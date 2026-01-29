@@ -289,10 +289,10 @@ Note: `template_id` corresponds to the template **name**, not the numeric identi
 
 ## Links
 
-- [WhatsApp Channel Overview](https://developers.sinch.com/docs/conversation/channel-support/whatsapp)
-- [WhatsApp Setup Guide](https://developers.sinch.com/docs/conversation/channel-support/whatsapp/set-up)
-- [WhatsApp Template Support](https://developers.sinch.com/docs/conversation/channel-support/whatsapp/template-support)
-- [WhatsApp Message Support](https://developers.sinch.com/docs/conversation/channel-support/whatsapp/message-support/)
-- [Provisioning API — WhatsApp Templates](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api/whatsapp-templates)
-- [Conversation API Reference](https://developers.sinch.com/docs/conversation/api-reference)
+- [WhatsApp Channel Overview](https://developers.sinch.com/docs/conversation/channel-support/whatsapp.md)
+- [WhatsApp Setup Guide](https://developers.sinch.com/docs/conversation/channel-support/whatsapp/set-up.md)
+- [WhatsApp Template Support](https://developers.sinch.com/docs/conversation/channel-support/whatsapp/template-support.md)
+- [WhatsApp Message Support](https://developers.sinch.com/docs/conversation/channel-support/whatsapp/message-support.md)
+- [Provisioning API — WhatsApp Templates](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api/whatsapp-templates.md)
+- [Conversation API Reference](https://developers.sinch.com/docs/conversation/api-reference/conversation.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

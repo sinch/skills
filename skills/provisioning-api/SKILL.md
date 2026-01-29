@@ -266,5 +266,5 @@ function verifyWebhookSignature(payload, signature, secret) {
 - [Provisioning API Reference](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api.md)
 - [Release Notes](https://developers.sinch.com/docs/provisioning-api/release-notes.md)
 - [Provisioning API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/provisioning/api-reference/provisioning.yaml?download)
-- [Provisioning API Reference (Markdown)](https://developers.sinch.com/docs/provisioning/api-reference/provisioning.md)
+- [Provisioning API Reference (Markdown)](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

@@ -241,10 +241,10 @@ curl -X POST \
 
 ## Links
 
-- [10DLC Registration API Reference](https://developers.sinch.com/docs/10dlc-registration)
-- [10DLC Registration Overview](https://developers.sinch.com/docs/10dlc-registration)
-- [Brand Registration API Reference](https://developers.sinch.com/docs/10dlc-registration/api-reference/10dlc-registration/tag/10DLC-Brand-Registration/)
-- [Campaign Registration API Reference](https://developers.sinch.com/docs/10dlc-registration/api-reference/10dlc-registration/10dlc-campaign-registration)
+- [10DLC Registration API Reference](https://developers.sinch.com/docs/10dlc-registration.md)
+- [10DLC Registration Overview](https://developers.sinch.com/docs/10dlc-registration.md)
+- [Brand Registration API Reference](https://developers.sinch.com/docs/10dlc-registration/api-reference/10dlc-registration/10dlc-brand-registration.md)
+- [Campaign Registration API Reference](https://developers.sinch.com/docs/10dlc-registration/api-reference/10dlc-registration/10dlc-campaign-registration.md)
 - [10DLC Registration Options (Community)](https://community.sinch.com/t5/10DLC/10DLC-Registration-Options-Overview/ta-p/12422)
 - [What is 10DLC Messaging (Blog)](https://sinch.com/blog/what-is-10dlc/)
 - [10DLC FAQ](https://sinch.com/blog/10dlc-faq/)

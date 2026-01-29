@@ -330,15 +330,15 @@ call.addListener({
 
 ## Links
 
-- [In-App Calling Overview](https://developers.sinch.com/docs/in-app-calling)
-- [JavaScript SDK Guide](https://developers.sinch.com/docs/in-app-calling/js-cloud)
-- [JavaScript Voice Calling](https://developers.sinch.com/docs/in-app-calling/js/calling/)
-- [Authentication & Authorization (JS)](https://developers.sinch.com/docs/in-app-calling/js/application-authentication/)
-- [Getting Started: Create App](https://developers.sinch.com/docs/in-app-calling/getting-started/javascript/create-app)
-- [Getting Started: Make a Call](https://developers.sinch.com/docs/in-app-calling/getting-started/javascript/make-call)
-- [SDK Downloads](https://developers.sinch.com/docs/in-app-calling/sdk-downloads/)
+- [In-App Calling Overview](https://developers.sinch.com/docs/in-app-calling.md)
+- [JavaScript SDK Guide](https://developers.sinch.com/docs/in-app-calling/js-cloud.md)
+- [JavaScript Voice Calling](https://developers.sinch.com/docs/in-app-calling/js/calling.md)
+- [Authentication & Authorization (JS)](https://developers.sinch.com/docs/in-app-calling/js/application-authentication.md)
+- [Getting Started: Create App](https://developers.sinch.com/docs/in-app-calling/getting-started/javascript/create-app.md)
+- [Getting Started: Make a Call](https://developers.sinch.com/docs/in-app-calling/getting-started/javascript/make-call.md)
+- [SDK Downloads](https://developers.sinch.com/docs/in-app-calling/sdk-downloads.md)
 - [Reference Applications (GitHub)](https://github.com/sinch/rtc-reference-applications)
 - [SinchClient JS API Reference](https://download.sinch.com/docs/javascript/latest/reference/classes/SinchClient.html)
-- [In-App Calling API Reference](https://developers.sinch.com/docs/in-app-calling)
+- [In-App Calling API Reference](https://developers.sinch.com/docs/in-app-calling.md)
 - [npm: @sinch/sdk-core](https://www.npmjs.com/package/@sinch/sdk-core)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

@@ -1,4 +1,4 @@
-﻿---
+---
 name: sinch-numbers
 description: Manage phone numbers with Sinch Numbers API. Use when purchasing, searching, configuring, or releasing virtual numbers for SMS and Voice.
 ---
@@ -256,12 +256,12 @@ curl -X GET \
 
 ## Links
 
-- [Numbers API Reference](https://developers.sinch.com/docs/numbers/api-reference/numbers)
-- [Getting Started Guide](https://developers.sinch.com/docs/numbers/getting-started)
-- [Node.js SDK Reference](https://developers.sinch.com/docs/numbers/sdk/node/syntax-reference/)
-- [Python SDK Reference](https://developers.sinch.com/docs/numbers/sdk/python/syntax-reference/)
-- [Java SDK Reference](https://developers.sinch.com/docs/numbers/sdk/java/syntax-reference/)
-- [.NET SDK Reference](https://developers.sinch.com/docs/numbers/sdk/dotnet/syntax-reference/)
+- [Numbers API Reference](https://developers.sinch.com/docs/numbers/api-reference/numbers.md)
+- [Getting Started Guide](https://developers.sinch.com/docs/numbers/getting-started.md)
+- [Node.js SDK Reference](https://developers.sinch.com/docs/numbers/sdk/node/syntax-reference.md)
+- [Python SDK Reference](https://developers.sinch.com/docs/numbers/sdk/python/syntax-reference)
+- [Java SDK Reference](https://developers.sinch.com/docs/numbers/sdk/java/syntax-reference.md)
+- [.NET SDK Reference](https://developers.sinch.com/docs/numbers/sdk/dotnet/syntax-reference.md)
 - [@sinch/numbers on npm](https://www.npmjs.com/package/@sinch/numbers)
 - [Numbers API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/numbers/api-reference/numbers.yaml?download)
 - [Numbers API Reference (Markdown)](https://developers.sinch.com/docs/numbers/api-reference/numbers.md)

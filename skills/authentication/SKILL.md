@@ -125,7 +125,7 @@ const sinch = new SinchClient({
 });
 ```
 
-For curl with Voice API, sign requests using the Application Key and Secret per the [Voice API auth docs](https://developers.sinch.com/docs/voice/api-reference/authentication).
+For curl with Voice API, sign requests using the Application Key and Secret per the [Voice API auth docs](https://developers.sinch.com/docs/voice/api-reference/authentication.md).
 
 ## Email Authentication
 
@@ -178,7 +178,7 @@ const sinch = new SinchClient({
 
 - Sinch Dashboard: https://dashboard.sinch.com
 - Access Keys: https://dashboard.sinch.com/settings/access-keys
-- OAuth2 Docs: https://developers.sinch.com/docs/conversation/api-reference/oauth2
-- Voice Auth Docs: https://developers.sinch.com/docs/voice/api-reference/authentication
+- OAuth2 Docs: https://developers.sinch.com/docs/conversation/api-reference/oauth2.md
+- Voice Auth Docs: https://developers.sinch.com/docs/voice/api-reference/authentication.md
 - Mailgun API Keys: https://app.mailgun.com/settings/api_security
 - Mailjet API Keys: https://app.mailjet.com/account/apikeys

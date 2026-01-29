@@ -1,4 +1,4 @@
-﻿---
+---
 name: sinch-fax
 description: Send and receive faxes programmatically with Sinch Fax API. Use when building fax workflows, fax-to-email, or integrating fax into applications.
 ---
@@ -323,13 +323,13 @@ curl -X GET \
 
 ## Links
 
-- [Fax API Reference](https://developers.sinch.com/docs/fax/api-reference/fax)
-- [Getting Started Guide](https://developers.sinch.com/docs/fax/getting-started)
-- [Send a Fax with Node.js](https://developers.sinch.com/docs/fax/getting-started/node/send-fax)
-- [Receive a Fax with Node.js](https://developers.sinch.com/docs/fax/getting-started/node/receive-fax/)
-- [Faxes Endpoint Reference](https://developers.sinch.com/docs/fax/api-reference/fax/tag/Faxes/)
-- [Services Endpoint Reference](https://developers.sinch.com/docs/fax/api-reference/fax/services)
-- [Fax-to-Email Reference](https://developers.sinch.com/docs/fax/api-reference/fax/fax-to-email)
+- [Fax API Reference](https://developers.sinch.com/docs/fax/api-reference/fax.md)
+- [Getting Started Guide](https://developers.sinch.com/docs/fax/getting-started.md)
+- [Send a Fax with Node.js](https://developers.sinch.com/docs/fax/getting-started/node/send-fax.md)
+- [Receive a Fax with Node.js](https://developers.sinch.com/docs/fax/getting-started/node/receive-fax.md)
+- [Faxes Endpoint Reference](https://developers.sinch.com/docs/fax/api-reference/fax/faxes.md)
+- [Services Endpoint Reference](https://developers.sinch.com/docs/fax/api-reference/fax/services.md)
+- [Fax-to-Email Reference](https://developers.sinch.com/docs/fax/api-reference/fax/fax-to-email.md)
 - [@sinch/fax on npm](https://www.npmjs.com/package/@sinch/fax)
 - [Sinch Fax Product Page](https://sinch.com/apis/fax-api/)
 - [Fax API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/fax/api-reference/fax.yaml?download)

@@ -252,14 +252,14 @@ curl -X POST "https://us.conversation.api.sinch.com/v1/projects/$PROJECT_ID/webh
 
 ## Links
 
-- [Getting Started](https://developers.sinch.com/docs/conversation/getting-started)
-- [API Reference](https://developers.sinch.com/docs/conversation/api-reference/conversation)
-- [Key Concepts](https://developers.sinch.com/docs/conversation/keyconcepts)
-- [Message Types](https://developers.sinch.com/docs/conversation/message-types)
-- [Channel Support](https://developers.sinch.com/docs/conversation/channel-support)
-- [Callbacks](https://developers.sinch.com/docs/conversation/callbacks)
+- [Getting Started](https://developers.sinch.com/docs/conversation/getting-started.md)
+- [API Reference](https://developers.sinch.com/docs/conversation/api-reference/conversation.md)
+- [Key Concepts](https://developers.sinch.com/docs/conversation/keyconcepts.md)
+- [Message Types](https://developers.sinch.com/docs/conversation/message-types.md)
+- [Channel Support](https://developers.sinch.com/docs/conversation/channel-support.md)
+- [Callbacks](https://developers.sinch.com/docs/conversation/callbacks.md)
 - [Node.js SDK (GitHub)](https://github.com/sinch/sinch-sdk-node)
-- [Node.js SDK Reference](https://developers.sinch.com/docs/conversation/sdk/node/syntax-reference/)
+- [Node.js SDK Reference](https://developers.sinch.com/docs/conversation/sdk/node/syntax-reference.md)
 - [Conversation API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/conversation/api-reference/conversation.yaml?download)
 - [Conversation API Reference (Markdown)](https://developers.sinch.com/docs/conversation/api-reference/conversation.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

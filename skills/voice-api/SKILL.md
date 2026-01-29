@@ -1,4 +1,4 @@
-﻿---
+---
 name: sinch-voice-api
 description: Build voice apps with Sinch Voice REST API. Use for making/receiving calls, IVR menus, TTS, conference calling, call recording, and SVAML call control.
 ---
@@ -320,16 +320,16 @@ curl -X PATCH "https://calling.api.sinch.com/calling/v1/calls/id/CALL_ID" \
 
 ## Links
 
-- [Voice API Reference](https://developers.sinch.com/docs/voice/api-reference/voice)
-- [Voice API Overview](https://developers.sinch.com/docs/voice/api-reference/voice/overview/)
-- [SVAML Actions Reference](https://developers.sinch.com/docs/voice/api-reference/svaml/actions)
-- [SVAML Instructions Reference](https://developers.sinch.com/docs/voice/api-reference/svaml/instructions)
-- [Callbacks Reference](https://developers.sinch.com/docs/voice/api-reference/voice/callbacks)
-- [Callouts Reference](https://developers.sinch.com/docs/voice/api-reference/voice/callouts)
-- [Node.js SDK Reference](https://developers.sinch.com/docs/voice/sdk/node/syntax-reference)
-- [Authentication Guide](https://developers.sinch.com/docs/voice/api-reference/authentication)
-- [Callback Signing](https://developers.sinch.com/docs/voice/api-reference/authentication/callback-signed-request)
-- [Voice API Tutorials](https://developers.sinch.com/docs/voice/tutorials/callout-callback-node)
+- [Voice API Reference](https://developers.sinch.com/docs/voice/api-reference/voice.md)
+- [Voice API Overview](https://developers.sinch.com/docs/voice/api-reference/voice/overview)
+- [SVAML Actions Reference](https://developers.sinch.com/docs/voice/api-reference/svaml/actions.md)
+- [SVAML Instructions Reference](https://developers.sinch.com/docs/voice/api-reference/svaml/instructions.md)
+- [Callbacks Reference](https://developers.sinch.com/docs/voice/api-reference/voice/callbacks.md)
+- [Callouts Reference](https://developers.sinch.com/docs/voice/api-reference/voice/callouts.md)
+- [Node.js SDK Reference](https://developers.sinch.com/docs/voice/sdk/node/syntax-reference.md)
+- [Authentication Guide](https://developers.sinch.com/docs/voice/api-reference/authentication.md)
+- [Callback Signing](https://developers.sinch.com/docs/voice/api-reference/authentication/callback-signed-request.md)
+- [Voice API Tutorials](https://developers.sinch.com/docs/voice/tutorials/callout-callback-node.md)
 - [GitHub: Voice Webhook Sample (Node.js)](https://github.com/sinch/voice-api-webhook-nodejs)
 - [npm: @sinch/sdk-core](https://www.npmjs.com/package/@sinch/sdk-core)
 - [npm: @sinch/voice](https://www.npmjs.com/package/@sinch/voice)

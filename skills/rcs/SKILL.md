@@ -327,10 +327,10 @@ Enable in your Conversation API app settings. When no positive delivery report (
 
 ## Links
 
-- [RCS Channel Overview](https://developers.sinch.com/docs/conversation/channel-support/rcs)
-- [RCS Setup Guide](https://developers.sinch.com/docs/conversation/channel-support/rcs/set-up)
-- [RCS Message Support](https://developers.sinch.com/docs/conversation/channel-support/rcs/message-support)
-- [RCS Senders (Provisioning API)](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api/rcs-senders)
-- [Conversation API Fallback](https://developers.sinch.com/docs/conversation/overview)
-- [Conversation API Reference](https://developers.sinch.com/docs/conversation/api-reference)
+- [RCS Channel Overview](https://developers.sinch.com/docs/conversation/channel-support/rcs.md)
+- [RCS Setup Guide](https://developers.sinch.com/docs/conversation/channel-support/rcs/set-up.md)
+- [RCS Message Support](https://developers.sinch.com/docs/conversation/channel-support/rcs/message-support.md)
+- [RCS Senders (Provisioning API)](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api/rcs-senders.md)
+- [Conversation API Fallback](https://developers.sinch.com/docs/conversation/overview.md)
+- [Conversation API Reference](https://developers.sinch.com/docs/conversation/api-reference/conversation.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

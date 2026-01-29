@@ -256,14 +256,14 @@ Configure a webhook with the `MESSAGE_INBOUND` trigger. Inbound SMS arrives as:
 
 ## Links
 
-- [SMS Channel Overview](https://developers.sinch.com/docs/conversation/channel-support/sms/)
-- [SMS Setup Guide](https://developers.sinch.com/docs/conversation/channel-support/sms/set-up/)
-- [SMS Channel Properties](https://developers.sinch.com/docs/conversation/channel-support/sms/properties/)
-- [SMS Message Support](https://developers.sinch.com/docs/conversation/channel-support/sms/message-support)
+- [SMS Channel Overview](https://developers.sinch.com/docs/conversation/channel-support/sms.md)
+- [SMS Setup Guide](https://developers.sinch.com/docs/conversation/channel-support/sms/set-up.md)
+- [SMS Channel Properties](https://developers.sinch.com/docs/conversation/channel-support/sms/properties.md)
+- [SMS Message Support](https://developers.sinch.com/docs/conversation/channel-support/sms/message-support.md)
 - [Character Encoding](https://developers.sinch.com/docs/sms/resources/message-info/character-support.md)
 - [Auto Encoding](https://developers.sinch.com/docs/sms/resources/message-info/auto-encoding.md)
-- [SMS API Reference](https://developers.sinch.com/docs/sms/api-reference/sms)
-- [Conversation API Reference](https://developers.sinch.com/docs/conversation/api-reference)
+- [SMS API Reference](https://developers.sinch.com/docs/sms/api-reference/sms.md)
+- [Conversation API Reference](https://developers.sinch.com/docs/conversation/api-reference/conversation.md)
 - [SMS API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/sms/api-reference/sms.yaml?download)
 - [SMS API Reference (Markdown)](https://developers.sinch.com/docs/sms/api-reference/sms.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

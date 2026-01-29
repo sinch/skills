@@ -1,4 +1,4 @@
-﻿---
+---
 name: sinch-verification
 description: Verify phone numbers via SMS, Flashcall, Phone Call, or Data with Sinch Verification API. Use when implementing user phone verification flows.
 ---
@@ -268,14 +268,14 @@ curl -X GET \
 
 ## Links
 
-- [Verification API Reference](https://developers.sinch.com/docs/verification/api-reference/verification)
-- [Getting Started Guide](https://developers.sinch.com/docs/verification/getting-started)
-- [Authentication Guide](https://developers.sinch.com/docs/verification/api-reference/authentication)
-- [Application Signed Requests](https://developers.sinch.com/docs/verification/api-reference/authentication/application-signed-request)
-- [Callback Signing](https://developers.sinch.com/docs/verification/api-reference/authentication/callback-signed-request)
-- [Node.js SDK Reference](https://developers.sinch.com/docs/verification/sdk/node/syntax-reference)
-- [Java SDK Reference](https://developers.sinch.com/docs/verification/sdk/java/syntax-reference/)
-- [.NET SDK Reference](https://developers.sinch.com/docs/verification/sdk/dotnet/syntax-reference/)
+- [Verification API Reference](https://developers.sinch.com/docs/verification/api-reference/verification.md)
+- [Getting Started Guide](https://developers.sinch.com/docs/verification/getting-started.md)
+- [Authentication Guide](https://developers.sinch.com/docs/verification/api-reference/authentication.md)
+- [Application Signed Requests](https://developers.sinch.com/docs/verification/api-reference/authentication/application-signed-request.md)
+- [Callback Signing](https://developers.sinch.com/docs/verification/api-reference/authentication/callback-signed-request.md)
+- [Node.js SDK Reference](https://developers.sinch.com/docs/verification/sdk/node/syntax-reference.md)
+- [Java SDK Reference](https://developers.sinch.com/docs/verification/sdk/java/syntax-reference.md)
+- [.NET SDK Reference](https://developers.sinch.com/docs/verification/sdk/dotnet/syntax-reference.md)
 - [@sinch/verification on npm](https://www.npmjs.com/package/@sinch/verification)
 - [Verification API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/verification/api-reference/verification.yaml?download)
 - [Verification API Reference (Markdown)](https://developers.sinch.com/docs/verification/api-reference/verification.md)
