@@ -278,7 +278,6 @@ Keep video under 1 MB for best deliverability. The API may compress video to fit
 - [MMS Message Support](https://developers.sinch.com/docs/conversation/channel-support/mms/message-support)
 - [Media Message Type](https://developers.sinch.com/docs/conversation/message-types/media-message/)
 - [Card Message Type](https://developers.sinch.com/docs/conversation/message-types/card-message/)
-- [MMS Channel Support](https://developers.sinch.com/docs/conversation/channel-support/mms)
 - [Conversation API Reference](https://developers.sinch.com/docs/conversation/api-reference)
 - [MMS API (standalone)](https://developers.sinch.com/docs/mms/api-reference/sendmms/)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

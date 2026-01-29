@@ -17,7 +17,7 @@ Key capabilities:
 - **Push notifications** for incoming calls when the app is in the background
 - **Screen sharing** on supported platforms
 
-Pricing: In-app calls cost $0.003 per minute per leg ($0.006/min for a two-party call).
+See the [Sinch pricing page](https://sinch.com/pricing/) for current in-app calling rates.
 
 ## Getting Started
 

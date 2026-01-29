@@ -5,6 +5,8 @@ description: Build with Mailgun Email API for sending, receiving, and tracking e
 
 # Mailgun Email API
 
+## Overview
+
 Mailgun (by Sinch) is a powerful email API for sending, receiving, and tracking email. It supports both REST API and SMTP relay for transactional and bulk email.
 
 ## Getting Started

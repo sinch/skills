@@ -1,4 +1,4 @@
----
+﻿---
 name: sinch-fax
 description: Send and receive faxes programmatically with Sinch Fax API. Use when building fax workflows, fax-to-email, or integrating fax into applications.
 ---
@@ -332,4 +332,6 @@ curl -X GET \
 - [Fax-to-Email Reference](https://developers.sinch.com/docs/fax/api-reference/fax/fax-to-email)
 - [@sinch/fax on npm](https://www.npmjs.com/package/@sinch/fax)
 - [Sinch Fax Product Page](https://sinch.com/apis/fax-api/)
+- [Fax API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/fax/api-reference/fax.yaml?download)
+- [Fax API Reference (Markdown)](https://developers.sinch.com/docs/fax/api-reference/fax.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

@@ -265,4 +265,6 @@ function verifyWebhookSignature(payload, signature, secret) {
 - [Getting Started with WhatsApp Provisioning](https://developers.sinch.com/docs/provisioning-api/getting-started/whatsapp)
 - [Provisioning API Reference](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api)
 - [Release Notes](https://developers.sinch.com/docs/provisioning-api/release-notes/)
+- [Provisioning API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/provisioning/api-reference/provisioning.yaml?download)
+- [Provisioning API Reference (Markdown)](https://developers.sinch.com/docs/provisioning/api-reference/provisioning.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

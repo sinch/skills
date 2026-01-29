@@ -1,4 +1,4 @@
----
+﻿---
 name: sinch-elastic-sip-trunking
 description: Manage SIP trunks, endpoints, ACLs, and phone numbers with the Sinch Elastic SIP Trunking REST API. Use for trunk provisioning and SIP connectivity.
 ---
@@ -330,4 +330,6 @@ All endpoints are prefixed with `https://elastic-trunking.api.sinch.com/v1/proje
 - [npm: @sinch/sdk-core](https://www.npmjs.com/package/@sinch/sdk-core)
 - [npm: @sinch/elastic-sip-trunking](https://www.npmjs.com/package/@sinch/elastic-sip-trunking)
 - [Sinch Community: How to Create a SIP Trunk](https://community.sinch.com/t5/Elastic-SIP-Trunking/How-do-I-create-a-SIP-trunk/ta-p/11405)
+- [Elastic SIP Trunking OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/est/api-reference/est.yaml?download)
+- [Elastic SIP Trunking API Reference (Markdown)](https://developers.sinch.com/docs/est/api-reference/est.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

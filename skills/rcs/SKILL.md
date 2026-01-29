@@ -332,6 +332,5 @@ Enable in your Conversation API app settings. When no positive delivery report (
 - [RCS Message Support](https://developers.sinch.com/docs/conversation/channel-support/rcs/message-support)
 - [RCS Senders (Provisioning API)](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api/rcs-senders)
 - [Conversation API Fallback](https://developers.sinch.com/docs/conversation/overview)
-- [RCS Channel Support](https://developers.sinch.com/docs/conversation/channel-support/rcs)
 - [Conversation API Reference](https://developers.sinch.com/docs/conversation/api-reference)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

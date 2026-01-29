@@ -1,9 +1,11 @@
 ---
 name: sinch-mailgun-inspect
-description: Build with Mailgun Inspect API for email pre-send quality control. Use when previewing emails across clients, checking accessibility, validating links or images.
+description: Build with Mailgun Inspect API for email quality control. Use when previewing emails, checking accessibility, or validating links and images.
 ---
 
 # Mailgun Inspect
+
+## Overview
 
 Mailgun Inspect (by Sinch) is an email pre-send quality control tool that ensures your emails are optimized for delivery, readability, and accessibility before they reach recipients. It provides email previews, accessibility testing, link validation, image validation, and code analysis.
 

@@ -1,9 +1,11 @@
 ---
 name: sinch-mailgun-optimize
-description: Build with Mailgun Optimize (InboxReady) API for email deliverability tools. Use when testing inbox placement, monitoring blocklists, classifying bounces, or checking email health.
+description: Build with Mailgun Optimize API for email deliverability. Use when testing inbox placement, monitoring blocklists, classifying bounces, or checking email health.
 ---
 
 # Mailgun Optimize (InboxReady)
+
+## Overview
 
 Mailgun Optimize (by Sinch), formerly InboxReady, is a suite of email deliverability tools. It helps you stay out of the spam folder, monitor sender reputation, test inbox placement, track blocklists, classify bounces, and measure email health scores.
 

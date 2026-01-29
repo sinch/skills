@@ -1,4 +1,4 @@
----
+﻿---
 name: sinch-verification
 description: Verify phone numbers via SMS, Flashcall, Phone Call, or Data with Sinch Verification API. Use when implementing user phone verification flows.
 ---
@@ -280,4 +280,6 @@ curl -X GET \
 - [Java SDK Reference](https://developers.sinch.com/docs/verification/sdk/java/syntax-reference/)
 - [.NET SDK Reference](https://developers.sinch.com/docs/verification/sdk/dotnet/syntax-reference/)
 - [@sinch/verification on npm](https://www.npmjs.com/package/@sinch/verification)
+- [Verification API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/verification/api-reference/verification.yaml?download)
+- [Verification API Reference (Markdown)](https://developers.sinch.com/docs/verification/api-reference/verification.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

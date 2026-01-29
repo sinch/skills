@@ -1,4 +1,4 @@
----
+﻿---
 name: sinch-number-lookup
 description: Look up phone number details with Sinch Number Lookup API. Use when checking carrier, line type, porting status, SIM swap, or VoIP detection.
 ---
@@ -245,4 +245,6 @@ if (voipProbability > 0.8) {
 - [Combined Lookup and Verification](https://developers.sinch.com/docs/number-lookup-api-v2/combined-lookup-verification)
 - [Number Lookup API Reference](https://developers.sinch.com/docs/number-lookup-api-v2)
 - [Number Lookup v2 Endpoint](https://developers.sinch.com/docs/number-lookup-api-v2/api-reference/number-lookup-v2/numberlookupv2)
+- [Number Lookup API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/number-lookup-api-v2/api-reference/number-lookup-api-v2.yaml?download)
+- [Number Lookup API Reference (Markdown)](https://developers.sinch.com/docs/number-lookup-api-v2/api-reference/number-lookup-api-v2.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

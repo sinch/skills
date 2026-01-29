@@ -5,6 +5,8 @@ description: Build with Mailjet Email API for transactional and marketing email.
 
 # Mailjet Email API
 
+## Overview
+
 Mailjet (by Sinch) is an email delivery platform providing both REST API and SMTP relay for transactional and marketing email. The Send API v3.1 is the current recommended version.
 
 ## Getting Started

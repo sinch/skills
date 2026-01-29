@@ -1,4 +1,4 @@
----
+﻿---
 name: sinch-numbers
 description: Manage phone numbers with Sinch Numbers API. Use when purchasing, searching, configuring, or releasing virtual numbers for SMS and Voice.
 ---
@@ -263,4 +263,6 @@ curl -X GET \
 - [Java SDK Reference](https://developers.sinch.com/docs/numbers/sdk/java/syntax-reference/)
 - [.NET SDK Reference](https://developers.sinch.com/docs/numbers/sdk/dotnet/syntax-reference/)
 - [@sinch/numbers on npm](https://www.npmjs.com/package/@sinch/numbers)
+- [Numbers API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/numbers/api-reference/numbers.yaml?download)
+- [Numbers API Reference (Markdown)](https://developers.sinch.com/docs/numbers/api-reference/numbers.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

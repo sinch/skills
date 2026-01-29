@@ -260,4 +260,6 @@ curl -X POST "https://us.conversation.api.sinch.com/v1/projects/$PROJECT_ID/webh
 - [Callbacks](https://developers.sinch.com/docs/conversation/callbacks)
 - [Node.js SDK (GitHub)](https://github.com/sinch/sinch-sdk-node)
 - [Node.js SDK Reference](https://developers.sinch.com/docs/conversation/sdk/node/syntax-reference/)
+- [Conversation API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/conversation/api-reference/conversation.yaml?download)
+- [Conversation API Reference (Markdown)](https://developers.sinch.com/docs/conversation/api-reference/conversation.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

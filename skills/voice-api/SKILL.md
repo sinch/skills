@@ -1,4 +1,4 @@
----
+﻿---
 name: sinch-voice-api
 description: Build voice apps with Sinch Voice REST API. Use for making/receiving calls, IVR menus, TTS, conference calling, call recording, and SVAML call control.
 ---
@@ -334,4 +334,6 @@ curl -X PATCH "https://calling.api.sinch.com/calling/v1/calls/id/CALL_ID" \
 - [GitHub: Voice Webhook Sample (Node.js)](https://github.com/sinch/voice-api-webhook-nodejs)
 - [npm: @sinch/sdk-core](https://www.npmjs.com/package/@sinch/sdk-core)
 - [npm: @sinch/voice](https://www.npmjs.com/package/@sinch/voice)
+- [Voice API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/voice/api-reference/voice.yaml?download)
+- [Voice API Reference (Markdown)](https://developers.sinch.com/docs/voice/api-reference/voice.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

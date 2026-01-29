@@ -264,4 +264,6 @@ Configure a webhook with the `MESSAGE_INBOUND` trigger. Inbound SMS arrives as:
 - [Auto Encoding](https://developers.sinch.com/docs/sms/resources/message-info/auto-encoding)
 - [SMS API Reference](https://developers.sinch.com/docs/sms/api-reference/sms)
 - [Conversation API Reference](https://developers.sinch.com/docs/conversation/api-reference)
+- [SMS API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/sms/api-reference/sms.yaml?download)
+- [SMS API Reference (Markdown)](https://developers.sinch.com/docs/sms/api-reference/sms.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

@@ -273,7 +273,7 @@ Note: `template_id` corresponds to the template **name**, not the numeric identi
 
 3. **Template rejection.** Meta may reject templates for vague content, promotional language in utility templates, or policy violations. Allow time for re-submission.
 
-4. **Pricing changed July 2025.** WhatsApp moved to per-message pricing (was per-conversation). Marketing and authentication templates are charged on delivery. Utility templates are free within a session window.
+4. **Per-message pricing model.** WhatsApp uses per-message pricing. Marketing and authentication templates are charged on delivery. Utility templates are free within a session window.
 
 5. **Rate limits.** WhatsApp enforces its own rate limits based on your business quality rating and tier. New numbers start at a low tier (1K messages/day) and scale up with good quality.
 
@@ -294,6 +294,5 @@ Note: `template_id` corresponds to the template **name**, not the numeric identi
 - [WhatsApp Template Support](https://developers.sinch.com/docs/conversation/channel-support/whatsapp/template-support)
 - [WhatsApp Message Support](https://developers.sinch.com/docs/conversation/channel-support/whatsapp/message-support/)
 - [Provisioning API — WhatsApp Templates](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api/whatsapp-templates)
-- [WhatsApp Channel Support](https://developers.sinch.com/docs/conversation/channel-support/whatsapp)
 - [Conversation API Reference](https://developers.sinch.com/docs/conversation/api-reference)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)
