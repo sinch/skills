@@ -261,4 +261,5 @@ curl -s --user 'api:YOUR_API_KEY' \
 - Help Center: https://help.mailgun.com
 - SDKs: https://documentation.mailgun.com/docs/mailgun/sdk-reference/
 - Status Page: https://status.mailgun.com
+- Mailgun LLMs.txt: https://documentation.mailgun.com/llms.txt
 - LLMs.txt (full docs index): https://developers.sinch.com/llms.txt

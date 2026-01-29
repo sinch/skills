@@ -248,4 +248,5 @@ curl -X POST \
 - [10DLC Registration Options (Community)](https://community.sinch.com/t5/10DLC/10DLC-Registration-Options-Overview/ta-p/12422)
 - [What is 10DLC Messaging (Blog)](https://sinch.com/blog/what-is-10dlc/)
 - [10DLC FAQ](https://sinch.com/blog/10dlc-faq/)
+- [Numbers API OpenAPI Spec](https://developers.sinch.com/_bundle/docs/numbers/api-reference/numbers.yaml?download)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

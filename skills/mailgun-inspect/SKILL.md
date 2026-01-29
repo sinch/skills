@@ -232,4 +232,5 @@ echo "Accessibility results: $RESULT"
 - Mailgun Dashboard: https://app.mailgun.com
 - Sign Up: https://www.mailgun.com/products/inspect/#form
 - Help Center: https://help.mailgun.com
+- Mailgun LLMs.txt: https://documentation.mailgun.com/llms.txt
 - LLMs.txt (full docs index): https://developers.sinch.com/llms.txt
