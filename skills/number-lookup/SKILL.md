@@ -240,8 +240,8 @@ if (voipProbability > 0.8) {
 ## Links
 
 - [Number Lookup API v2 Reference](https://developers.sinch.com/docs/number-lookup-api-v2/api-reference/number-lookup-v2)
-- [Number Lookup API Overview](https://developers.sinch.com/docs/number-lookup-api/overview)
-- [Getting Started Guide](https://developers.sinch.com/docs/number-lookup-api/getting-started)
+- [Number Lookup API Overview](https://developers.sinch.com/docs/number-lookup-api/overview.md)
+- [Getting Started Guide](https://developers.sinch.com/docs/number-lookup-api/getting-started.md)
 - [Combined Lookup and Verification](https://developers.sinch.com/docs/number-lookup-api-v2/combined-lookup-verification)
 - [Number Lookup API Reference](https://developers.sinch.com/docs/number-lookup-api-v2)
 - [Number Lookup v2 Endpoint](https://developers.sinch.com/docs/number-lookup-api-v2/api-reference/number-lookup-v2/numberlookupv2)

@@ -40,12 +40,11 @@ The Voice API uses regional endpoints. Choose the closest to your users:
 | Region | Base URL |
 |--------|----------|
 | Global (default) | `https://calling.api.sinch.com/calling/v1` |
-| US East 1 | `https://calling-use1.api.sinch.com/calling/v1` |
-| US West 1 | `https://calling-usw1.api.sinch.com/calling/v1` |
-| EU 1 | `https://calling-euc1.api.sinch.com/calling/v1` |
+| North America | `https://calling-use1.api.sinch.com/calling/v1` |
+| Europe | `https://calling-euc1.api.sinch.com/calling/v1` |
 | Southeast Asia 1 | `https://calling-apse1.api.sinch.com/calling/v1` |
 | Southeast Asia 2 | `https://calling-apse2.api.sinch.com/calling/v1` |
-| South America 1 | `https://calling-sae1.api.sinch.com/calling/v1` |
+| South America | `https://calling-sae1.api.sinch.com/calling/v1` |
 
 ### SDK Installation
 

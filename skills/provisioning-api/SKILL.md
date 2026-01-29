@@ -257,14 +257,14 @@ function verifyWebhookSignature(payload, signature, secret) {
 
 ## Links
 
-- [Provisioning API Introduction](https://developers.sinch.com/docs/provisioning-api/api-reference/)
-- [WhatsApp Senders](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api/whatsapp-senders)
-- [WhatsApp Templates](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api/whatsapp-templates)
-- [RCS Senders](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api/rcs-senders)
-- [Webhooks](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api/webhooks)
-- [Getting Started with WhatsApp Provisioning](https://developers.sinch.com/docs/provisioning-api/getting-started/whatsapp)
-- [Provisioning API Reference](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api)
-- [Release Notes](https://developers.sinch.com/docs/provisioning-api/release-notes/)
+- [Provisioning API Introduction](https://developers.sinch.com/docs/provisioning-api/api-reference.md)
+- [WhatsApp Senders](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api/whatsapp-senders.md)
+- [WhatsApp Templates](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api/whatsapp-templates.md)
+- [RCS Senders](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api/rcs-senders.md)
+- [Webhooks](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api/webhooks.md)
+- [Getting Started with WhatsApp Provisioning](https://developers.sinch.com/docs/provisioning-api/getting-started/whatsapp.md)
+- [Provisioning API Reference](https://developers.sinch.com/docs/provisioning-api/api-reference/provisioning-api.md)
+- [Release Notes](https://developers.sinch.com/docs/provisioning-api/release-notes.md)
 - [Provisioning API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/provisioning/api-reference/provisioning.yaml?download)
 - [Provisioning API Reference (Markdown)](https://developers.sinch.com/docs/provisioning/api-reference/provisioning.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

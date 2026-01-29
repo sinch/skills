@@ -141,3 +141,10 @@ vite.config.ts.timestamp-*
 # Playwright MCP artifacts
 .playwright-mcp/
 PRD.md
+REVIEW_SUMMARY.md
+fix_skills.ps1
+FIXES_BEFORE_AFTER.md
+README_VERIFICATION.md
+VERIFICATION_COMPLETE.md
+VERIFICATION_REPORT_FINAL.md
+VERIFICATION_REPORT.md

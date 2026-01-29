@@ -76,9 +76,6 @@ pip install sinch
 from sinch import SinchClient
 
 sinch_client = SinchClient(
-    key_id="YOUR_key_id",
-    key_secret="YOUR_key_secret",
-    project_id="YOUR_project_id",
     application_key="YOUR_application_key",
     application_secret="YOUR_application_secret",
 )
@@ -130,10 +127,10 @@ console.log(response.id); // Verification ID
 ## Key Concepts
 
 - **Verification Methods**:
-  - `sms` -- Sends a PIN code via SMS. User enters the code to verify.
-  - `flashcall` -- Places a call that is immediately hung up. The caller ID contains the verification code. Android only.
-  - `callout` -- Places a voice call that reads a verification code aloud via text-to-speech.
-  - `seamless` -- Data verification using the mobile data connection. No user interaction needed. Limited carrier support.
+  - SMS (`sms`) -- Sends a PIN code via SMS. User enters the code to verify.
+  - FlashCall (`flashcall`) -- Places a call that is immediately hung up. The caller ID contains the verification code. Android only.
+  - Phone Call (`callout`) -- Places a voice call that reads a verification code aloud via text-to-speech.
+  - Data (`seamless`) -- Data verification using the mobile data connection. No user interaction needed. Limited carrier support.
 - **Identity**: Always `{ "type": "number", "endpoint": "+E164_NUMBER" }`.
 - **Verification ID**: Returned when starting a verification. Used to report the code.
 - **Report**: After the user enters the code, you report it back to Sinch to confirm verification.

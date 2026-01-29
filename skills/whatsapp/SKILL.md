@@ -148,10 +148,10 @@ curl -X POST "https://us.conversation.api.sinch.com/v1/projects/$PROJECT_ID/mess
             "template_id": "your_template_name",
             "language_code": "en",
             "body": {
-              "parameters": [
-                { "default": "John" },
-                { "default": "12345" }
-              ]
+              "parameters": {
+                "body[1]text": "John",
+                "body[2]text": "12345"
+              }
             }
           }
         }

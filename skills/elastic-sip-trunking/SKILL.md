@@ -320,13 +320,12 @@ All endpoints are prefixed with `https://elastic-trunking.api.sinch.com/v1/proje
 
 ## Links
 
-- [Elastic SIP Trunking Overview](https://developers.sinch.com/docs/est/)
-- [Getting Started Guide](https://developers.sinch.com/docs/est/getting-started)
-- [API Reference](https://developers.sinch.com/docs/est/api-reference/est)
-- [SIP Trunks API](https://developers.sinch.com/docs/est/api-reference/sip-trunking/)
-- [SIP Endpoints API](https://developers.sinch.com/docs/est/api-reference/est/sip-endpoints)
-- [Access Control Lists API](https://developers.sinch.com/docs/est/api-reference/est/credential-list/bulkupdatecredentiallistsfortrunk)
-- [Twilio BYOC Integration Guide](https://developers.sinch.com/docs/est/integration-guides/twilio-byoc)
+- [Elastic SIP Trunking Overview](https://developers.sinch.com/docs/est/overview.md)
+- [Getting Started Guide](https://developers.sinch.com/docs/est/getting-started.md)
+- [API Reference](https://developers.sinch.com/docs/est/api-reference/est.md)
+- [SIP Trunks API](https://developers.sinch.com/docs/est/api-reference/sip-trunking.md)
+- [SIP Endpoints API](https://developers.sinch.com/docs/est/api-reference/sip-endpoints.md)
+- [Twilio BYOC Integration Guide](https://developers.sinch.com/docs/est/integration-guides/twilio-byoc.md)
 - [npm: @sinch/sdk-core](https://www.npmjs.com/package/@sinch/sdk-core)
 - [npm: @sinch/elastic-sip-trunking](https://www.npmjs.com/package/@sinch/elastic-sip-trunking)
 - [Sinch Community: How to Create a SIP Trunk](https://community.sinch.com/t5/Elastic-SIP-Trunking/How-do-I-create-a-SIP-trunk/ta-p/11405)
