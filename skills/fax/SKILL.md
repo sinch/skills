@@ -19,6 +19,8 @@ The Sinch Fax API lets you send and receive faxes programmatically. It supports 
 
 ### Authentication
 
+See the [sinch-authentication](../authentication/SKILL.md) skill for full auth setup, SDK initialization, and dashboard links.
+
 **OAuth2 (production):**
 
 ```bash
@@ -321,7 +323,7 @@ curl -X GET \
 
 ## Links
 
-- [Fax API Reference](https://developers.sinch.com/docs/fax/api-reference)
+- [Fax API Reference](https://developers.sinch.com/docs/fax/api-reference/fax)
 - [Getting Started Guide](https://developers.sinch.com/docs/fax/getting-started)
 - [Send a Fax with Node.js](https://developers.sinch.com/docs/fax/getting-started/node/send-fax)
 - [Receive a Fax with Node.js](https://developers.sinch.com/docs/fax/getting-started/node/receive-fax/)
@@ -330,3 +332,4 @@ curl -X GET \
 - [Fax-to-Email Reference](https://developers.sinch.com/docs/fax/api-reference/fax/fax-to-email)
 - [@sinch/fax on npm](https://www.npmjs.com/package/@sinch/fax)
 - [Sinch Fax Product Page](https://sinch.com/apis/fax-api/)
+- [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

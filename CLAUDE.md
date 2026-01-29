@@ -53,16 +53,27 @@ One folder per Sinch product. The skill file is always `SKILL.md`.
 
 ## Sinch Developer Docs
 
-https://developers.sinch.com
+- Developer portal: https://developers.sinch.com
+- LLMs.txt (full markdown docs index): https://developers.sinch.com/llms.txt
+- Mailgun LLMs.txt: https://documentation.mailgun.com/llms.txt
+- OpenAPI specs: `https://developers.sinch.com/_bundle/docs/<product>/api-reference/<product>.yaml?download`
 
-## Auth Patterns
+## Auth
 
-Most Sinch APIs use OAuth2:
-- Credentials: project ID + key ID + key secret
-- Exchange for a bearer token via `POST https://auth.sinch.com/oauth2/token`
-- Include `Authorization: Bearer <token>` on API requests
+The shared `skills/authentication/SKILL.md` skill covers all auth methods. Product skills reference it rather than duplicating auth setup.
 
-Some legacy APIs use Basic auth or application signing. Check each product's documentation for specifics.
+- OAuth2 (most APIs): project ID + key ID + key secret → bearer token
+- Application signing: Voice API, Verification API
+- API key: Mailgun, Mailjet
+- Dashboard access keys: https://dashboard.sinch.com/settings/access-keys
+
+## API Reference Link Format
+
+Each skill's Links section should include both:
+1. **OpenAPI YAML spec**: `https://developers.sinch.com/_bundle/docs/<product>/api-reference/<product>.yaml?download`
+2. **Markdown docs**: `https://developers.sinch.com/docs/<product>/api-reference/<product>.md`
+
+These are machine-readable formats optimized for AI agent consumption.
 
 ## Do Not
 
