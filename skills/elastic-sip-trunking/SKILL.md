@@ -1,4 +1,4 @@
-﻿---
+---
 name: sinch-elastic-sip-trunking
 description: Manage SIP trunks, endpoints, ACLs, and phone numbers with the Sinch Elastic SIP Trunking REST API. Use for trunk provisioning and SIP connectivity.
 ---
@@ -15,6 +15,21 @@ Key capabilities:
 - **Access control lists (ACLs)**: Restrict trunk access to specific IP addresses
 - **Phone number management**: Assign and manage phone numbers on trunks
 - **Credential lists**: Manage authentication credentials for trunk users
+
+## Operational Mental Model
+
+1. **Hierarchy**: Project > Trunk > (SIP Endpoint + ACL).
+2. **Inbound (Origination)**: Requires a **SIP Endpoint** attached to the Trunk. Use **Registered Endpoints** (with Credential Lists) for dynamic IPs or **Static Endpoints** for fixed infrastructure.
+3. **Outbound (Termination)**: Requires an **ACL** (IP Authorization) or **Credential List** (Digest Auth) linked directly to the **Trunk**.
+4. **Phone Numbers**: Rented from Sinch and **assigned** to a specific Trunk for inbound routing.
+
+## Golden Rules
+
+1. **Dependency Order**: Failures occur if resources are created out of order.
+   `Create Trunk` -> `Create Creds/ACL` -> `LINK TO TRUNK` -> `Rent/Assign Number` -> `Create Endpoint`.
+2. **The Domain Trap**: Never send SIP INVITEs to the generic `trunk.pstn.sinch.com`. ALWAYS use your specific `{trunk-hostname}.pstn.sinch.com`.
+3. **Propagation Delay**: After linking ACLs or Credentials to a trunk, **WAIT 60 SECONDS** before attempting to register or place calls.
+4. **Lower Priority = Higher Preference**: SIP Endpoint `priority: 1` is the primary target; `priority: 100` is for failover.
 
 ## Getting Started
 
@@ -138,19 +153,36 @@ A SIP trunk is the primary resource representing a connection between your infra
 
 ### SIP Endpoints
 
-Endpoints define the SIP addresses that can receive calls through a trunk. You can configure multiple endpoints per trunk for failover and load balancing.
+Endpoints define the SIP addresses that can receive calls through a trunk.
+- **Registered Endpoints**: Uses a `Credential List`. The SIP User Agent must send a `REGISTER` request.
+- **Static Endpoints**: Forwards calls to a static IP/Port you define.
+- **Priority**: Lower numbers are preferred (1 = Primary, 100 = Backup).
 
 ### Access Control Lists (ACLs)
 
-ACLs restrict which IP addresses can send SIP traffic to your trunk. You must configure at least one ACL to make outbound calls. ACLs can be shared across multiple trunks.
+ACLs restrict which IP addresses can send SIP traffic to your trunk for **outbound calls**. You must configure at least one ACL (or use Credential Lists) assigned to the trunk to authorize termination.
 
 ### Credential Lists
 
-Credential lists manage username/password pairs for SIP REGISTER authentication. Use these to control which users can register and make calls on a trunk.
+Credential lists manage username/password pairs.
+- **For Inbound**: Used by Registered Endpoints for `REGISTER` authentication.
+- **For Outbound**: Used for Digest Authentication on the trunk if ACLs are not used.
 
 ### Phone Numbers
 
-Phone numbers (DIDs) are assigned to trunks for inbound call routing. Numbers purchased or ported to your Sinch account can be assigned to specific trunks.
+Phone numbers (DIDs) are assigned to trunks for inbound call routing. Numbers must be in **E.164 format** (e.g., `+14045001000`).
+
+## SIP Header & Routing Rules
+
+When making outbound calls through your trunk, headers must be configured precisely:
+
+| Header | Value | Purpose |
+|--------|-------|---------|
+| **`From`** | `caller@your-trunk.pstn.sinch.com` | **Must** use your trunk's domain. |
+| **`To`** | `callee@your-trunk.pstn.sinch.com` | Routing destination. Routes on the number only|
+| **`Request-URI`** | `sip:+1E164@your-trunk.pstn.sinch.com` | The destination number and your trunk domain. |
+
+**Important**: Using the destination's domain in the `From` header will result in a **403 Forbidden** error.
 
 ## Common Patterns
 
@@ -296,27 +328,36 @@ curl -X POST "https://elastic-trunking.api.sinch.com/v1/projects/YOUR_PROJECT_ID
 
 All endpoints are prefixed with `https://elastic-trunking.api.sinch.com/v1/projects/{projectId}`.
 
+## Diagnostic Reference
+
+If calls or registrations fail, check the SIP response code:
+
+| Code | Symptom | Likely Cause | Fix |
+|------|---------|--------------|-----|
+| **401** | Reg Fail | Credential mismatch | Verify username/password in Credential List. |
+| **403** | Outbound Fail | Source IP not in ACL | Add your public IP to the ACL linked to the trunk. |
+| **403** | Outbound Fail | Wrong `From` domain | Ensure `From` header uses YOUR trunk domain. |
+| **404** | Outbound Fail | Wrong Domain | Do NOT use `trunk.pstn.sinch.com`; use your hostname. |
+| **503** | Inbound Fail | No active endpoints | Ensure endpoint is created and (if registered) UA is active. |
+| **603** | Outbound Fail | Rate Limit (CPS) | Reduce call frequency (default 1 CPS). |
+
 ## Gotchas and Best Practices
 
-1. **OAuth2 tokens expire after 1 hour.** Implement token refresh logic in your application. Do not cache tokens beyond their expiry. The `expires_in` field in the token response tells you the TTL.
+1. **Wait for Propagation.** ACL and Credential changes take **~60 seconds** to sync across Sinch's edge network. Testing immediately after a configuration change often results in false negatives.
 
-2. **Basic auth is for testing only.** It is heavily rate-limited and the limits may change without notice. Always use OAuth2 in production.
+2. **The "From" Header Rule.** Always set the domain in your SIP `From` header to your specific trunk hostname (e.g., `+15551234567@my-trunk.pstn.sinch.com`).
 
-3. **UPDATE replaces the entire object.** The PUT endpoint requires the full trunk object. Any fields you omit will be set to `null`. Always fetch the current state before updating.
+3. **OAuth2 tokens expire after 1 hour.** Implement token refresh logic in your application. Do not cache tokens beyond their expiry.
 
-4. **ACLs are required for outbound calls.** You must have at least one ACL assigned to a trunk before you can make outbound calls. Without an ACL, outbound traffic is blocked.
+4. **UPDATE replaces the entire object.** The PUT endpoint requires the full trunk object. Any fields you omit will be set to `null`.
 
-5. **IP ACL entries use CIDR notation.** Specify IP ranges as `203.0.113.0/24` for a range or `203.0.113.10/32` for a single IP. Be precise to avoid exposing your trunk to unauthorized traffic.
+5. **Priority Logic.** Lower numbers = higher priority. Use `1` for primary and `100` for failover.
 
-6. **SIP transport options.** Sinch supports UDP, TCP, and TLS for SIP signaling. Use TLS for production to encrypt SIP headers and prevent eavesdropping. Media (RTP) encryption via SRTP is recommended.
+6. **IP ACL entries use CIDR notation.** Specify IP ranges as `203.0.113.0/24` or `203.0.113.10/32`.
 
-7. **Codec support.** Sinch EST supports standard voice codecs including G.711 (PCMU/PCMA), G.729, and Opus. Ensure your PBX/SBC negotiates compatible codecs.
+7. **Project ID vs App Key.** EST uses `projectId` from the Dashboard settings, not the Voice Application Key.
 
-8. **Pagination on list endpoints.** List responses may be paginated. Check for pagination tokens in the response and iterate to retrieve all results.
-
-9. **Phone numbers must be in E.164 format.** Always include the `+` prefix and country code (e.g., `+14045001000`). Numbers not in E.164 format will be rejected.
-
-10. **Project ID is required in every request.** The base URL includes your `projectId`. This is different from the Application Key used by the Voice API. Find your Project ID in the Sinch Dashboard under Settings.
+8. **Country Permissions.** US/Canada are allowed by default. Most other countries are blocked; use `updateCountryPermissions` to enable them.
 
 ## Links
 
