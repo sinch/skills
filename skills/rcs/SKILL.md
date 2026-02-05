@@ -7,7 +7,7 @@ description: Send Rich Communication Services (RCS) messages via Sinch Conversat
 
 ## Overview
 
-RCS (Rich Communication Services) is a next-generation messaging channel available through the Sinch Conversation API. RCS enables rich, branded messaging experiences in the native device messaging app -- including rich cards, carousels, suggested actions, read receipts, and typing indicators. When a recipient's device does not support RCS, you can configure automatic fallback to SMS.
+RCS (Rich Communication Services) is a next-generation messaging channel available through the Sinch Conversation API. RCS enables rich, branded messaging experiences in the native device messaging app - including rich cards, carousels, suggested actions, read receipts, and typing indicators. When a recipient's device does not support RCS, you can configure automatic fallback to SMS.
 
 ## Getting Started
 
@@ -42,12 +42,12 @@ Use returned `access_token` as `Authorization: Bearer <token>`.
 
 ### SDK Installation
 
-| Language | Package | Install |
-|----------|---------|---------|
-| Node.js | `@sinch/sdk-core` + `@sinch/conversation` | `npm install @sinch/sdk-core` |
-| Java | `com.sinch.sdk:sinch-sdk-java` | Maven dependency |
-| Python | `sinch` | `pip install sinch` |
-| .NET | `Sinch` | `dotnet add package Sinch` |
+| Language | Package                                   | Install                       |
+|----------|-------------------------------------------|-------------------------------|
+| Node.js  | `@sinch/sdk-core` + `@sinch/conversation` | `npm install @sinch/sdk-core` |
+| Java     | `com.sinch.sdk:sinch-sdk-java`            | Maven dependency              |
+| Python   | `sinch`                                   | `pip install sinch`           |
+| .NET     | `Sinch`                                   | `dotnet add package Sinch`    |
 
 ### First API Call — Send an RCS Text Message
 
@@ -114,14 +114,7 @@ An RCS Agent is your business identity on RCS. It includes your brand name, logo
 
 ### Rich Cards
 
-Rich cards combine media, text, and interactive elements in a single message:
-- Must include an image or video
-- Optional: title, description, up to 4 suggested replies/actions
-
-**Media specifications:**
-- Image: aspect ratio 4:3, optimal 960x720 px, max 1 MB
-- Video: aspect ratio 4:3, max 5 MB
-- Thumbnail: 605x452 px, recommended max 100 KB
+Rich cards combine media, text, and interactive elements in a single message. They are natively supported by RCS.
 
 ```json
 {
@@ -192,22 +185,23 @@ Carousels display 2-10 swipeable cards in a single message. Each card follows th
   }
 }
 ```
+RCS supports other Conversation API message types:
+- Text message
+- Media message
+- Choice message
+- Location message
 
 ### Suggested Actions and Replies
 
 RCS supports interactive suggestions that appear as chips below the message:
 
-- **Suggested replies** — predefined text responses (max 25 characters). Easier to process than freeform text.
+- **Suggested replies** — predefined text responses. Easier to process than freeform text.
 - **Suggested actions** — trigger native device features:
   - Open URL
   - Dial phone number
   - Show location on map
   - Share location
   - Create calendar event
-
-**Limits:**
-- Standalone message: max 11 suggestion chips
-- Rich card / carousel card: max 4 suggestion chips
 
 ```json
 {
@@ -232,6 +226,99 @@ RCS supports interactive suggestions that appear as chips below the message:
       ]
     }
   }
+}
+```
+
+### Channel Specific Properties
+
+RCS supports additional message properties that are specific to the channel and change how the message looks on the device:
+- RCS_WEBVIEW_MODE: defines the size of a webview to open when sending an OpenUrl action
+- RCS_CARD_ORIENTATION: defines the orientation of a rich card
+- RCS_CARD_THUMBNAIL_IMAGE_ALIGNMENT: defines the image preview alignment in a rich card
+
+```json
+{
+  "app_id": "YOUR_APP_ID",
+  "recipient": {
+    "identified_by": {
+      "channel_identities": [
+        { "channel": "RCS", "identity": "+15551234567" }
+      ]
+    }
+  },
+  "message": {
+    "choice_message": {
+      "text_message": {
+        "text": "What do you want to do?"
+      },
+      "choices": [
+        {
+          "url_message": { "title": "Open sinch.com", "url": "https://www.sinch.com" }
+        }
+      ]
+    }
+  },
+  "channel_properties": {
+    "RCS_WEBVIEW_MODE": "TALL"
+  }
+}
+```
+
+### Capability Check
+
+It is possible to check if a device supports RCS before sending a message using capability check:
+
+```bash
+curl -X POST "https://us.conversation.api.sinch.com/v1/projects/$PROJECT_ID/capability:query" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -d '{
+    "app_id": "YOUR_APP_ID",
+    "recipient": {
+      "identified_by": {
+        "channel_identities": [{
+          "channel": "RCS",
+          "identity": "+15551234567"
+        }]
+      }
+    }
+  }'
+```
+
+Callback will be sent on the configured webhook url in Conversation API with information if RCS is supported on the device: 
+
+```json
+{
+  "app_id": "YOUR_APP_ID",
+  "accepted_time": "2026-02-05T08:15:27.226Z",
+  "project_id": "9c6d7020-ccf7-43af-a741-24a034d3ea0b",
+  "capability_notification": {
+    "contact_id": "",
+    "identity": "+15551234567",
+    "channel": "RCS",
+    "capability_status": "CAPABILITY_FULL",
+    "request_id": "01KGPDXN7C68J0FN3G4V3ZVJK6"
+  },
+  "message_metadata": "",
+  "correlation_id": ""
+}
+```
+
+### Typing Indicators
+
+In RCS an event can be sent which indicates that a message is being composed:
+
+```json
+{
+  "app_id": "YOUR_APP_ID",
+  "recipient": {
+    "identified_by": {
+      "channel_identities": [
+        { "channel": "RCS", "identity": "+15551234567" }
+      ]
+    }
+  },
+  "event": { "composing_event": { } }
 }
 ```
 
@@ -301,7 +388,7 @@ const response = await sinch.conversation.messages.send({
 
 ### Delivery Report-Based Fallback
 
-Enable in your Conversation API app settings. When no positive delivery report (DELIVERED or READ) is received for RCS, the API automatically attempts the next channel in priority order.
+Enable in your Conversation API app settings. When a FAILED delivery report is received for RCS, the API automatically attempts the next channel in priority order.
 
 ## Gotchas and Best Practices
 
@@ -315,15 +402,13 @@ Enable in your Conversation API app settings. When no positive delivery report (
 
 5. **Carousel truncation.** Cards in a carousel share a uniform height. Long descriptions or titles may be truncated. Keep content concise.
 
-6. **Fallback billing.** Both the RCS attempt and SMS fallback may be billed. Factor this into cost planning.
+6**No template system.** Unlike WhatsApp, RCS does not require pre-approved templates. You can send any content at any time (within carrier guidelines).
 
-7. **Suggested reply length.** Max 25 characters per suggested reply. Longer text is truncated on the device.
+7**Read receipts are native.** RCS provides read receipts automatically. Use them to track engagement without additional infrastructure.
 
-8. **No template system.** Unlike WhatsApp, RCS does not require pre-approved templates. You can send any content at any time (within carrier guidelines).
+8**Rich messages degrade on non-RCS.** If you send a carousel to SMS fallback, the Conversation API transcodes it to plain text. Test what the fallback looks like.
 
-9. **Read receipts are native.** RCS provides read receipts automatically. Use them to track engagement without additional infrastructure.
-
-10. **Rich messages degrade on non-RCS.** If you send a carousel to SMS fallback, the Conversation API transcodes it to plain text. Test what the fallback looks like.
+9**It is a good practice to send a single test message to a test recipient and verify how it looks on the device.**
 
 ## Links
 
