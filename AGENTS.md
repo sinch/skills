@@ -18,20 +18,22 @@ Each `skills/<product>/SKILL.md` contains product-specific guidance for integrat
 
 Each SKILL.md has:
 
-- **YAML frontmatter**: `name` (e.g., `sinch-sms`) and `description` (when to use the skill)
+- **YAML frontmatter**: `name` (e.g., `sinch-conversation-api`) and `description` (when to use the skill)
 - **Markdown body**: Overview, Getting Started, Key Concepts, Common Patterns, Gotchas & Best Practices, Links
 
 ## Contributing
 
 When adding or editing skills:
 
-- Follow `template/SKILL.md` as the skeleton for new skills
-- Keep each SKILL.md under 500 lines
-- Use `sinch-<product>` naming convention for the `name` field (max 64 characters)
-- `description` field must be max 200 characters
-- Write for AI agents: concise, actionable, include code examples
-- Use curl and Node.js SDK (`@sinch/sdk-core`) for examples
-- Move detailed content to `references/` subdirectories if needed
+- Use kebab-case for skill folder names (e.g., `sinch-conversation-api`). No spaces, underscores, or capitals.
+- The skill file must be named exactly `SKILL.md` (case-sensitive). No variations (`SKILL.MD`, `skill.md`).
+- Do not add `README.md` inside skill folders. All documentation goes in `SKILL.md` or `references/`.
+- Keep each SKILL.md under 500 lines. Move detailed content to `references/` subdirectories if needed.
+- Use `sinch-<product>` naming convention for the `name` field (max 64 characters).
+- `description` field must be max 1024 characters. Include both what the skill does and when to use it (trigger conditions with specific phrases).
+- No XML angle brackets (`<` `>`) in YAML frontmatter.
+- Write for AI agents: concise, actionable, include code examples.
+- Use curl and Node.js SDK (`@sinch/sdk-core`) for examples.
 
 ## Sinch Developer Docs
 
