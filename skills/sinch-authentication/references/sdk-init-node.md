@@ -14,16 +14,16 @@ const sinch = new SinchClient({
 
 ### Setting the Conversation API Region
 
-> With SDK v2 (upcoming), region will be required for Conversation usage. Set region explicitly now to stay forward-compatible.
+> With SDK v2 (upcoming), defining the region will be required for Conversation usage. Set region explicitly now to stay forward-compatible.
 
 ```javascript
-import { SinchClient, Region } from '@sinch/sdk-core';
+import { SinchClient, ConversationRegion } from '@sinch/sdk-core';
 
 const sinch = new SinchClient({
   projectId: 'YOUR_PROJECT_ID',
   keyId: 'YOUR_KEY_ID',
   keySecret: 'YOUR_KEY_SECRET',
-  region: Region.EU, // US, EU, or BR
+  conversationRegion: ConversationRegion.EUROPE, // us, eu, or br
 });
 ```
 
