@@ -10,7 +10,7 @@ metadata:
 
 ## Overview
 
-One unified API to send and receive messages across SMS, WhatsApp, RCS, MMS, Viber Business, Facebook Messenger, Instagram, Telegram, KakaoTalk, KakaoTalkChat, LINE, WeChat, and Apple Messages for Business. The API transcodes between a generic message format and channel-specific formats automatically.
+One unified API to send and receive messages across SMS, WhatsApp, RCS, MMS, Viber Business, Facebook Messenger, Instagram, Telegram, KakaoTalk, LINE, and WeChat. The API transcodes between a generic message format and channel-specific formats automatically.
 
 **Auth:** OAuth2 bearer token (recommended) or HTTP Basic (`keyId:keySecret`, testing only — heavily rate limited). See [sinch-authentication](../sinch-authentication/SKILL.md) for setup.
 
@@ -19,7 +19,7 @@ One unified API to send and receive messages across SMS, WhatsApp, RCS, MMS, Vib
 **Apps** — Container for channel integrations. Each app has channels, webhooks, and a processing mode. Created via dashboard or API.
 **Contacts** — End-users with channel identities. Auto-created in CONVERSATION mode.
 **Conversations** — Message threads between app and contact. Only exist in CONVERSATION mode.
-**Processing modes** — `DISPATCH` (default): no contacts/conversations, for high-volume unidirectional SMS. `CONVERSATION`: auto-creates contacts/conversations, enables 2-way flows. Set per app.
+**Processing modes** — `DISPATCH` (default): no contacts/conversations, for high-volume unidirectional messaging. `CONVERSATION`: auto-creates contacts/conversations, enables 2-way flows. Set per app.
 **Message types** — `text_message`, `media_message`, `card_message`, `carousel_message`, `choice_message`, `list_message`, `template_message`, `location_message`, `contact_info_message`. See [Message Types](https://developers.sinch.com/docs/conversation/message-types.md).
 **Channel fallback** — Set `channel_priority_order` to try channels in sequence. `SWITCHING_CHANNEL` status indicates fallback.
 **Delivery statuses** — `QUEUED_ON_CHANNEL` → `DELIVERED` → `READ`, or `FAILED`. `SWITCHING_CHANNEL` when fallback occurs.
@@ -28,7 +28,7 @@ One unified API to send and receive messages across SMS, WhatsApp, RCS, MMS, Vib
 **Templates** — Pre-defined messages with parameter substitution. Managed at `{region}.template.api.sinch.com` (V2 only — V1 no longer accessible). See [references/templates.md](references/templates.md).
 **Batch sending** — Up to 1000 recipients with `${parameter}` substitution. Base URL: `{region}.conversationbatch.api.sinch.com`. See [references/batch.md](references/batch.md).
 
-**Supported channels:** `SMS`, `WHATSAPP`, `RCS`, `MMS`, `VIBERBM`, `MESSENGER`, `INSTAGRAM`, `TELEGRAM`, `KAKAOTALK`, `KAKAOTALKCHAT`, `LINE`, `WECHAT`, `APPLEBC`. Channel-specific details: [SMS](references/channels/sms.md), [WhatsApp](references/channels/whatsapp.md), [RCS](references/channels/rcs.md), [MMS](references/channels/mms.md). See [Channel Support](https://developers.sinch.com/docs/conversation/channel-support.md).
+**Supported channels:** `SMS`, `WHATSAPP`, `RCS`, `MMS`, `VIBERBM`, `MESSENGER`, `INSTAGRAM`, `TELEGRAM`, `KAKAOTALK`, `LINE`, `WECHAT`. Channel-specific details: [SMS](references/channels/sms.md), [WhatsApp](references/channels/whatsapp.md), [RCS](references/channels/rcs.md), [MMS](references/channels/mms.md). See [Channel Support](https://developers.sinch.com/docs/conversation/channel-support.md).
 
 ## Getting Started
 
@@ -94,9 +94,10 @@ For SDK examples, see the SDK references in Quick Reference.
 ## Common Patterns
 
 - **Channel fallback** — Add `channel_priority_order` array and list all channel identities in `recipient`. See [Messages API Reference](https://developers.sinch.com/docs/conversation/api-reference/conversation/messages.md).
-- **Recipient by contact ID** — Use `{ "recipient": { "contact_id": "CONTACT_ID" } }` instead of `identified_by` when the contact already exists.
+- **Recipient by channel identity** — You may use `"recipient": {"identified_by": {"channel_identities": [{"channel": "{CHANNEL}","identity": "{IDENTITY}"}]}}` when identifying a contact in the default `DISPATCH` mode. `DISPATCH` mode does not create Conversation API contact IDs in some cases, so using the channel-specific identity (for example, a phone number in the case of the `SMS` channel) allows you to specify recipients without a contact ID.
+- **Recipient by contact ID** — You may use `{ "recipient": { "contact_id": "CONTACT_ID" } }` instead of `identified_by` when the contact already exists.
 - **Rich messages** — `card_message`, `carousel_message`, `choice_message`, `list_message`. See [Message Types](https://developers.sinch.com/docs/conversation/message-types.md).
-- **WhatsApp templates** — Required outside the 24h service window. Use `template_message` with an approved template. See [references/templates.md](references/templates.md).
+- **WhatsApp templates** — Required outside the 24h service window. Use `template_message` with an approved WhatsApp template. See [Sinch's WhatsApp templates documentation](https://developers.sinch.com/docs/conversation/channel-support/whatsapp/template-support.md).
 - **Webhooks** — Register via `POST /webhooks` with `target`, `target_type: "HTTP"`, and `triggers` array. Each webhook target URL must be unique per app — attempting to register a duplicate target returns `400 INVALID_ARGUMENT`. See [Webhooks API Reference](https://developers.sinch.com/docs/conversation/api-reference/conversation/webhooks.md).
 - **Transcode** — `POST /messages:transcode` to preview how a message renders on a specific channel without actually sending it. Useful for testing rich messages.
 
@@ -158,6 +159,7 @@ For REST API payloads and field definitions, see:
 - **Messages not delivered:** Verify app region matches base URL region (mismatches cause `404`). Check delivery status via webhook or `GET /messages/{message_id}`. WhatsApp: must be within 24h window or using an approved template. Channel fallback: `SWITCHING_CHANNEL` status means fallback occurred — each attempted channel may incur charges.
 - **Webhook not receiving callbacks:** Verify `target_type` is `HTTP`, target URL must be publicly reachable and return `2xx`, check triggers are correct — max 5 webhooks per app.
 - **Rate limits (429):** 800 requests/second per project across most endpoints. 500,000-message ingress queue per app, drained at 20 msg/sec by default. Channel-specific limits also apply.
+- **WhatsApp template:** [Approved WhatsApp templates](https://community.sinch.com/t5/WhatsApp/What-is-a-message-template-and-why-are-they-necessary/ta-p/6857) are not the same as omni-channel templates that you can use with the rest of the Conversation API. WhatsApp templates need to be [approved by WhatsApp](https://community.sinch.com/t5/WhatsApp/Why-was-my-WhatsApp-message-template-rejected/ta-p/11997), and are not used on other Conversation API channels.
 
 ## Links
 

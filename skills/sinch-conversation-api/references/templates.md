@@ -112,8 +112,8 @@ Reference these via `channel_template_overrides`, but cannot create/modify them 
 1. **V1 is past EOL.** Use V2 (`/v2/projects/...`) exclusively.
 2. **Region locking.** Templates created in US can only be used by US apps.
 3. **Version conflicts on update.** Must pass current `version`. Concurrent updates fail.
-4. **Omni-channel vs channel-specific confusion.** This API manages omni-channel templates. WhatsApp templates (Meta-approved) are separate.
-5. **WhatsApp requires approved templates outside service window.** Use omni-channel template with WhatsApp override.
+4. **Omni-channel vs channel-specific confusion.** This API manages omni-channel templates. Channel-specific templates (like Meta-approved WhatsApp templates) are separate.
+5. **WhatsApp requires approved templates outside service window.** Reference these in an omni-channel template with WhatsApp `channel_template_overrides` field.
 6. **Variable key format.** Use `${key_name}` syntax. Key must match `variables` array.
 7. **Parameter mapping for overrides.** `parameter_mappings` maps channel-specific keys to omni-channel variable keys.
 

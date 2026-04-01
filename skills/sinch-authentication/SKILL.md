@@ -3,7 +3,7 @@ name: sinch-authentication
 description: Configures Sinch API credentials and authentication. Use when setting up OAuth2, Basic auth, application signing, API keys, or SDK credentials for any Sinch product including Conversation API, Voice, Verification, Numbers, Fax, and Mailgun. Also use when troubleshooting 401 Unauthorized, 403 Forbidden, invalid signature, or credential errors against any Sinch API.
 metadata:
   author: Sinch
-  version: 1.0.0
+  version: 1.0.1
 ---
 
 # Sinch Authentication
