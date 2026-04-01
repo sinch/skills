@@ -59,7 +59,7 @@ Set under `channel_properties` in your message request:
 
 ## Opt-Out Handling
 
-- Opt-out keywords (STOP, UNSUBSCRIBE, etc.) are processed by Sinch automatically for US/Canada numbers.
+- Opt-out keywords (STOP, UNSUBSCRIBE, etc.) can be processed by Sinch automatically for US/Canada numbers when consent management is active.
 - Inbound opt-out messages are delivered via webhook as Mobile Originated (MO) messages.
 - You must honor opt-outs and maintain your own suppression list for compliance.
 - Re-opt-in typically requires the user to send a keyword like START.
@@ -83,7 +83,7 @@ Set under `channel_properties` in your message request:
 3. **10DLC registration is required.** US A2P messaging over local numbers requires 10DLC brand and campaign registration. Unregistered traffic will be filtered.
 4. **Short code limitations.** US short codes require dedicated provisioning and carrier approval. Cannot send MMS via Conversation API.
 5. **Concatenation costs.** Each SMS part is billed separately. A 161-character GSM message costs 2 SMS credits.
-6. **Opt-out compliance.** US/Canada regulations (TCPA, CASL) require honoring opt-outs. Sinch handles standard keywords automatically.
+6. **Opt-out compliance.** US/Canada regulations (TCPA, CASL) require honoring opt-outs. Sinch handles standard keywords automatically when consent management is active.
 7. **Delivery receipts are not guaranteed.** Some carriers do not return delivery receipts. Handle `UNKNOWN` status gracefully.
 
 ## Links
