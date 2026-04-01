@@ -61,7 +61,7 @@ Each skill lives in its own folder under `skills/`. The `SKILL.md` file contains
 - [Sinch Dashboard](https://dashboard.sinch.com)
 - [skills.sh](https://skills.sh/)
 
-##Use of Sinch Services 
+## Use of Sinch Services 
 
 These Skills provides developers with a way to interact with Sinch APIs and services from supported developer tools or environments. Use of Sinch services requires a valid Sinch account and is subject to the applicable Sinch Terms of Service available at: [https://sinch.com/legal/terms-and-conditions/other-sinch-terms-conditions/sinch-engage/sinch-engage-terms/](https://sinch.com/legal/terms-and-conditions/other-sinch-terms-conditions/sinch-engage/sinch-engage-terms/)
 
