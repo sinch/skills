@@ -10,7 +10,7 @@ Official Sinch API skills for AI coding agents. Each skill in `skills/` provides
 
 Each `skills/<product>/SKILL.md` contains product-specific guidance for integrating a Sinch API. To find the right skill:
 
-1. Browse the `skills/` directory to see available products
+1. Browse the `skills/` directory to see available products.
 2. Open the relevant `SKILL.md` to get getting-started instructions, common patterns, and gotchas
 3. Follow the code examples (curl and Node.js SDK) to integrate the API
 
