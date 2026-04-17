@@ -1,8 +1,9 @@
 # Python — Numbers SDK Reference
 
-`pip install sinch`
+`pip install sinch` (v2.0.0+)
 
 SDK uses snake_case attributes mapping to camelCase JSON (e.g., `phone_number` ↔ `phoneNumber`).
+Response models are Pydantic instances with typed fields.
 
 ## Initialization
 
@@ -22,42 +23,38 @@ sinch_client = SinchClient(
 ### Search
 
 ```python
-response = sinch_client.numbers.available.list(
+response = sinch_client.numbers.search_for_available_numbers(
     region_code="US",
     number_type="LOCAL",
-    capabilities=["SMS"],
-    size=10
 )
-available = response.available_numbers or []
+for number in response.iterator():
+    print(number.phone_number)
 ```
 
 ### Check availability
 
 ```python
-result = sinch_client.numbers.available.check_availability(
+result = sinch_client.numbers.check_availability(
     phone_number="+12025550134"
 )
 ```
 
 ### Rent a specific number
 
-The Python SDK uses `activate()` (equivalent to `rent()` in other SDKs).
-
 ```python
-rented = sinch_client.numbers.available.activate(
+rented = sinch_client.numbers.rent(
     phone_number="+12025550134",
-    sms_configuration={"servicePlanId": "YOUR_SERVICE_PLAN_ID"}
+    sms_configuration={"service_plan_id": "YOUR_SERVICE_PLAN_ID"}
 )
 ```
 
 ### Rent any matching number
 
 ```python
-rented = sinch_client.numbers.available.rent_any(
+rented = sinch_client.numbers.rent_any(
     region_code="US",
-    type_="LOCAL",
-    capabilities=["SMS"],
-    sms_configuration={"servicePlanId": "YOUR_SERVICE_PLAN_ID"}
+    number_type="LOCAL",
+    sms_configuration={"service_plan_id": "YOUR_SERVICE_PLAN_ID"}
 )
 ```
 
@@ -66,53 +63,63 @@ rented = sinch_client.numbers.available.rent_any(
 ### List
 
 ```python
-response = sinch_client.numbers.active.list(
+response = sinch_client.numbers.list(
     region_code="US",
     number_type="LOCAL",
-    page_size=100
 )
-numbers = response.active_numbers or []
 ```
 
 ### Paginate
 
 ```python
 all_numbers = []
-page_token = None
+response = sinch_client.numbers.list(
+    region_code="US",
+    number_type="LOCAL",
+)
+for number in response.iterator():
+    all_numbers.append(number)
+```
+
+Or page-by-page:
+
+```python
+page = sinch_client.numbers.list(region_code="US", number_type="LOCAL")
 while True:
-    response = sinch_client.numbers.active.list(
-        page_size=100, page_token=page_token
-    )
-    all_numbers.extend(response.active_numbers or [])
-    if not response.next_page_token:
+    print(page)
+    if not page.has_next_page:
         break
-    page_token = response.next_page_token
+    page = page.next_page()
 ```
 
 ### Get
 
 ```python
-number = sinch_client.numbers.active.get(phone_number="+12025550134")
+number = sinch_client.numbers.get(phone_number="+12025550134")
 ```
 
 ### Update
 
 ```python
-sinch_client.numbers.active.update(
+sinch_client.numbers.update(
     phone_number="+12025550134",
     display_name="Updated Name",
-    sms_configuration={"servicePlanId": "NEW_SERVICE_PLAN_ID"}
+    sms_configuration={"service_plan_id": "NEW_SERVICE_PLAN_ID"}
 )
 ```
 
 ### Release
 
 ```python
-sinch_client.numbers.active.release(phone_number="+12025550134")
+sinch_client.numbers.release(phone_number="+12025550134")
 ```
 
-## Available Regions
+## Event Destinations Configuration
 
 ```python
-regions = sinch_client.numbers.regions.list()
+# Get current config
+config = sinch_client.numbers.event_destinations.get()
+
+# Update HMAC secret
+sinch_client.numbers.event_destinations.update(hmac_secret="YOUR_HMAC_SECRET")
 ```

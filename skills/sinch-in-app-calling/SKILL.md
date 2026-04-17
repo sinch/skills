@@ -3,7 +3,11 @@ name: sinch-in-app-calling
 description: Integrate Sinch In-App Voice and Video SDK for real-time calling in Android, iOS, or JavaScript apps. Use when the user mentions In-App Calling, VoIP integration, WebRTC with Sinch, app-to-phone calling, video calling, or building voice/video features in a mobile or web app.
 metadata:
   author: Sinch
-  version: 1.0.0
+  version: 1.0.1
+  category: Voice & Video
+  tags: in-app-calling, voip, webrtc, voice, video, android, ios, javascript
+  uses:
+    - sinch-authentication
 ---
 
 # Sinch In-App Calling
@@ -21,7 +25,7 @@ Real-time voice and video SDK for **Android**, **iOS**, and **JavaScript (Web)**
 ## Agent Instructions
 
 ### Prerequisites
-The user needs a Sinch account with an application key and secret from the [Sinch Build Dashboard](https://dashboard.sinch.com/voice/apps).
+The user needs a Sinch account with an application key and secret from the [Sinch Build Dashboard](https://dashboard.sinch.com/voice/apps). See [sinch-authentication](../sinch-authentication/SKILL.md) for credential setup — In-App Calling uses **application-scoped** auth (Application Key + Application Secret).
 
 ### Integration workflow
 
@@ -38,6 +42,14 @@ The user needs a Sinch account with an application key and secret from the [Sinc
 4. **Ask about call types**: Which types does the user need? This determines which sections to cover.
 
 5. **For Phone-to-App / SIP-to-App**: The user needs a backend ICE callback handler. See [backend setup](#phone-to-app--sip-to-app-backend) below.
+
+### SDK Init References
+
+For detailed SDK initialization code per platform:
+
+- Browser: [references/sdk-init-in-app-calling-browser.md](references/sdk-init-in-app-calling-browser.md)
+- iOS: [references/sdk-init-in-app-calling-ios.md](references/sdk-init-in-app-calling-ios.md)
+- Android: [references/sdk-init-in-app-calling-android.md](references/sdk-init-in-app-calling-android.md)
 
 ### Phone-to-App / SIP-to-App backend
 
@@ -57,6 +69,24 @@ Receiving inbound PSTN or SIP calls requires:
   }
 }
 ```
+
+## Key Concepts
+
+**SinchClient** — The core SDK object. Must be initialized with Application Key and started before any calls can be made or received.
+**User Identity** — A string identifier (e.g., user ID) that uniquely identifies a user in the Sinch system. Set during `SinchClient` initialization.
+**Call Types** — App-to-App (VoIP), App-to-Phone (PSTN), App-to-SIP, App-to-Conference, and inbound (Phone-to-App, SIP-to-App).
+**Managed Push** — Sinch-managed push notifications for incoming calls when the app is backgrounded. Required on all platforms.
+**JWT Authentication** — Production apps must use backend-generated JWTs (not embedded secrets) for SDK authentication.
+**ICE Callback** — Incoming Call Event. A backend webhook handler required for Phone-to-App and SIP-to-App calls that routes calls via `connectMxp`.
+**Environment Host** — Regional endpoint for the SDK connection (e.g., `ocra.api.sinch.com` for global routing).
+
+## Common Patterns
+
+- **App-to-App voice call** — Initialize SinchClient with user identity, call `callUser("recipient-id")`. Both users must have active SinchClient instances.
+- **App-to-Phone (PSTN)** — Call `callPhoneNumber("+15551234567")` with a CLI (caller ID) set to a Sinch number.
+- **Receive incoming calls** — Register push notifications, implement call listener/delegate, handle `onIncomingCall` event.
+- **Phone-to-App routing** — Assign a Sinch number to the app, set up backend ICE callback that returns `connectMxp` action targeting the user.
+- **Video calling** — Use `callUserVideo("recipient-id")` (or platform equivalent). Requires camera permissions.
 
 ## Troubleshooting
 
@@ -94,4 +124,5 @@ Set `environmentHost` when creating the Sinch client:
 - [Android SDK Reference](https://download.sinch.com/android/latest/reference/index.html)
 - [iOS SDK Reference](https://download.sinch.com/ios/latest/reference/index.html)
 - [JavaScript SDK Reference](https://download.sinch.com/js/latest/reference/index.html)
+- [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)
 

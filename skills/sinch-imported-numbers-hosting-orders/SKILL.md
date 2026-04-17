@@ -3,7 +3,11 @@ name: sinch-imported-numbers-hosting-orders
 description: Import, host, qualify, and text-enable phone numbers for Sinch SMS using the Imported Numbers and Hosting Orders API. Use when importing non-Sinch numbers as DCA, creating hosting orders, qualifying numbers for text-enablement, managing LOA workflows, or checking hosting order status.
 metadata:
   author: Sinch
-  version: 1.0.0
+  version: 1.0.1
+  category: Numbers
+  tags: imported-numbers, hosting-orders, text-enablement, dca, loa
+  uses:
+    - sinch-authentication
 ---
 
 # Sinch Imported Numbers & Hosting Orders
@@ -72,8 +76,8 @@ curl -X POST "https://imported.numbers.api.sinch.com/v1/projects/{PROJECT_ID}/im
     "regionCode": "US",
     "displayName": "My Number",
     "smsConfiguration": {
-      "servicePlanId": "YOUR_service_plan_id",
-      "campaignId": "YOUR_campaign_id"
+      "servicePlanId": "{SERVICE_PLAN_ID}",
+      "campaignId": "{CAMPAIGN_ID}"
     },
     "callbackUrl": "https://example.com/callback"
   }'
@@ -181,5 +185,5 @@ See [references/callbacks.md](references/callbacks.md) for full payload schema, 
 
 - [API Reference](https://developers.sinch.com/docs/numbers/api-reference/imported-hosting.md)
 - [OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/numbers/api-reference/imported-hosting.yaml?download)
-- [Dashboard](https://dashboard.sinch.com)
 - [NNID Provisioning](https://community.sinch.com/t5/10DLC/How-can-you-provision-a-Network-Number-ID-NNID/ta-p/7040)
+- [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

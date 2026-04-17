@@ -1,6 +1,6 @@
 # TypeScript/Node.js — Numbers SDK Reference
 
-`npm install @sinch/sdk-core`
+`npm install @sinch/sdk-core` (v1.4.0+)
 
 ## Initialization
 

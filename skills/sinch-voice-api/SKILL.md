@@ -3,7 +3,12 @@ name: sinch-voice-api
 description: Build voice apps with Sinch Voice REST API. Use for phone calls, text-to-speech (TTS), IVR menus, DTMF input, conference calling, call recording, call forwarding, answering machine detection (AMD), SIP routing, WebSocket audio streaming, and SVAML call control.
 metadata:
   author: Sinch
-  version: 1.0.0
+  version: 1.1.0
+  category: Voice
+  tags: voice, calls, tts, ivr, dtmf, conference, recording, svaml, sip, amd, webrtc
+  uses:
+    - sinch-authentication
+    - sinch-sdks
 ---
 
 # Sinch Voice API
@@ -52,19 +57,14 @@ Configuration endpoints (numbers, callbacks) use: `https://callingapi.sinch.com`
 
 ### SDK Installation
 
-| Language | Package | Install |
-|----------|---------|---------|
-| Node.js | `@sinch/sdk-core` | `npm install @sinch/sdk-core` |
-| Java | `com.sinch.sdk:sinch-sdk-java` | Maven dependency |
-| Python | `sinch` | `pip3 install sinch` |
-| .NET | `Sinch` | `dotnet add package Sinch` |
+See [sinch-sdks](../sinch-sdks/SKILL.md) for installation and client initialization across all languages.
 
 ### First API Call: TTS Callout
 
 ```bash
 curl -X POST "https://calling.api.sinch.com/calling/v1/callouts" \
   -H "Content-Type: application/json" \
-  -u "YOUR_APPLICATION_KEY:YOUR_APPLICATION_SECRET" \
+  -u "{APPLICATION_KEY}:{APPLICATION_SECRET}" \
   -d '{
     "method": "ttsCallout",
     "ttsCallout": {
@@ -82,8 +82,8 @@ curl -X POST "https://calling.api.sinch.com/calling/v1/callouts" \
 import { SinchClient } from "@sinch/sdk-core";
 
 const sinch = new SinchClient({
-  applicationKey: "YOUR_APPLICATION_KEY",
-  applicationSecret: "YOUR_APPLICATION_SECRET",
+  applicationKey: "{APPLICATION_KEY}",
+  applicationSecret: "{APPLICATION_SECRET}",
 });
 
 const response = await sinch.voice.callouts.tts({
@@ -235,8 +235,8 @@ Paths starting with `/calling/v1/` use the **regional base URL** from the table 
 Bundled Node.js scripts (no external dependencies, uses Basic Auth):
 
 ```bash
-export SINCH_APPLICATION_KEY="your-app-key"
-export SINCH_APPLICATION_SECRET="your-app-secret"
+export SINCH_APPLICATION_KEY="{APPLICATION_KEY}"
+export SINCH_APPLICATION_SECRET="{APPLICATION_SECRET}"
 export SINCH_VOICE_REGION="global"  # optional
 ```
 
@@ -277,5 +277,4 @@ export SINCH_VOICE_REGION="global"  # optional
 - [Java SDK Reference](https://developers.sinch.com/docs/voice/sdk/java/syntax-reference.md)
 - [.NET SDK Reference](https://developers.sinch.com/docs/voice/sdk/dotnet/syntax-reference.md)
 - [Voice Tutorials](https://developers.sinch.com/docs/voice/tutorials)
-- [npm: @sinch/sdk-core](https://www.npmjs.com/package/@sinch/sdk-core) | [npm: @sinch/voice](https://www.npmjs.com/package/@sinch/voice)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

@@ -1,4 +1,8 @@
-# SDK Initialization (Node.js)
+# SDK Installation (Node.js)
+
+`npm install @sinch/sdk-core` (v1.4.0+)
+
+> **ESM vs CommonJS** — The SDK uses ESM imports by default: `import { SinchClient } from "@sinch/sdk-core"`. For CommonJS, use `const { SinchClient } = require("@sinch/sdk-core")`.
 
 ## Project-Scoped Auth (Conversation, Numbers, Fax, EST, etc.)
 
@@ -14,7 +18,7 @@ const sinch = new SinchClient({
 
 ### Setting the Conversation API Region
 
-> With SDK v2 (upcoming), defining the region will be required for Conversation usage. Set region explicitly now to stay forward-compatible.
+> The region should be set explicitly for Conversation API usage. Not yet enforced in SDK v1 for backward compatibility, but recommended.
 
 ```javascript
 import { SinchClient, ConversationRegion } from '@sinch/sdk-core';

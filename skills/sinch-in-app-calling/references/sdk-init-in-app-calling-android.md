@@ -1,4 +1,4 @@
-# SDK Initialization — In-App Calling (Android)
+# SDK Installation — In-App Calling (Android)
 
 In-App Calling uses the **Sinch RTC SDK** — a separate client-side SDK from `@sinch/sdk-core`. Authentication is handled via JWT tokens generated on your backend using Application Key + Application Secret credentials.
 

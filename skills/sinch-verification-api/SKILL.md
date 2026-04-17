@@ -3,7 +3,11 @@ name: sinch-verification-api
 description: Verify phone numbers via SMS, Flashcall, Phone Call, Data (seamless carrier-level), or WhatsApp with Sinch Verification API. Use when implementing user phone verification, OTP, two-factor authentication, or number ownership confirmation flows.
 metadata:
   author: Sinch
-  version: 1.0.0
+  version: 1.0.1
+  category: Verification
+  tags: verification, otp, sms, flashcall, 2fa, phone-verification, whatsapp
+  uses:
+    - sinch-authentication
 ---
 
 # Sinch Verification API
@@ -25,13 +29,7 @@ Before generating code, you **MUST** ask the user:
 
 Do not assume defaults or skip these questions. Wait for answers before generating code.
 
-For SDK syntax, fetch the appropriate reference:
-- [Node.js SDK](https://developers.sinch.com/docs/verification/sdk/node/syntax-reference.md)
-- [Python SDK](https://developers.sinch.com/docs/verification/sdk/py/syntax-reference.md)
-- [Java SDK](https://developers.sinch.com/docs/verification/sdk/java/syntax-reference.md)
-- [.NET SDK](https://developers.sinch.com/docs/verification/sdk/dotnet/syntax-reference.md)
-
-For direct HTTP, use the [API Reference (Markdown)](https://developers.sinch.com/docs/verification/api-reference/verification.md) for request/response schemas.
+For SDK syntax and setup, see [sinch-sdks](../sinch-sdks/SKILL.md). For direct HTTP, use the [API Reference (Markdown)](https://developers.sinch.com/docs/verification/api-reference/verification.md) for request/response schemas.
 
 ## Getting Started
 
@@ -51,14 +49,7 @@ Minimum auth level is configurable in the Sinch Dashboard — requests below tha
 
 ### SDK Setup
 
-| Language | Package | Install |
-|----------|---------|---------|
-| Node.js | `@sinch/sdk-core` or `@sinch/verification` | `npm install @sinch/sdk-core` |
-| Python | `sinch` | `pip install sinch` |
-| Java | `com.sinch.sdk:sinch-sdk-java` | Maven dependency |
-| .NET | `Sinch` | `dotnet add package Sinch` |
-
-All SDKs initialize with `applicationKey` + `applicationSecret` (not project credentials).
+See [sinch-sdks](../sinch-sdks/SKILL.md) for installation and client initialization across all languages. All SDKs initialize with `applicationKey` + `applicationSecret` (not project credentials).
 
 ### Canonical Example — Start SMS Verification
 
@@ -66,7 +57,7 @@ All SDKs initialize with `applicationKey` + `applicationSecret` (not project cre
 # Uses Basic Auth (-u) for simplicity. Use Application Signed Requests in production.
 curl -X POST https://verification.api.sinch.com/verification/v1/verifications \
   -H 'Content-Type: application/json' \
-  -u YOUR_APPLICATION_KEY:YOUR_APPLICATION_SECRET \
+  -u {APPLICATION_KEY}:{APPLICATION_SECRET} \
   -d '{
     "identity": { "type": "number", "endpoint": "+12025550134" },
     "method": "sms"
@@ -171,5 +162,4 @@ Callbacks are signed — verify signatures using [Callback Signing](https://deve
 - [Python SDK Reference](https://developers.sinch.com/docs/verification/sdk/py/syntax-reference.md)
 - [Java SDK Reference](https://developers.sinch.com/docs/verification/sdk/java/syntax-reference.md)
 - [.NET SDK Reference](https://developers.sinch.com/docs/verification/sdk/dotnet/syntax-reference.md)
-- [@sinch/verification on npm](https://www.npmjs.com/package/@sinch/verification)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

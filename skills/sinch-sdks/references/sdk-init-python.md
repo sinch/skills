@@ -1,4 +1,6 @@
-# SDK Initialization (Python)
+# SDK Installation (Python)
+
+`pip install sinch` (v2.0.0+)
 
 ## Project-Scoped Auth (Conversation, Numbers, Fax, EST, etc.)
 
@@ -14,7 +16,7 @@ sinch = SinchClient(
 
 ### Setting the Conversation API Region
 
-> With SDK v2 (upcoming), region will be required for Conversation usage. Set region explicitly now to stay forward-compatible.
+> Since SDK v2.0.0, `conversation_region` is **required** when using the Conversation API. Calls will fail at runtime if the region is not set.
 
 ```python
 from sinch import SinchClient
@@ -23,8 +25,8 @@ sinch = SinchClient(
     project_id="YOUR_PROJECT_ID",
     key_id="YOUR_KEY_ID",
     key_secret="YOUR_KEY_SECRET",
+    conversation_region="eu",  # "us", "eu", or "br"
 )
-sinch.configuration.conversation_region = "eu"  # "us", "eu", or "br"
 ```
 
 ## Application-Scoped Auth (Voice, Verification)

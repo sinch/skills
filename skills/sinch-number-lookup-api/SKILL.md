@@ -3,38 +3,51 @@ name: sinch-number-lookup-api
 description: Looks up phone number details via Sinch Number Lookup API. Use when checking carrier, line type, porting status, SIM swap, VoIP detection, or reassigned number detection (RND) for fraud prevention or routing decisions.
 metadata:
   author: Sinch
-  version: 1.0.0
+  version: 1.0.2
+  category: Numbers
+  tags: number-lookup, carrier, line-type, sim-swap, voip-detection, fraud-prevention
+  uses:
+    - sinch-authentication
+    - sinch-sdks
 ---
 
 # Sinch Number Lookup API
 
 ## Overview
 
-Queries phone numbers for carrier, line type, porting, SIM swap, VoIP detection, and reassigned number detection. Used for fraud prevention, routing, and data enrichment.
+Queries phone numbers for carrier, line type, porting, SIM swap, VoIP detection, and reassigned number detection. Used for fraud prevention, routing, and data enrichment. One number per request — no batch endpoint.
 
-- **v2 Base URL:** `https://lookup.api.sinch.com`
-- **v1 Base URL:** `https://number-lookup.api.sinch.com` (legacy -- no OAuth2, no projectId)
-- **Endpoint:** `POST /v2/projects/{projectId}/lookups`
-- **Auth:** OAuth2 (recommended) or HTTP Basic. See [sinch-authentication](../sinch-authentication/SKILL.md).
-- **One number per request.** No batch endpoint.
+## Agent Instructions
+
+Before generating code, gather from the user: **approach** (SDK or direct API calls) and **language** (Node.js, Python, Java, .NET/C#, curl). Do not assume defaults.
+
+When the user chooses **SDK**, refer to [sinch-sdks](../sinch-sdks/SKILL.md) for installation, client initialization, and language-specific references. Note: Number Lookup is only supported in **Node.js** and **Python** (partial) SDKs — for Java and .NET, use direct HTTP calls.
 
 ## Getting Started
 
-### Canonical curl Example
+### Authentication
+
+See [sinch-authentication](../sinch-authentication/SKILL.md) for full setup.
+
+### Base URL
+
+`https://lookup.api.sinch.com`
+
+**Endpoint:** `POST /v2/projects/{PROJECT_ID}/lookups`
+
+### First API Call
 
 ```bash
 curl -X POST \
-  'https://lookup.api.sinch.com/v2/projects/YOUR_project_id/lookups' \
+  "https://lookup.api.sinch.com/v2/projects/{PROJECT_ID}/lookups" \
   -H 'Content-Type: application/json' \
-  -u YOUR_key_id:YOUR_key_secret \
+  -H "Authorization: Bearer {ACCESS_TOKEN}" \
   -d '{
     "number": "+12025550134",
     "features": ["LineType", "SimSwap", "VoIPDetection", "RND"],
     "rndFeatureOptions": { "contactDate": "2025-01-01" }
   }'
 ```
-
-For OAuth2, replace `-u` with `-H 'Authorization: Bearer YOUR_access_token'`.
 
 For SDK setup (Node.js, Python, Java, .NET), see the [Getting Started Guide](https://developers.sinch.com/docs/number-lookup-api-v2/getting-started).
 
@@ -144,5 +157,4 @@ const results = await Promise.all(
 - [Combined Lookup + Verification](https://developers.sinch.com/docs/number-lookup-api-v2/combined-lookup-verification.md)
 - [Release Notes](https://developers.sinch.com/docs/number-lookup-api-v2/release-notes)
 - [OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/number-lookup-api-v2/api-reference/number-lookup-api-v2.yaml?download)
-- [v1 API Reference](https://developers.sinch.com/docs/number-lookup-api/api-reference/number-lookup) (legacy)
-- [LLMs.txt](https://developers.sinch.com/llms.txt)
+- [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

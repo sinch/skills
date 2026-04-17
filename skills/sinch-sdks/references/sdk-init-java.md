@@ -1,4 +1,6 @@
-# SDK Initialization (Java)
+# SDK Installation (Java)
+
+Maven: `com.sinch.sdk:sinch-sdk-java` (v2.0.0+)
 
 ## Project-Scoped Auth (Conversation, Numbers, Fax, EST, etc.)
 
@@ -17,7 +19,7 @@ SinchClient sinch = new SinchClient(config);
 
 ### Setting the Conversation API Region
 
-> With SDK v2 (upcoming), region will be required for Conversation usage. Set region explicitly now to stay forward-compatible.
+> Since SDK v2.0.0, `conversationRegion` is **required** when using the Conversation API. Calls will fail at runtime if the region is not set.
 
 ```java
 import com.sinch.sdk.SinchClient;

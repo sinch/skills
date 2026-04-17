@@ -3,7 +3,11 @@ name: sinch-provisioning-api
 description: Provisions and manages channel resources for Conversation API projects, including WhatsApp accounts/senders/templates, RCS senders, KakaoTalk senders/templates, webhooks, and bundles. Use when the user asks to onboard channels, configure provisioning webhooks, manage templates, orchestrate multi-service bundles, or automate channel setup.
 metadata:
   author: Sinch
-  version: 1.0.0
+  version: 1.0.1
+  category: Messaging
+  tags: provisioning, whatsapp, rcs, kakaotalk, channels, templates, bundles
+  uses:
+    - sinch-authentication
 ---
 
 # Sinch Provisioning API

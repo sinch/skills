@@ -3,7 +3,12 @@ name: sinch-numbers-api
 description: "Search, rent, manage, and release phone numbers with the Sinch Numbers API. Use when listing active numbers, searching available numbers, renting or releasing numbers, updating number configuration (SMS/voice/callback), managing emergency addresses, or checking available regions."
 metadata:
   author: Sinch
-  version: 1.0.0
+  version: 1.1.0
+  category: Numbers
+  tags: numbers, phone-numbers, rent, release, search, sms, voice, configuration
+  uses:
+    - sinch-authentication
+    - sinch-sdks
 ---
 
 # Sinch Numbers API
@@ -29,16 +34,27 @@ For direct HTTP calls, see [Numbers API Reference](https://developers.sinch.com/
 
 ### Step 2: Authenticate
 
-See [sinch-authentication](../sinch-authentication/SKILL.md) for full setup. Use Basic auth (`-u KEY_ID:KEY_SECRET`) for quick starts, OAuth2 for production.
+See [sinch-authentication](../sinch-authentication/SKILL.md) for full setup.
 
 ### Step 3: Verify connectivity
 
 ```bash
 curl -X GET "https://numbers.api.sinch.com/v1/projects/{PROJECT_ID}/activeNumbers?regionCode=US&type=LOCAL&pageSize=10" \
-  -u {KEY_ID}:{KEY_SECRET}
+  -H "Authorization: Bearer {ACCESS_TOKEN}"
 ```
 
 A 200 response confirms credentials and project access.
+
+## Key Concepts
+
+**Active Number** — A phone number currently rented and owned by your project. Managed via `/activeNumbers`.
+**Available Number** — A phone number available for rent in a given region and type. Searched via `/availableNumbers`.
+**Number Type** — `LOCAL`, `MOBILE`, or `TOLL_FREE`. Required when searching or listing numbers.
+**Region Code** — ISO 3166-1 alpha-2 country code (e.g., `US`, `GB`, `SE`). Required for search and list operations.
+**SMS Configuration** — Settings for SMS on a number: `servicePlanId`, `campaignId` (US 10DLC only), `scheduledProvisioning` status.
+**Voice Configuration** — Discriminated union on `type`: `RTC` (requires `appId`), `EST` (requires `trunkId`), `FAX` (requires `serviceId`).
+**Callback Configuration** — Project-level HMAC secret for signature verification on number lifecycle webhooks. Does NOT set a callback URL.
+**Scheduled Provisioning** — Async provisioning status for SMS/voice config. Status values: `WAITING`, `IN_PROGRESS`, `FAILED`.
 
 ## Workflows
 
@@ -105,4 +121,8 @@ A separate API at `https://imported.numbers.api.sinch.com` handles importing non
 - [Numbers API docs](https://developers.sinch.com/docs/numbers/)
 - [Numbers API reference (Markdown)](https://developers.sinch.com/docs/numbers/api-reference/numbers.md)
 - [Numbers OpenAPI spec](https://developers.sinch.com/_bundle/docs/numbers/api-reference/numbers.yaml?download)
-- [Sinch dashboard — Access keys](https://dashboard.sinch.com/settings/access-keys)
+- [Node.js SDK Reference](https://developers.sinch.com/docs/numbers/sdk/node/syntax-reference.md)
+- [Python SDK Reference](https://developers.sinch.com/docs/numbers/sdk/py/syntax-reference.md)
+- [Java SDK Reference](https://developers.sinch.com/docs/numbers/sdk/java/syntax-reference.md)
+- [.NET SDK Reference](https://developers.sinch.com/docs/numbers/sdk/dotnet/syntax-reference.md)
+- [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

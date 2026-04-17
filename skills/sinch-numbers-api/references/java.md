@@ -1,6 +1,6 @@
 # Java — Numbers SDK Reference
 
-Maven: `com.sinch.sdk:sinch-sdk-java`
+Maven: `com.sinch.sdk:sinch-sdk-java` (v2.0.0+)
 
 ## Initialization
 
@@ -63,7 +63,6 @@ ActiveNumberListResponse response = sinch.numbers().v1().list(
     ActiveNumbersListQueryParameters.builder()
         .setRegionCode("US")
         .setType(NumberType.LOCAL)
-        .setPageSize(100)
         .build()
 );
 ```
@@ -105,15 +104,17 @@ sinch.numbers().v1().regions().list(
     AvailableRegionsListQueryParameters.builder().build());
 ```
 
-## Callback Configuration
+## Event Destinations Configuration
 
 ```java
+import com.sinch.sdk.domains.numbers.models.v1.eventdestinations.request.EventDestinationUpdateRequest;
+
 // Get current config
-sinch.numbers().v1().callbackConfiguration().get();
+sinch.numbers().v1().eventDestinations().get();
 
 // Update HMAC secret
-sinch.numbers().v1().callbackConfiguration().update(
-    CallbackConfigurationUpdateRequest.builder()
+sinch.numbers().v1().eventDestinations().update(
+    EventDestinationUpdateRequest.builder()
         .setHmacSecret("YOUR_HMAC_SECRET")
         .build());
 ```
