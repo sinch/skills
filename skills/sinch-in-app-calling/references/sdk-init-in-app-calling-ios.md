@@ -1,4 +1,4 @@
-# SDK Initialization — In-App Calling (iOS)
+# SDK Installation — In-App Calling (iOS)
 
 In-App Calling uses the **Sinch RTC SDK** (Swift) — a separate client-side SDK from `@sinch/sdk-core`. Authentication is handled via JWT tokens generated on your backend using Application Key + Application Secret credentials.
 

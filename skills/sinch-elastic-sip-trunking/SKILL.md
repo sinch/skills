@@ -3,7 +3,12 @@ name: sinch-elastic-sip-trunking
 description: Provisions SIP trunks, endpoints, ACLs, credential lists, and phone numbers via the Sinch Elastic SIP Trunking REST API. Use when the user needs SIP connectivity, trunk provisioning, inbound/outbound PSTN voice routing, PBX integration, or SIP-to-PSTN bridging.
 metadata:
   author: Sinch
-  version: 1.0.0
+  version: 1.0.1
+  category: Voice
+  tags: sip, trunking, est, pstn, voice, pbx, inbound, outbound
+  uses:
+    - sinch-authentication
+    - sinch-sdks
 ---
 
 # Sinch Elastic SIP Trunking API
@@ -53,17 +58,13 @@ See [sinch-authentication](../sinch-authentication/SKILL.md) for full auth setup
 
 ### SDK Installation
 
-| Language | Package | Install |
-|----------|---------|---------|
-| Node.js | `@sinch/sdk-core` | `npm install @sinch/sdk-core` |
-| Python | `sinch` | `pip install sinch` |
-| Java | `com.sinch.sdk:sinch-sdk-java` | Maven dependency |
-| .NET | `Sinch` | `dotnet add package Sinch` |
+See [sinch-sdks](../sinch-sdks/SKILL.md) for installation and client initialization. Note: EST is only supported in the **Node.js SDK** — for Java, Python, and .NET, use direct HTTP calls.
+
 ### First API Call — Create a Trunk
 
 ```bash
-curl -X POST "https://elastic-trunking.api.sinch.com/v1/projects/YOUR_PROJECT_ID/trunks" \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN" \
+curl -X POST "https://elastic-trunking.api.sinch.com/v1/projects/{PROJECT_ID}/trunks" \
+  -H "Authorization: Bearer {ACCESS_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{"name": "my-trunk", "hostName": "my-trunk"}'
 ```
@@ -170,4 +171,4 @@ Quick reference:
 - [API Reference (Markdown)](https://developers.sinch.com/docs/est/api-reference/est.md)
 - [OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/est/api-reference/est.yaml?download)
 - [Twilio BYOC Integration](https://developers.sinch.com/docs/est/integration-guides/twilio-byoc.md)
-- [npm: @sinch/sdk-core](https://www.npmjs.com/package/@sinch/sdk-core)
+- [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

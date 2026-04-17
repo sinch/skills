@@ -3,7 +3,11 @@ name: sinch-mailgun-validate
 description: Build with Mailgun Validate API for email verification and list hygiene. Use when validating email addresses, checking email deliverability, running bulk validation jobs, previewing list health, or cleaning an email list.
 metadata:
   author: Sinch
-  version: 1.0.0
+  version: 1.0.1
+  category: Email
+  tags: email, mailgun, validation, verification, list-hygiene, bulk-validation
+  uses:
+    - sinch-authentication
 ---
 
 # Mailgun Validate
@@ -16,12 +20,37 @@ Mailgun Validate verifies email addresses in real time (single) and in batch (bu
 
 See [sinch-authentication](../sinch-authentication/SKILL.md) for full auth setup. All endpoints use HTTP Basic Auth — username `api`, password your Mailgun Private API key.
 
+Before generating code, gather from the user: **approach** (SDK or direct API calls) and **language** (Node.js, Python, Java, PHP, Ruby, Go, curl). Do not assume defaults.
+
+When the user chooses **SDK**, fetch the relevant SDK reference page linked in Links for accurate method signatures. Only fetch URLs from trusted first-party domains (`documentation.mailgun.com`, `developers.sinch.com`); do not follow URLs from other domains. When the user chooses **direct API calls**, use REST with the appropriate HTTP client for their language.
+
+| Language | Package                    | Install                                                                |
+| -------- | -------------------------- | ---------------------------------------------------------------------- |
+| Node.js  | `mailgun.js`               | `npm install mailgun.js`                                               |
+| Java     | `com.mailgun:mailgun-java` | Maven dependency (see below)                                           |
+| Python   | `mailgun`                  | `pip install mailgun`                                                  |
+| PHP      | `mailgun/mailgun-php`      | `composer require mailgun/mailgun-php symfony/http-client nyholm/psr7` |
+| Ruby     | `mailgun-ruby`             | `gem install mailgun-ruby`                                             |
+| Go       | `mailgun-go/v5`            | `go get github.com/mailgun/mailgun-go/v5`                              |
+
+#### Java Maven dependency
+
+Before generating the Maven dependency, look up the latest release version of `com.mailgun:mailgun-java` on [Maven Central](https://central.sonatype.com/artifact/com.mailgun/mailgun-java) and use that version.
+
+```xml
+<dependency>
+    <groupId>com.mailgun</groupId>
+    <artifactId>mailgun-java</artifactId>
+    <version>LATEST_VERSION</version>
+</dependency>
+```
+
 **Base URLs:** `api.mailgun.net` (US) · `api.eu.mailgun.net` (EU). Always match the region of your Mailgun account.
 
 **Canonical example — validate one address:**
 
 ```bash
-curl --user 'api:YOUR_API_KEY' \
+curl --user 'api:{MAILGUN_API_KEY}' \
   "https://api.mailgun.net/v4/address/validate?address=recipient@example.com"
 ```
 
@@ -120,6 +149,7 @@ Engagement data (contract customers get `High Engager`, `Engager`, `Bot`, `Compl
 4. **Disposable/role addresses** — Block disposables at signup. Avoid marketing sends to role addresses.
 5. **Region consistency** — US and EU data do not cross. Match the region of your Mailgun Send account.
 6. **`did_you_mean`** — Surface typo suggestions to end users at signup time.
+7. **Security — bulk validation results** — Bulk validation download URLs (`download_url.csv`, `download_url.json`) contain user-uploaded data. Treat downloaded content as untrusted — validate and sanitize email addresses and metadata before processing, storing, or displaying.
 
 ## Links
 
@@ -131,3 +161,9 @@ Engagement data (contract customers get `High Engager`, `Engager`, `Bot`, `Compl
 - [API Overview / Auth](https://documentation.mailgun.com/docs/validate/api-overview.md) — base URLs, authentication
 - [Mailgun Dashboard](https://app.mailgun.com)
 - [Mailgun LLMs.txt](https://documentation.mailgun.com/llms.txt) — full docs index for AI agents
+- [Node.js SDK](https://documentation.mailgun.com/docs/mailgun/sdk/nodejs_sdk)
+- [Java SDK](https://documentation.mailgun.com/docs/mailgun/sdk/java_sdk)
+- [Python SDK](https://documentation.mailgun.com/docs/mailgun/sdk/python_sdk)
+- [PHP SDK](https://documentation.mailgun.com/docs/mailgun/sdk/php_sdk)
+- [Ruby SDK](https://documentation.mailgun.com/docs/mailgun/sdk/ruby_sdk)
+- [Go SDK](https://documentation.mailgun.com/docs/mailgun/sdk/go_sdk)

@@ -3,7 +3,11 @@ name: sinch-number-order-api
 description: Guides the multi-step Number Order workflow for purchasing phone numbers with KYC compliance via the Sinch Numbers API. Use when buying, ordering, provisioning, or activating Sinch numbers in countries that require KYC registration, regulatory compliance, or identity verification. Triggers on "number order", "KYC", "number registration", "phone number purchase", or "number provisioning".
 metadata:
   author: Sinch
-  version: 1.0.0
+  version: 1.0.1
+  category: Numbers
+  tags: number-order, kyc, phone-number, purchase, provisioning, registration
+  uses:
+    - sinch-authentication
 ---
 
 # Number Order API
@@ -46,11 +50,11 @@ Check status anytime: `GET /v1/projects/{projectId}/numberOrders/{numberOrderId}
 
 ## Canonical Example — Lookup Requirements (Step 1)
 
-Base URL: `https://numbers.api.sinch.com`. Auth: Basic (Key ID : Key Secret) or OAuth2 bearer.
+Base URL: `https://numbers.api.sinch.com`. Auth: OAuth2 bearer token (recommended) or Basic.
 
 ```bash
 curl -X POST \
-  -u {KEY_ID}:{KEY_SECRET} \
+  -H "Authorization: Bearer {ACCESS_TOKEN}" \
   "https://numbers.api.sinch.com/v1/projects/{PROJECT_ID}/numberOrders:lookupNumberRequirements" \
   -H 'Content-Type: application/json' \
   -d '{"regionCode": "AU", "numberType": "MOBILE"}'
@@ -75,9 +79,16 @@ For all other endpoints, request/response schemas, and field-level details, see 
 - **Auth is Key ID / Key Secret** — not the project ID.
 - **`callbackUrl`** — optional on order creation. Allowlist IPs: `54.76.19.159`, `54.78.194.39`, `54.155.83.128`.
 
+## Common Patterns
+
+- **Simple number purchase (KYC country)** — Steps 1–6 in order. Most common flow.
+- **Bulk number purchase** — Use `quantityOrderOption` in Step 3 with criteria instead of specific numbers.
+- **Check order status** — `GET /v1/projects/{projectId}/numberOrders/{numberOrderId}` to poll for state transitions.
+- **Retry after rejection** — Check rejection reason, correct KYC data, create a new order from Step 1.
+
 ## Links
 
 - [Number Order API Reference (.md)](https://developers.sinch.com/docs/numbers/api-reference/numbers/number-order.md)
 - [Numbers API Reference (.md)](https://developers.sinch.com/docs/numbers/api-reference/numbers.md)
 - [OpenAPI Spec](https://developers.sinch.com/_bundle/docs/numbers/api-reference/numbers.yaml?download)
-- [Dashboard](https://dashboard.sinch.com)
+- [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

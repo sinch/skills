@@ -1,4 +1,4 @@
-# SDK Initialization (.NET)
+# SDK Installation (.NET)
 
 ## Project-Scoped Auth (Conversation, Numbers, Fax, EST, etc.)
 

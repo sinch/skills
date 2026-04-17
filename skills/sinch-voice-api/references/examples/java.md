@@ -25,41 +25,44 @@ SinchClient sinch = new SinchClient(config);
 ## TTS Callout
 
 ```java
-import com.sinch.sdk.domains.voice.models.requests.CalloutRequestParametersTTS;
-import com.sinch.sdk.domains.voice.models.DestinationNumber;
+import com.sinch.sdk.domains.voice.models.v1.callouts.request.CalloutRequestTTS;
+import com.sinch.sdk.domains.voice.models.v1.destination.DestinationPstn;
 
-var response = sinch.voice().callouts().call(
-    CalloutRequestParametersTTS.builder()
-        .setDestination(DestinationNumber.valueOf("+14045005000"))
+var response = sinch.voice().v1().callouts().call(
+    CalloutRequestTTS.builder()
+        .setDestination(DestinationPstn.from("+14045005000"))
         .setCli("+14045001000")
         .setLocale("en-US")
         .setText("Hello! This is a test call from Sinch.")
         .build()
 );
-System.out.println("Call ID: " + response.getCallId());
+System.out.println("Call ID: " + response);
 ```
 
 ## Conference Callout
 
 ```java
-import com.sinch.sdk.domains.voice.models.requests.CalloutRequestParametersConference;
+import com.sinch.sdk.domains.voice.models.v1.callouts.request.CalloutRequestConference;
+import com.sinch.sdk.domains.voice.models.v1.destination.DestinationPstn;
 
-var response = sinch.voice().callouts().call(
-    CalloutRequestParametersConference.builder()
-        .setDestination(DestinationNumber.valueOf("+14045005000"))
+var response = sinch.voice().v1().conferences().call(
+    CalloutRequestConference.builder()
+        .setDestination(DestinationPstn.from("+14045005000"))
         .setCli("+14045001000")
         .setConferenceId("myConference")
         .setEnableAce(true)
         .setEnableDice(true)
         .build()
 );
-System.out.println("Call ID: " + response.getCallId());
+System.out.println("Call ID: " + response);
 ```
 
 ## Get Call Info
 
 ```java
-var callInfo = sinch.voice().calls().get("4398599d1ba84ef3bde0a82dfb61abed");
+import com.sinch.sdk.domains.voice.models.v1.calls.response.CallInformation;
+
+CallInformation callInfo = sinch.voice().v1().calls().get("4398599d1ba84ef3bde0a82dfb61abed");
 System.out.println("Status: " + callInfo.getStatus());
 System.out.println("Duration: " + callInfo.getDuration());
 ```
@@ -67,18 +70,20 @@ System.out.println("Duration: " + callInfo.getDuration());
 ## Update In-Progress Call
 
 ```java
-import com.sinch.sdk.domains.voice.models.svaml.*;
+import com.sinch.sdk.domains.voice.models.v1.svaml.SvamlControl;
+import com.sinch.sdk.domains.voice.models.v1.svaml.action.SvamlActionHangup;
+import com.sinch.sdk.domains.voice.models.v1.svaml.instruction.SvamlInstructionSay;
 
-sinch.voice().calls().update(
+sinch.voice().v1().calls().update(
     "4398599d1ba84ef3bde0a82dfb61abed",
-    SVAMLControl.builder()
+    SvamlControl.builder()
         .setInstructions(List.of(
-            InstructionSay.builder()
+            SvamlInstructionSay.builder()
                 .setText("This call will now end.")
                 .setLocale("en-US")
                 .build()
         ))
-        .setAction(ActionHangup.builder().build())
+        .setAction(SvamlActionHangup.SVAML_ACTION_HANGUP)
         .build()
 );
 ```
@@ -86,14 +91,14 @@ sinch.voice().calls().update(
 ## Conference — Get Info
 
 ```java
-var conf = sinch.voice().conferences().get("myConference");
+var conf = sinch.voice().v1().conferences().get("myConference");
 System.out.println("Participants: " + conf.getParticipants());
 ```
 
 ## Conference — Kick All
 
 ```java
-sinch.voice().conferences().kickAll("myConference");
+sinch.voice().v1().conferences().kickAll("myConference");
 ```
 
 ## Callback Handler (Spring Boot)

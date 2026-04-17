@@ -5,8 +5,8 @@ Full field reference for `POST /v1/projects/{projectId}/campaignRegistrations:su
 ## Example Request
 
 ```bash
-curl -X POST https://us10dlc.numbers.api.sinch.com/v1/projects/{PROJECT_ID}/campaignRegistrations:submit \
-  -u {KEY_ID}:{KEY_SECRET} \
+curl -X POST "https://us10dlc.numbers.api.sinch.com/v1/projects/{SINCH_PROJECT_ID}/campaignRegistrations:submit" \
+  -H "Authorization: Bearer {ACCESS_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
     "brandId": "BEXAMPLE",

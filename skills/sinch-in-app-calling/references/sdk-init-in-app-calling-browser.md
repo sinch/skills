@@ -1,4 +1,4 @@
-# SDK Initialization — In-App Calling (Browser / JavaScript)
+# SDK Installation — In-App Calling (Browser / JavaScript)
 
 In-App Calling uses the **Sinch RTC SDK** — a separate client-side SDK from `@sinch/sdk-core`. Authentication is handled via JWT tokens generated on your backend using Application Key + Application Secret credentials.
 
@@ -7,6 +7,7 @@ In-App Calling uses the **Sinch RTC SDK** — a separate client-side SDK from `@
 Add the SDK via CDN script tag in your HTML `<head>`:
 
 ```html
+<!-- Trusted first-party CDN: cdn.sinch.com is owned by Sinch -->
 <script src="https://cdn.sinch.com/latest/sinch-rtc-min.js"></script>
 ```
 
