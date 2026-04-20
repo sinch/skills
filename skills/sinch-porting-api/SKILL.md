@@ -43,7 +43,6 @@ Store credentials in environment variables — never hardcode tokens, PINs, or k
 ```bash
 export PROJECT_ID="your-project-id"
 export ACCESS_TOKEN="your-oauth-token"
-export PORT_OUT_PIN="your-port-out-pin"
 ```
 
 ### First API Call — Check Portability
@@ -106,12 +105,14 @@ curl -X POST "https://porting.api.sinch.com/v1/projects/$PROJECT_ID/orders/portI
           "typeOfService": "B"
         },
         "portOutInfo": {
-          "existingPortOutPin": "$PORT_OUT_PIN"
+          "existingPortOutPin": "1234"
         }
       }
     ]
   }'
 ```
+
+> `existingPortOutPin` — Obtain this PIN from the losing carrier before submitting the order. See [Create Port-In Order](https://developers.sinch.com/docs/numbers/api-reference/porting/port-in-numbers/orderportin.md) for full field reference.
 
 Response:
 
@@ -137,6 +138,7 @@ Response:
 ### Track an Order
 
 ```bash
+# Auth: same Bearer token header as above
 curl "https://porting.api.sinch.com/v1/projects/$PROJECT_ID/orders/portIns/12345" \
   -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
@@ -168,6 +170,7 @@ Response:
 First check which number groups are ready:
 
 ```bash
+# Auth: same Bearer token header as above
 curl "https://porting.api.sinch.com/v1/projects/$PROJECT_ID/orders/portIns/12345/availableActivations" \
   -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
@@ -189,6 +192,7 @@ Response:
 Then activate:
 
 ```bash
+# Auth: same Bearer token header as above
 curl -X POST "https://porting.api.sinch.com/v1/projects/$PROJECT_ID/orders/portIns/12345/activate" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $ACCESS_TOKEN" \
