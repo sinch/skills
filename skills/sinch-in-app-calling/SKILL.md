@@ -3,7 +3,7 @@ name: sinch-in-app-calling
 description: Integrate Sinch In-App Voice and Video SDK for real-time calling in Android, iOS, or JavaScript apps. Use when the user mentions In-App Calling, VoIP integration, WebRTC with Sinch, app-to-phone calling, video calling, or building voice/video features in a mobile or web app.
 metadata:
   author: Sinch
-  version: 1.0.1
+  version: 1.0.2
   category: Voice & Video
   tags: in-app-calling, voip, webrtc, voice, video, android, ios, javascript
   uses:
@@ -41,7 +41,7 @@ The user needs a Sinch account with an application key and secret from the [Sinc
 
 4. **Ask about call types**: Which types does the user need? This determines which sections to cover.
 
-5. **For Phone-to-App / SIP-to-App**: The user needs a backend ICE callback handler. See [backend setup](#phone-to-app--sip-to-app-backend) below.
+5. **For Phone-to-App / SIP-to-App**: The user needs a backend ICE callback handler. See the "Phone-to-App / SIP-to-App backend" section below.
 
 ### SDK Init References
 
@@ -72,13 +72,13 @@ Receiving inbound PSTN or SIP calls requires:
 
 ## Key Concepts
 
-**SinchClient** — The core SDK object. Must be initialized with Application Key and started before any calls can be made or received.
-**User Identity** — A string identifier (e.g., user ID) that uniquely identifies a user in the Sinch system. Set during `SinchClient` initialization.
-**Call Types** — App-to-App (VoIP), App-to-Phone (PSTN), App-to-SIP, App-to-Conference, and inbound (Phone-to-App, SIP-to-App).
-**Managed Push** — Sinch-managed push notifications for incoming calls when the app is backgrounded. Required on all platforms.
-**JWT Authentication** — Production apps must use backend-generated JWTs (not embedded secrets) for SDK authentication.
-**ICE Callback** — Incoming Call Event. A backend webhook handler required for Phone-to-App and SIP-to-App calls that routes calls via `connectMxp`.
-**Environment Host** — Regional endpoint for the SDK connection (e.g., `ocra.api.sinch.com` for global routing).
+- **SinchClient** — The core SDK object. Must be initialized with Application Key and started before any calls can be made or received.
+- **User Identity** — A string identifier (e.g., user ID) that uniquely identifies a user in the Sinch system. Set during `SinchClient` initialization.
+- **Call Types** — App-to-App (VoIP), App-to-Phone (PSTN), App-to-SIP, App-to-Conference, and inbound (Phone-to-App, SIP-to-App).
+- **Managed Push** — Sinch-managed push notifications for incoming calls when the app is backgrounded. Required on all platforms.
+- **JWT Authentication** — Production apps must use backend-generated JWTs (not embedded secrets) for SDK authentication.
+- **ICE Callback** — Incoming Call Event. A backend webhook handler required for Phone-to-App and SIP-to-App calls that routes calls via `connectMxp`.
+- **Environment Host** — Regional endpoint for the SDK connection (e.g., `ocra.api.sinch.com` for global routing).
 
 ## Common Patterns
 

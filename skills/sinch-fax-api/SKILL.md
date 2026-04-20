@@ -3,7 +3,7 @@ name: sinch-fax-api
 description: Send and receive faxes programmatically with Sinch Fax API. Use when building fax workflows, fax-to-email delivery, sending PDFs by fax, checking fax status, managing fax services, configuring cover pages, receiving fax webhooks, or integrating fax into healthcare, legal, or financial applications.
 metadata:
   author: Sinch
-  version: 1.0.1
+  version: 1.0.2
   category: Voice
   tags: fax, pdf, fax-to-email, webhooks, healthcare, legal
   uses:
@@ -31,13 +31,20 @@ See [sinch-sdks](../sinch-sdks/SKILL.md) for SDK installation and client initial
 
 ### First API Call — Send a Fax
 
+Store credentials in environment variables — never hardcode tokens or keys in commands or source code:
+
+```bash
+export PROJECT_ID="your-project-id"
+export ACCESS_TOKEN="your-oauth-token"
+```
+
 **curl:**
 
 ```bash
 curl -X POST \
-  "https://fax.api.sinch.com/v3/projects/{PROJECT_ID}/faxes" \
+  "https://fax.api.sinch.com/v3/projects/$PROJECT_ID/faxes" \
   -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer {ACCESS_TOKEN}" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
   -d '{
     "to": "+12025550134",
     "contentUrl": "https://example.com/document.pdf",
@@ -51,16 +58,16 @@ curl -X POST \
 
 ## Key Concepts
 
-**Fax Services** — Logical containers for fax configuration. Associate numbers, set defaults, and manage routing.
-**Fax Numbers** — Phone numbers provisioned for fax. Must be configured in your Sinch dashboard.
-**Faxes** — Individual fax transmissions (inbound or outbound). Each has a unique ID, status, and metadata.
-**Fax statuses** — `QUEUED` → `IN_PROGRESS` → `COMPLETED` or `FAILURE`. Error details in `errorType` and `errorMessage` fields.
-**Supported formats** — PDF (most reliable), DOC, DOCX, TIF/TIFF, JPG, PNG, TXT, HTML.
-**Webhooks/Callbacks** — HTTP POST notifications for fax events. Default content type is `multipart/form-data` (fax content as attachment). Set `callbackUrlContentType: "application/json"` for JSON callbacks.
-**Cover Pages** — Customizable cover pages per service. Attach via `coverPageId` and `coverPageData` on send.
-**Fax-to-Email** — Incoming faxes auto-forwarded to email addresses.
-**Retries** — Auto-retry on failure. Default set per fax service; maximum: 5.
-**Retention** — Fax logs and media retained for 13 months. Use `DELETE /faxes/{id}/file` to remove earlier.
+- **Fax Services** — Logical containers for fax configuration. Associate numbers, set defaults, and manage routing.
+- **Fax Numbers** — Phone numbers provisioned for fax. Must be configured in your Sinch dashboard.
+- **Faxes** — Individual fax transmissions (inbound or outbound). Each has a unique ID, status, and metadata.
+- **Fax statuses** — `QUEUED` → `IN_PROGRESS` → `COMPLETED` or `FAILURE`. Error details in `errorType` and `errorMessage` fields.
+- **Supported formats** — PDF (most reliable), DOC, DOCX, TIF/TIFF, JPG, PNG, TXT, HTML.
+- **Webhooks/Callbacks** — HTTP POST notifications for fax events. Default content type is `multipart/form-data` (fax content as attachment). Set `callbackUrlContentType: "application/json"` for JSON callbacks.
+- **Cover Pages** — Customizable cover pages per service. Attach via `coverPageId` and `coverPageData` on send.
+- **Fax-to-Email** — Incoming faxes auto-forwarded to email addresses.
+- **Retries** — Auto-retry on failure. Default set per fax service; maximum: 5.
+- **Retention** — Fax logs and media retained for 13 months. Use `DELETE /faxes/{id}/file` to remove earlier.
 
 ## Common Patterns
 

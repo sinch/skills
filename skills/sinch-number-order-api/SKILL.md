@@ -3,7 +3,7 @@ name: sinch-number-order-api
 description: Guides the multi-step Number Order workflow for purchasing phone numbers with KYC compliance via the Sinch Numbers API. Use when buying, ordering, provisioning, or activating Sinch numbers in countries that require KYC registration, regulatory compliance, or identity verification. Triggers on "number order", "KYC", "number registration", "phone number purchase", or "number provisioning".
 metadata:
   author: Sinch
-  version: 1.0.1
+  version: 1.0.2
   category: Numbers
   tags: number-order, kyc, phone-number, purchase, provisioning, registration
   uses:
@@ -52,10 +52,17 @@ Check status anytime: `GET /v1/projects/{projectId}/numberOrders/{numberOrderId}
 
 Base URL: `https://numbers.api.sinch.com`. Auth: OAuth2 bearer token (recommended) or Basic.
 
+Store credentials in environment variables — never hardcode tokens or keys in commands or source code:
+
+```bash
+export PROJECT_ID="your-project-id"
+export ACCESS_TOKEN="your-oauth-token"
+```
+
 ```bash
 curl -X POST \
-  -H "Authorization: Bearer {ACCESS_TOKEN}" \
-  "https://numbers.api.sinch.com/v1/projects/{PROJECT_ID}/numberOrders:lookupNumberRequirements" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  "https://numbers.api.sinch.com/v1/projects/$PROJECT_ID/numberOrders:lookupNumberRequirements" \
   -H 'Content-Type: application/json' \
   -d '{"regionCode": "AU", "numberType": "MOBILE"}'
 ```
