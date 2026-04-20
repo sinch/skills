@@ -38,7 +38,7 @@ Registration is **asynchronous** — it takes minutes to days. There are **no we
 
 ```bash
 curl "https://us10dlc.numbers.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/brandRegistrations/$BRAND_REGISTRATION_ID" \
-  -u "$SINCH_KEY_ID:$SINCH_KEY_SECRET"
+  -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
 
 Example response:
@@ -93,7 +93,7 @@ Before creating a campaign, verify requirements and estimated fees:
 
 ```bash
 curl "https://us10dlc.numbers.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/campaignRegistrations:qualify?brandId=$BRAND_ID&useCase=MARKETING" \
-  -u "$SINCH_KEY_ID:$SINCH_KEY_SECRET"
+  -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
 
 `useCase` is **optional** — omit it to get qualification data for all use cases at once (useful when the user hasn't decided yet).
