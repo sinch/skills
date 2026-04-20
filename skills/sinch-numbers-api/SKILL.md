@@ -3,7 +3,7 @@ name: sinch-numbers-api
 description: "Search, rent, manage, and release phone numbers with the Sinch Numbers API. Use when listing active numbers, searching available numbers, renting or releasing numbers, updating number configuration (SMS/voice/callback), managing emergency addresses, or checking available regions."
 metadata:
   author: Sinch
-  version: 1.1.0
+  version: 1.1.1
   category: Numbers
   tags: numbers, phone-numbers, rent, release, search, sms, voice, configuration
   uses:
@@ -47,14 +47,14 @@ A 200 response confirms credentials and project access.
 
 ## Key Concepts
 
-**Active Number** — A phone number currently rented and owned by your project. Managed via `/activeNumbers`.
-**Available Number** — A phone number available for rent in a given region and type. Searched via `/availableNumbers`.
-**Number Type** — `LOCAL`, `MOBILE`, or `TOLL_FREE`. Required when searching or listing numbers.
-**Region Code** — ISO 3166-1 alpha-2 country code (e.g., `US`, `GB`, `SE`). Required for search and list operations.
-**SMS Configuration** — Settings for SMS on a number: `servicePlanId`, `campaignId` (US 10DLC only), `scheduledProvisioning` status.
-**Voice Configuration** — Discriminated union on `type`: `RTC` (requires `appId`), `EST` (requires `trunkId`), `FAX` (requires `serviceId`).
-**Callback Configuration** — Project-level HMAC secret for signature verification on number lifecycle webhooks. Does NOT set a callback URL.
-**Scheduled Provisioning** — Async provisioning status for SMS/voice config. Status values: `WAITING`, `IN_PROGRESS`, `FAILED`.
+- **Active Number** — A phone number currently rented and owned by your project. Managed via `/activeNumbers`.
+- **Available Number** — A phone number available for rent in a given region and type. Searched via `/availableNumbers`.
+- **Number Type** — `LOCAL`, `MOBILE`, or `TOLL_FREE`. Required when searching or listing numbers.
+- **Region Code** — ISO 3166-1 alpha-2 country code (e.g., `US`, `GB`, `SE`). Required for search and list operations.
+- **SMS Configuration** — Settings for SMS on a number: `servicePlanId`, `campaignId` (US 10DLC only), `scheduledProvisioning` status.
+- **Voice Configuration** — Discriminated union on `type`: `RTC` (requires `appId`), `EST` (requires `trunkId`), `FAX` (requires `serviceId`).
+- **Callback Configuration** — Project-level HMAC secret for signature verification on number lifecycle webhooks. Does NOT set a callback URL.
+- **Scheduled Provisioning** — Async provisioning status for SMS/voice config. Status values: `WAITING`, `IN_PROGRESS`, `FAILED`.
 
 ## Workflows
 

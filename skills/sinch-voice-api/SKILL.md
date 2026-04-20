@@ -3,7 +3,7 @@ name: sinch-voice-api
 description: Build voice apps with Sinch Voice REST API. Use for phone calls, text-to-speech (TTS), IVR menus, DTMF input, conference calling, call recording, call forwarding, answering machine detection (AMD), SIP routing, WebSocket audio streaming, and SVAML call control.
 metadata:
   author: Sinch
-  version: 1.1.0
+  version: 1.1.1
   category: Voice
   tags: voice, calls, tts, ivr, dtmf, conference, recording, svaml, sip, amd, webrtc
   uses:
@@ -97,7 +97,7 @@ const response = await sinch.voice.callouts.tts({
 console.log("Call ID:", response.callId);
 ```
 
-For more examples, see [Callouts Reference](https://developers.sinch.com/docs/voice/api-reference/voice/callouts/callouts) or [bundled examples](references/examples/).
+For more examples, see [Callouts Reference](https://developers.sinch.com/docs/voice/api-reference/voice/callouts/callouts.md) or [bundled examples](references/examples/).
 
 ## Key Concepts
 
@@ -108,7 +108,7 @@ SVAML controls call flow. Every SVAML response has:
 - **instructions** (array): Multiple tasks — play audio, record, set cookies
 - **action** (object): Exactly ONE routing/control action
 
-Full reference: [SVAML Actions](https://developers.sinch.com/docs/voice/api-reference/svaml#actions) | [SVAML Instructions](https://developers.sinch.com/docs/voice/api-reference/svaml#instructions) | [Bundled SVAML Reference](references/svaml.md)
+Full reference: [SVAML Actions](https://developers.sinch.com/docs/voice/api-reference/svaml.md#actions) | [SVAML Instructions](https://developers.sinch.com/docs/voice/api-reference/svaml.md#instructions) | [Bundled SVAML Reference](references/svaml.md)
 
 ### Actions (one per response)
 
@@ -146,7 +146,7 @@ Full reference: [SVAML Actions](https://developers.sinch.com/docs/voice/api-refe
 | **PIE** | DTMF/voice input from `runMenu` | Yes |
 | **Notify** | Notification (e.g., recording finished) | No |
 
-See [Callbacks Reference](https://developers.sinch.com/docs/voice/api-reference/voice/callbacks/ice) for event schemas, or [bundled callbacks reference](references/callbacks.md) for full field tables and JSON examples.
+See [Callbacks Reference](https://developers.sinch.com/docs/voice/api-reference/voice/callbacks/ice.md) for event schemas, or [bundled callbacks reference](references/callbacks.md) for full field tables and JSON examples.
 
 ### Callout Types
 
@@ -263,18 +263,18 @@ export SINCH_VOICE_REGION="global"  # optional
 12. **AMD on `connectPstn`.** `amd: { enabled: true, async: true/false }` for answering machine detection.
 13. **`startRecording` transcription.** `transcriptionOptions: { enabled: true, locale: "en-US" }` for auto-transcription.
 14. **Conference DTMF options.** `conferenceDtmfOptions` on `conferenceCallout`/`connectConf` with modes: `ignore` (default), `forward`, `detect` (sends PIE).
-15. **`cli` is required for TTS callouts to connect.** The API accepts a TTS callout without a `cli` parameter and returns a call ID, but the call will never reach the destination. The `cli` is the number displayed as the incoming caller — use your verified number or your Dashboard-assigned number, in E.164 format (e.g., `"+14151112223333"`). To test, register on the [Sinch Dashboard](https://dashboard.sinch.com) and use the free number assigned to your app. See [Assign your number](https://developers.sinch.com/docs/voice/getting-started#2-assign-your-number-and-get-your-credentials).
+15. **`cli` is required for TTS callouts to connect.** The API accepts a TTS callout without a `cli` parameter and returns a call ID, but the call will never reach the destination. The `cli` is the number displayed as the incoming caller — use your verified number or your Dashboard-assigned number, in E.164 format (e.g., `"+14151112223333"`). To test, register on the [Sinch Dashboard](https://dashboard.sinch.com) and use the free number assigned to your app. See [Assign your number](https://developers.sinch.com/docs/voice/getting-started.md#2-assign-your-number-and-get-your-credentials).
 
 ## Links
 
 - [Voice API Reference (Markdown)](https://developers.sinch.com/docs/voice/api-reference/voice.md)
 - [Voice API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/voice/api-reference/voice.yaml?download)
-- [SVAML Actions](https://developers.sinch.com/docs/voice/api-reference/svaml#actions) | [SVAML Instructions](https://developers.sinch.com/docs/voice/api-reference/svaml#instructions)
-- [Callbacks](https://developers.sinch.com/docs/voice/api-reference/voice/callbacks/ice) | [Callouts](https://developers.sinch.com/docs/voice/api-reference/voice/callouts/callouts)
+- [SVAML Actions](https://developers.sinch.com/docs/voice/api-reference/svaml.md#actions) | [SVAML Instructions](https://developers.sinch.com/docs/voice/api-reference/svaml.md#instructions)
+- [Callbacks](https://developers.sinch.com/docs/voice/api-reference/voice/callbacks/ice.md) | [Callouts](https://developers.sinch.com/docs/voice/api-reference/voice/callouts/callouts.md)
 - [Authentication](https://developers.sinch.com/docs/voice/api-reference/authentication.md) | [Callback Signing](https://developers.sinch.com/docs/voice/api-reference/authentication/callback-signed-request.md)
 - [Node.js SDK Reference](https://developers.sinch.com/docs/voice/sdk/node/syntax-reference.md)
 - [Python SDK Reference](https://developers.sinch.com/docs/voice/sdk/py/syntax-reference.md)
 - [Java SDK Reference](https://developers.sinch.com/docs/voice/sdk/java/syntax-reference.md)
 - [.NET SDK Reference](https://developers.sinch.com/docs/voice/sdk/dotnet/syntax-reference.md)
-- [Voice Tutorials](https://developers.sinch.com/docs/voice/tutorials)
+- [Voice Tutorials](https://developers.sinch.com/docs/voice/tutorials.md)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

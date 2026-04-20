@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. Individual skills have their own versions in metadata.
 
+## 2026-04-20
+
+### Changed
+
+- `sinch-10dlc` v1.1.1 — Added environment variable instructions; switched curl placeholders to shell variables; improved Key Concepts formatting
+- `sinch-fax-api` v1.0.2 — Added environment variable instructions; switched curl placeholders to shell variables; improved Key Concepts formatting
+- `sinch-in-app-calling` v1.0.2 — Clarified Phone-to-App/SIP-to-App backend reference; improved Key Concepts formatting
+- `sinch-mailgun-validate` v1.0.2 — Added environment variable instructions; switched curl placeholders to shell variables
+- `sinch-number-lookup-api` v1.0.3 — Added environment variable instructions; switched curl placeholders to shell variables
+- `sinch-number-order-api` v1.0.2 — Added environment variable instructions; switched curl placeholders to shell variables
+- `sinch-numbers-api` v1.1.1 — Improved Key Concepts formatting
+- `sinch-porting-api` v1.0.1 — Added environment variable instructions; switched curl placeholders to shell variables
+- `sinch-voice-api` v1.1.1 — Fixed doc links to use `.md` extensions for AI agent consumption
+
 ## 2026-04-17
 
 ### Added

@@ -3,7 +3,7 @@ name: sinch-10dlc
 description: Registers US 10DLC brands and campaigns with Sinch for A2P SMS messaging. Use when the user needs to register a brand, create a 10DLC campaign, check registration status, troubleshoot a 10DLC rejection, fix an EIN mismatch, upgrade from simplified to full registration, or qualify a campaign for US SMS sending on 10-digit long codes. Do NOT use for non-US messaging or toll-free/short code registration.
 metadata:
   author: Sinch
-  version: 1.1.0
+  version: 1.1.1
   category: Numbers
   tags: 10dlc, sms, a2p, brand-registration, campaign-registration, us-messaging, brand, campaign, tcr, registration, a2p-sms
   uses:
@@ -40,13 +40,20 @@ https://us10dlc.numbers.api.sinch.com
 
 US-only — there are no regional variants for 10DLC.
 
+Store credentials in environment variables — never hardcode tokens or keys in commands or source code:
+
+```bash
+export PROJECT_ID="your-project-id"
+export ACCESS_TOKEN="your-oauth-token"
+```
+
 ### First API Call
 
 Register a brand:
 
 ```bash
-curl -X POST "https://us10dlc.numbers.api.sinch.com/v1/projects/{PROJECT_ID}/brandRegistrations:submit" \
-  -H "Authorization: Bearer {ACCESS_TOKEN}" \
+curl -X POST "https://us10dlc.numbers.api.sinch.com/v1/projects/$PROJECT_ID/brandRegistrations:submit" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
   "brandRegistrationType": "FULL",
@@ -82,19 +89,16 @@ curl -X POST "https://us10dlc.numbers.api.sinch.com/v1/projects/{PROJECT_ID}/bra
 
 ## Key Concepts
 
-**Brand** — The company sending messages. Must be registered first. ID starts with `B` (e.g., `BESINCH`).
-**Campaign** — A messaging use case tied to a brand. Defines what, to whom, and why.
-**TCR** — The Campaign Registry. Sinch submits to TCR on your behalf as your CSP.
-**Registration type** (`brandRegistrationType`) — `SIMPLIFIED` (basic, lower throughput, $10) or `FULL` (complete vetting, higher throughput, $50). Default is `SIMPLIFIED`. Prefer `FULL` for production.
-**Trust score** — Assigned by TCR after vetting. Higher score = more messages per second. This is a TCR concept; the Sinch API does not return it in the brand response.
-**Use case** — The campaign's messaging purpose. Use cases are categorized as Standard or Special, with different vetting requirements and fees.
-
-Standard Use Cases: 2FA, ACCOUNT_NOTIFICATION, CUSTOMER_CARE, DELIVERY_NOTIFICATION, FRAUD_ALERT, HIGHER_EDUCATION, MARKETING, POLLING_VOTING, PUBLIC_SERVICE_ANNOUNCEMENT, SECURITY_ALERT.
-
-Special Use Cases: AGENTS_FRANCHISES, CARRIER_EXEMPT, CHARITY, EMERGENCY, K12_EDUCATION, POLITICAL, PROXY, SOCIAL, SWEEPSTAKE.
-
-Mixed/Low Volume: LOW_VOLUME or MIXED can be used for campaigns that combine multiple standard use cases but have low traffic requirements.
-**CSP** — Campaign Service Provider. Sinch typically acts as your CSP, managing the registration process. It's also possible for you to register as your own CSP directly with TCR and use Sinch for number provisioning and connectivity, though this is a more advanced setup.
+- **Brand** — The company sending messages. Must be registered first. ID starts with `B` (e.g., `BESINCH`).
+- **Campaign** — A messaging use case tied to a brand. Defines what, to whom, and why.
+- **TCR** — The Campaign Registry. Sinch submits to TCR on your behalf as your CSP.
+- **Registration type** (`brandRegistrationType`) — `SIMPLIFIED` (basic, lower throughput, $10) or `FULL` (complete vetting, higher throughput, $50). Default is `SIMPLIFIED`. Prefer `FULL` for production.
+- **Trust score** — Assigned by TCR after vetting. Higher score = more messages per second. This is a TCR concept; the Sinch API does not return it in the brand response.
+- **Use case** — The campaign's messaging purpose. Use cases are categorized as Standard or Special, with different vetting requirements and fees.
+  - Standard Use Cases: 2FA, ACCOUNT_NOTIFICATION, CUSTOMER_CARE, DELIVERY_NOTIFICATION, FRAUD_ALERT, HIGHER_EDUCATION, MARKETING, POLLING_VOTING, PUBLIC_SERVICE_ANNOUNCEMENT, SECURITY_ALERT.
+  - Special Use Cases: AGENTS_FRANCHISES, CARRIER_EXEMPT, CHARITY, EMERGENCY, K12_EDUCATION, POLITICAL, PROXY, SOCIAL, SWEEPSTAKE.
+  - Mixed/Low Volume: LOW_VOLUME or MIXED can be used for campaigns that combine multiple standard use cases but have low traffic requirements.
+- **CSP** — Campaign Service Provider. Sinch typically acts as your CSP, managing the registration process. It's also possible for you to register as your own CSP directly with TCR and use Sinch for number provisioning and connectivity, though this is a more advanced setup.
 
 ## Workflow: Complete 10DLC Setup
 

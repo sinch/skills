@@ -3,7 +3,7 @@ name: sinch-porting-api
 description: "Port phone numbers from other carriers into Sinch with the Porting API. Automates port-in order creation, portability checks, order tracking, on-demand activation, and webhook notifications. Use when porting numbers, checking portability, creating port-in orders, tracking port status, activating ported numbers, uploading LOA documents, or configuring porting defaults."
 metadata:
   author: Sinch
-  version: 1.0.0
+  version: 1.0.1
   category: Numbers
   tags: porting, port-in, number-transfer, carrier, portability, loa, foc, activation
   uses:
@@ -38,14 +38,22 @@ See [sinch-authentication](../sinch-authentication/SKILL.md) for full setup.
 |-------------|-----|
 | Production  | `https://porting.api.sinch.com/v1/projects/{PROJECT_ID}` |
 
+Store credentials in environment variables — never hardcode tokens, PINs, or keys in commands or source code:
+
+```bash
+export PROJECT_ID="your-project-id"
+export ACCESS_TOKEN="your-oauth-token"
+export PORT_OUT_PIN="your-port-out-pin"
+```
+
 ### First API Call — Check Portability
 
 Always check portability before creating an order:
 
 ```bash
-curl -X POST "https://porting.api.sinch.com/v1/projects/{PROJECT_ID}/portabilityChecks" \
+curl -X POST "https://porting.api.sinch.com/v1/projects/$PROJECT_ID/portabilityChecks" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer {ACCESS_TOKEN}" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
   -d '{
     "phoneNumbers": ["+15551234567", "+15559876543"]
   }'
@@ -74,9 +82,9 @@ Response:
 ### Create a Port-In Order
 
 ```bash
-curl -X POST "https://porting.api.sinch.com/v1/projects/{PROJECT_ID}/orders/portIns" \
+curl -X POST "https://porting.api.sinch.com/v1/projects/$PROJECT_ID/orders/portIns" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer {ACCESS_TOKEN}" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
   -d '{
     "desiredPortSchedule": {
       "desiredPortDate": "2026-05-15",
@@ -98,7 +106,7 @@ curl -X POST "https://porting.api.sinch.com/v1/projects/{PROJECT_ID}/orders/port
           "typeOfService": "B"
         },
         "portOutInfo": {
-          "existingPortOutPin": "1234"
+          "existingPortOutPin": "$PORT_OUT_PIN"
         }
       }
     ]
@@ -129,8 +137,8 @@ Response:
 ### Track an Order
 
 ```bash
-curl "https://porting.api.sinch.com/v1/projects/{PROJECT_ID}/orders/portIns/12345" \
-  -H "Authorization: Bearer {ACCESS_TOKEN}"
+curl "https://porting.api.sinch.com/v1/projects/$PROJECT_ID/orders/portIns/12345" \
+  -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
 
 Response:
@@ -160,8 +168,8 @@ Response:
 First check which number groups are ready:
 
 ```bash
-curl "https://porting.api.sinch.com/v1/projects/{PROJECT_ID}/orders/portIns/12345/availableActivations" \
-  -H "Authorization: Bearer {ACCESS_TOKEN}"
+curl "https://porting.api.sinch.com/v1/projects/$PROJECT_ID/orders/portIns/12345/availableActivations" \
+  -H "Authorization: Bearer $ACCESS_TOKEN"
 ```
 
 Response:
@@ -181,9 +189,9 @@ Response:
 Then activate:
 
 ```bash
-curl -X POST "https://porting.api.sinch.com/v1/projects/{PROJECT_ID}/orders/portIns/12345/activate" \
+curl -X POST "https://porting.api.sinch.com/v1/projects/$PROJECT_ID/orders/portIns/12345/activate" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer {ACCESS_TOKEN}" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
   -d '{
     "groupIds": ["grp-001"]
   }'
@@ -191,33 +199,20 @@ curl -X POST "https://porting.api.sinch.com/v1/projects/{PROJECT_ID}/orders/port
 
 ## Key Concepts
 
-**Port-In Order** — A request to transfer one or more phone numbers from another carrier to Sinch. Each order has a numeric `id` and tracks the overall lifecycle.
-
-**Order Status** — Lifecycle of a port-in order: `PENDING` (can update/cancel) → `CONFIRMED` (locked, awaiting port date) → `COMPLETED` (numbers active). Also: `PENDING_CANCELATION` → `CANCELED`.
-
-**Phone Number Status** — Per-number status within an order: `PENDING` → `CONFIRMED` → `ACTIVATED`. Also: `REJECTED` (see `rejectReason`), `CANCELED`, `EXCLUDED` (see `exclusionReason`).
-
-**FOC (Firm Order Confirmation)** — The confirmed port date set by the losing carrier. Returned as `focDate` on each phone number once confirmed. On-demand activation requires FOC date to be today or earlier.
-
-**End User** — The person or company that currently owns the number. Required fields: `name`, `streetNum`, `streetName`, `city`, `state`, `zipCode`. Must match the losing carrier's records exactly.
-
-**Port-Out Info** — Credentials from the losing carrier. Usually only `existingPortOutPin` is needed. May also include `accountNum`, `accountPhoneNumber`, `authorizingName`, `authorizingDate`.
-
-**LOA (Letter of Authorization)** — A document authorizing the port. Upload via `POST /orders/portIns/{orderId}/documents`.
-
-**On-Demand Activation** — When `onDemandActivation: true`, numbers are not auto-activated on the port date. Instead, call `POST /orders/portIns/{orderId}/activate` after FOC date is reached and numbers are routing on Sinch network.
-
-**Voice Configuration** — Optional per-number config for voice routing. Discriminated on `type`: `RTC` (programmable voice, requires `appId`), `EST` (elastic SIP trunking, requires `trunkId`), `FAX` (requires `serviceId`).
-
-**Messaging Configuration** — Optional per-number config for messaging features. Supports `A2PLC` (Application-to-Person Long Code) and `SMSMMS` feature types. Configured alongside voice options on each phone number in the order.
-
-**E911** — Optional per-number emergency location data. Submitted as part of the phone number entry in a port-in order for numbers that require E911 service.
-
-**Directory Listing** — Optional per-number directory listing information (e.g., name and address for directory assistance). Provided as part of the phone number entry in a port-in order.
-
-**Desired Port Schedule** — Required. Contains `desiredPortDate` (ISO date, required), `desiredPortTime` (defaults to project config or `09:00:00`), `desiredPortTimeZone` (one of: `US/Eastern`, `US/Central`, `US/Mountain`, `US/Pacific`).
-
-**Configuration** — Project-level defaults for porting: default contact info, webhook URL, default port time and timezone. Set via `POST /configuration`, updated via `PUT /configuration`.
+- **Port-In Order** — A request to transfer one or more phone numbers from another carrier to Sinch. Each order has a numeric `id` and tracks the overall lifecycle.
+- **Order Status** — Lifecycle of a port-in order: `PENDING` (can update/cancel) → `CONFIRMED` (locked, awaiting port date) → `COMPLETED` (numbers active). Also: `PENDING_CANCELATION` → `CANCELED`.
+- **Phone Number Status** — Per-number status within an order: `PENDING` → `CONFIRMED` → `ACTIVATED`. Also: `REJECTED` (see `rejectReason`), `CANCELED`, `EXCLUDED` (see `exclusionReason`).
+- **FOC (Firm Order Confirmation)** — The confirmed port date set by the losing carrier. Returned as `focDate` on each phone number once confirmed. On-demand activation requires FOC date to be today or earlier.
+- **End User** — The person or company that currently owns the number. Required fields: `name`, `streetNum`, `streetName`, `city`, `state`, `zipCode`. Must match the losing carrier's records exactly.
+- **Port-Out Info** — Credentials from the losing carrier. Usually only `existingPortOutPin` is needed. May also include `accountNum`, `accountPhoneNumber`, `authorizingName`, `authorizingDate`.
+- **LOA (Letter of Authorization)** — A document authorizing the port. Upload via `POST /orders/portIns/{orderId}/documents`.
+- **On-Demand Activation** — When `onDemandActivation: true`, numbers are not auto-activated on the port date. Instead, call `POST /orders/portIns/{orderId}/activate` after FOC date is reached and numbers are routing on Sinch network.
+- **Voice Configuration** — Optional per-number config for voice routing. Discriminated on `type`: `RTC` (programmable voice, requires `appId`), `EST` (elastic SIP trunking, requires `trunkId`), `FAX` (requires `serviceId`).
+- **Messaging Configuration** — Optional per-number config for messaging features. Supports `A2PLC` (Application-to-Person Long Code) and `SMSMMS` feature types. Configured alongside voice options on each phone number in the order.
+- **E911** — Optional per-number emergency location data. Submitted as part of the phone number entry in a port-in order for numbers that require E911 service.
+- **Directory Listing** — Optional per-number directory listing information (e.g., name and address for directory assistance). Provided as part of the phone number entry in a port-in order.
+- **Desired Port Schedule** — Required. Contains `desiredPortDate` (ISO date, required), `desiredPortTime` (defaults to project config or `09:00:00`), `desiredPortTimeZone` (one of: `US/Eastern`, `US/Central`, `US/Mountain`, `US/Pacific`).
+- **Configuration** — Project-level defaults for porting: default contact info, webhook URL, default port time and timezone. Set via `POST /configuration`, updated via `PUT /configuration`.
 
 ## Common Patterns
 

@@ -3,7 +3,7 @@ name: sinch-number-lookup-api
 description: Looks up phone number details via Sinch Number Lookup API. Use when checking carrier, line type, porting status, SIM swap, VoIP detection, or reassigned number detection (RND) for fraud prevention or routing decisions.
 metadata:
   author: Sinch
-  version: 1.0.2
+  version: 1.0.3
   category: Numbers
   tags: number-lookup, carrier, line-type, sim-swap, voip-detection, fraud-prevention
   uses:
@@ -35,13 +35,20 @@ See [sinch-authentication](../sinch-authentication/SKILL.md) for full setup.
 
 **Endpoint:** `POST /v2/projects/{PROJECT_ID}/lookups`
 
+Store credentials in environment variables — never hardcode tokens or keys in commands or source code:
+
+```bash
+export PROJECT_ID="your-project-id"
+export ACCESS_TOKEN="your-oauth-token"
+```
+
 ### First API Call
 
 ```bash
 curl -X POST \
-  "https://lookup.api.sinch.com/v2/projects/{PROJECT_ID}/lookups" \
+  "https://lookup.api.sinch.com/v2/projects/$PROJECT_ID/lookups" \
   -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer {ACCESS_TOKEN}" \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
   -d '{
     "number": "+12025550134",
     "features": ["LineType", "SimSwap", "VoIPDetection", "RND"],
