@@ -3,7 +3,7 @@ name: sinch-voice-api
 description: Build voice apps with Sinch Voice REST API. Use for phone calls, text-to-speech (TTS), IVR menus, DTMF input, conference calling, call recording, call forwarding, answering machine detection (AMD), SIP routing, WebSocket audio streaming, and SVAML call control.
 metadata:
   author: Sinch
-  version: 1.1.1
+  version: 1.1.2
   category: Voice
   tags: voice, calls, tts, ivr, dtmf, conference, recording, svaml, sip, amd, webrtc
   uses:
@@ -62,9 +62,10 @@ See [sinch-sdks](../sinch-sdks/SKILL.md) for installation and client initializat
 ### First API Call: TTS Callout
 
 ```bash
-curl -X POST "https://calling.api.sinch.com/calling/v1/callouts" \
-  -H "Content-Type: application/json" \
+curl -X POST \
+  "https://calling.api.sinch.com/calling/v1/callouts" \
   -u "{APPLICATION_KEY}:{APPLICATION_SECRET}" \
+  -H "Content-Type: application/json" \
   -d '{
     "method": "ttsCallout",
     "ttsCallout": {

@@ -3,7 +3,7 @@ name: sinch-number-lookup-api
 description: Looks up phone number details via Sinch Number Lookup API. Use when checking carrier, line type, porting status, SIM swap, VoIP detection, or reassigned number detection (RND) for fraud prevention or routing decisions.
 metadata:
   author: Sinch
-  version: 1.0.3
+  version: 1.0.4
   category: Numbers
   tags: number-lookup, carrier, line-type, sim-swap, voip-detection, fraud-prevention
   uses:
@@ -38,17 +38,17 @@ See [sinch-authentication](../sinch-authentication/SKILL.md) for full setup.
 Store credentials in environment variables — never hardcode tokens or keys in commands or source code:
 
 ```bash
-export PROJECT_ID="your-project-id"
-export ACCESS_TOKEN="your-oauth-token"
+export SINCH_PROJECT_ID="your-project-id"
+export SINCH_ACCESS_TOKEN="your-oauth-token"
 ```
 
 ### First API Call
 
 ```bash
 curl -X POST \
-  "https://lookup.api.sinch.com/v2/projects/$PROJECT_ID/lookups" \
-  -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  "https://lookup.api.sinch.com/v2/projects/$SINCH_PROJECT_ID/lookups" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
   -d '{
     "number": "+12025550134",
     "features": ["LineType", "SimSwap", "VoIPDetection", "RND"],
@@ -163,5 +163,5 @@ const results = await Promise.all(
 - [Getting Started](https://developers.sinch.com/docs/number-lookup-api-v2/getting-started)
 - [Combined Lookup + Verification](https://developers.sinch.com/docs/number-lookup-api-v2/combined-lookup-verification.md)
 - [Release Notes](https://developers.sinch.com/docs/number-lookup-api-v2/release-notes)
-- [OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/number-lookup-api-v2/api-reference/number-lookup-api-v2.yaml?download)
+- [OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/number-lookup-api-v2/api-reference/number-lookup-v2.yaml?download)
 - [LLMs.txt (full docs index)](https://developers.sinch.com/llms.txt)

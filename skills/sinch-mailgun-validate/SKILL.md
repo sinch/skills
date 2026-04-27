@@ -3,7 +3,7 @@ name: sinch-mailgun-validate
 description: Build with Mailgun Validate API for email verification and list hygiene. Use when validating email addresses, checking email deliverability, running bulk validation jobs, previewing list health, or cleaning an email list.
 metadata:
   author: Sinch
-  version: 1.0.2
+  version: 1.0.3
   category: Email
   tags: email, mailgun, validation, verification, list-hygiene, bulk-validation
   uses:
@@ -56,8 +56,9 @@ export MAILGUN_API_KEY="your-private-api-key"
 **Canonical example — validate one address:**
 
 ```bash
-curl -s --user "api:$MAILGUN_API_KEY" \
-  "https://api.mailgun.net/v4/address/validate?address=recipient@example.com"
+curl -X GET \
+  "https://api.mailgun.net/v4/address/validate?address=recipient@example.com" \
+  -s --user "api:$MAILGUN_API_KEY"
 ```
 
 Response:

@@ -3,7 +3,7 @@ name: sinch-provisioning-api
 description: Provisions and manages channel resources for Conversation API projects, including WhatsApp accounts/senders/templates, RCS senders, KakaoTalk senders/templates, webhooks, and bundles. Use when the user asks to onboard channels, configure provisioning webhooks, manage templates, orchestrate multi-service bundles, or automate channel setup.
 metadata:
   author: Sinch
-  version: 1.0.1
+  version: 1.0.2
   category: Messaging
   tags: provisioning, whatsapp, rcs, kakaotalk, channels, templates, bundles
   uses:
@@ -75,8 +75,9 @@ Prefer OAuth 2.0 for automation/CI. Use Basic auth only for quick manual tests.
 ### Canonical curl Example
 
 ```bash
-curl -X GET "https://provisioning.api.sinch.com/v1/projects/{PROJECT_ID}/whatsapp/senders" \
-  -H "Authorization: Bearer {ACCESS_TOKEN}"
+curl -X GET \
+  "https://provisioning.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/whatsapp/senders" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN"
 ```
 
 ## Microservices

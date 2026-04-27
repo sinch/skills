@@ -79,4 +79,4 @@ These are machine-readable formats optimized for AI agent consumption.
 
 - Add README.md, CHANGELOG.md, or INSTALLATION_GUIDE.md inside skill folders. Only SKILL.md and optional bundled resources.
 - Create skills that exceed 500 lines.
-- Use authentication credentials or API keys in code examples (use placeholders like `YOUR_PROJECT_ID`).
+- Use authentication credentials or API keys in code examples (use placeholders like `SINCH_PROJECT_ID`).

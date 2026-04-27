@@ -3,7 +3,7 @@ name: sinch-imported-numbers-hosting-orders
 description: Import, host, qualify, and text-enable phone numbers for Sinch SMS using the Imported Numbers and Hosting Orders API. Use when importing non-Sinch numbers as DCA, creating hosting orders, qualifying numbers for text-enablement, managing LOA workflows, or checking hosting order status.
 metadata:
   author: Sinch
-  version: 1.0.1
+  version: 1.0.2
   category: Numbers
   tags: imported-numbers, hosting-orders, text-enablement, dca, loa
   uses:
@@ -68,16 +68,17 @@ See [sinch-authentication](../sinch-authentication/SKILL.md) for full auth setup
 ### First API Call — Import a Number
 
 ```bash
-curl -X POST "https://imported.numbers.api.sinch.com/v1/projects/{PROJECT_ID}/importedNumbers" \
-  -H "Authorization: Bearer {ACCESS_TOKEN}" \
+curl -X POST \
+  "https://imported.numbers.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/importedNumbers" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "phoneNumber": "+11234567890",
     "regionCode": "US",
     "displayName": "My Number",
     "smsConfiguration": {
-      "servicePlanId": "{SERVICE_PLAN_ID}",
-      "campaignId": "{CAMPAIGN_ID}"
+      "servicePlanId": "$SERVICE_PLAN_ID",
+      "campaignId": "$CAMPAIGN_ID"
     },
     "callbackUrl": "https://example.com/callback"
   }'

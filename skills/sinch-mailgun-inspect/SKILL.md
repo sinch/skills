@@ -3,7 +3,7 @@ name: sinch-mailgun-inspect
 description: Checks email quality before sending via Mailgun Inspect API. Use when previewing emails across clients, checking accessibility (WCAG), validating links, validating images, or analyzing email HTML/CSS compatibility.
 metadata:
   author: Sinch
-  version: 1.0.2
+  version: 1.0.3
   category: Email
   tags: email, mailgun, inspect, accessibility, links, images, previews, qa
   uses:
@@ -62,14 +62,16 @@ Create responses may return `"status": "Processing"` or `"Completed"` depending 
 export MAILGUN_API_KEY="{MAILGUN_API_KEY}"
 
 # 1. Create test (returns 201 + test ID)
-curl --user "api:${MAILGUN_API_KEY}" \
-  -X POST https://api.mailgun.net/v1/inspect/accessibility \
+curl -X POST \
+  "https://api.mailgun.net/v1/inspect/accessibility" \
+  --user "api:$MAILGUN_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"html": "<html><body><h1>Hello</h1><img src=\"logo.png\"></body></html>", "encoded": false}'
 
 # 2. Poll for results (repeat until status is "Complete" or "Completed"; "Failed" = error)
-curl --user "api:${MAILGUN_API_KEY}" \
-  https://api.mailgun.net/v1/inspect/accessibility/TEST_ID
+curl -X GET \
+  "https://api.mailgun.net/v1/inspect/accessibility/TEST_ID" \
+  --user "api:$MAILGUN_API_KEY"
 ```
 
 All other endpoints follow the same create-then-poll pattern. Adapt the path and request body per the capability table above. For programmatic use, prefer the Node.js SDK from the authentication skill so the key is not interpolated into command strings.

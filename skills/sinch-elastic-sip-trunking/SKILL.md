@@ -3,7 +3,7 @@ name: sinch-elastic-sip-trunking
 description: Provisions SIP trunks, endpoints, ACLs, credential lists, and phone numbers via the Sinch Elastic SIP Trunking REST API. Use when the user needs SIP connectivity, trunk provisioning, inbound/outbound PSTN voice routing, PBX integration, or SIP-to-PSTN bridging.
 metadata:
   author: Sinch
-  version: 1.0.1
+  version: 1.0.2
   category: Voice
   tags: sip, trunking, est, pstn, voice, pbx, inbound, outbound
   uses:
@@ -63,8 +63,9 @@ See [sinch-sdks](../sinch-sdks/SKILL.md) for installation and client initializat
 ### First API Call — Create a Trunk
 
 ```bash
-curl -X POST "https://elastic-trunking.api.sinch.com/v1/projects/{PROJECT_ID}/trunks" \
-  -H "Authorization: Bearer {ACCESS_TOKEN}" \
+curl -X POST \
+  "https://elastic-trunking.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/trunks" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"name": "my-trunk", "hostName": "my-trunk"}'
 ```

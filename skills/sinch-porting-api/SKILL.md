@@ -3,7 +3,7 @@ name: sinch-porting-api
 description: "Port phone numbers from other carriers into Sinch with the Porting API. Automates port-in order creation, portability checks, order tracking, on-demand activation, and webhook notifications. Use when porting numbers, checking portability, creating port-in orders, tracking port status, activating ported numbers, uploading LOA documents, or configuring porting defaults."
 metadata:
   author: Sinch
-  version: 1.0.1
+  version: 1.0.2
   category: Numbers
   tags: porting, port-in, number-transfer, carrier, portability, loa, foc, activation
   uses:
@@ -41,8 +41,8 @@ See [sinch-authentication](../sinch-authentication/SKILL.md) for full setup.
 Store credentials in environment variables — never hardcode tokens, PINs, or keys in commands or source code:
 
 ```bash
-export PROJECT_ID="your-project-id"
-export ACCESS_TOKEN="your-oauth-token"
+export SINCH_PROJECT_ID="your-project-id"
+export SINCH_ACCESS_TOKEN="your-oauth-token"
 ```
 
 ### First API Call — Check Portability
@@ -50,9 +50,10 @@ export ACCESS_TOKEN="your-oauth-token"
 Always check portability before creating an order:
 
 ```bash
-curl -X POST "https://porting.api.sinch.com/v1/projects/$PROJECT_ID/portabilityChecks" \
+curl -X POST \
+  "https://porting.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/portabilityChecks" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $ACCESS_TOKEN" \
   -d '{
     "phoneNumbers": ["+15551234567", "+15559876543"]
   }'
@@ -81,9 +82,10 @@ Response:
 ### Create a Port-In Order
 
 ```bash
-curl -X POST "https://porting.api.sinch.com/v1/projects/$PROJECT_ID/orders/portIns" \
+curl -X POST \
+  "https://porting.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/orders/portIns" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $ACCESS_TOKEN" \
   -d '{
     "desiredPortSchedule": {
       "desiredPortDate": "2026-05-15",
@@ -139,8 +141,9 @@ Response:
 
 ```bash
 # Auth: same Bearer token header as above
-curl "https://porting.api.sinch.com/v1/projects/$PROJECT_ID/orders/portIns/12345" \
-  -H "Authorization: Bearer $ACCESS_TOKEN"
+curl -X GET \
+  "https://porting.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/orders/portIns/12345" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN"
 ```
 
 Response:
@@ -171,8 +174,9 @@ First check which number groups are ready:
 
 ```bash
 # Auth: same Bearer token header as above
-curl "https://porting.api.sinch.com/v1/projects/$PROJECT_ID/orders/portIns/12345/availableActivations" \
-  -H "Authorization: Bearer $ACCESS_TOKEN"
+curl -X GET \
+  "https://porting.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/orders/portIns/12345/availableActivations" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN"
 ```
 
 Response:
@@ -193,9 +197,10 @@ Then activate:
 
 ```bash
 # Auth: same Bearer token header as above
-curl -X POST "https://porting.api.sinch.com/v1/projects/$PROJECT_ID/orders/portIns/12345/activate" \
+curl -X POST \
+  "https://porting.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/orders/portIns/12345/activate" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $ACCESS_TOKEN" \
   -d '{
     "groupIds": ["grp-001"]
   }'

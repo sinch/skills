@@ -3,7 +3,7 @@ name: sinch-mailgun
 description: Sends, receives, and tracks email via the Mailgun (Sinch) API. Use when the user wants to send email, manage domains, configure webhooks, query email events/logs, manage templates, handle suppressions (bounces, unsubscribes, complaints), set up inbound routes, manage mailing lists, DKIM keys, or IP warmup using Mailgun.
 metadata:
   author: Sinch
-  version: 1.0.1
+  version: 1.0.2
   category: Email
   tags: email, mailgun, smtp, webhooks, templates, domains, suppressions
   uses:
@@ -50,8 +50,9 @@ Always match the base URL to the domain's region. Data never crosses regions.
 ### Send an Email
 
 ```bash
-curl -s --user "api:$MAILGUN_API_KEY" \
-  https://api.mailgun.net/v3/$MAILGUN_DOMAIN/messages \
+curl -X POST \
+  "https://api.mailgun.net/v3/$MAILGUN_DOMAIN/messages" \
+  -s --user "api:$MAILGUN_API_KEY" \
   -F from='Sender <sender@YOUR_DOMAIN>' \
   -F to='recipient@example.com' \
   -F subject='Hello from Mailgun' \

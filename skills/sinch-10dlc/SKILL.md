@@ -3,7 +3,7 @@ name: sinch-10dlc
 description: Registers US 10DLC brands and campaigns with Sinch for A2P SMS messaging. Use when the user needs to register a brand, create a 10DLC campaign, check registration status, troubleshoot a 10DLC rejection, fix an EIN mismatch, upgrade from simplified to full registration, or qualify a campaign for US SMS sending on 10-digit long codes. Do NOT use for non-US messaging or toll-free/short code registration.
 metadata:
   author: Sinch
-  version: 1.1.1
+  version: 1.1.2
   category: Numbers
   tags: 10dlc, sms, a2p, brand-registration, campaign-registration, us-messaging, brand, campaign, tcr, registration, a2p-sms
   uses:
@@ -43,8 +43,8 @@ US-only — there are no regional variants for 10DLC.
 Store credentials in environment variables — never hardcode tokens or keys in commands or source code:
 
 ```bash
-export PROJECT_ID="your-project-id"
-export ACCESS_TOKEN="your-oauth-token"
+export SINCH_PROJECT_ID="your-project-id"
+export SINCH_ACCESS_TOKEN="your-oauth-token"
 ```
 
 ### First API Call
@@ -52,8 +52,9 @@ export ACCESS_TOKEN="your-oauth-token"
 Register a brand:
 
 ```bash
-curl -X POST "https://us10dlc.numbers.api.sinch.com/v1/projects/$PROJECT_ID/brandRegistrations:submit" \
-  -H "Authorization: Bearer $ACCESS_TOKEN" \
+curl -X POST \
+  "https://us10dlc.numbers.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/brandRegistrations:submit" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
   "brandRegistrationType": "FULL",
