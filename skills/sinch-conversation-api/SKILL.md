@@ -3,7 +3,7 @@ name: sinch-conversation-api
 description: "Sends and receives omnichannel messages with Sinch Conversation API. One unified API for SMS, WhatsApp, RCS, MMS, Viber, Messenger, and more. Use when sending texts, WhatsApp messages, rich cards, carousels, templates, batch messages, or building multi-channel messaging."
 metadata:
   author: Sinch
-  version: 1.1.0
+  version: 1.1.1
   category: Messaging
   tags: conversation, messaging, sms, whatsapp, rcs, mms, viber, messenger, instagram, telegram, kakao, line, wechat, webhooks, templates
   uses:
@@ -33,9 +33,28 @@ When the user chooses **direct API calls**, refer to the [Messages API Reference
 
 ## Getting Started
 
+### Agent Credentials handling
+
+Store credentials in environment variables — never hardcode tokens or keys in commands or source code:
+
+```bash
+export SINCH_PROJECT_ID="your-project-id"
+export SINCH_KEY_ID="your-key-id"
+export SINCH_KEY_SECRET="your-key-secret"
+export SINCH_APP_ID="your-app-id"
+export SINCH_REGION="us"  # us|eu|br, default: us
+export SINCH_SMS_SENDER_ID="your-sms-sender-id"  # Alphanumeric or phone number, required for SMS channel
+```
+
 ### Authentication
 
-See [sinch-authentication](../sinch-authentication/SKILL.md) for full setup.
+Ensure that authentication headers are properly set when making API calls. The Conversation API uses Bearer token authentication:
+
+```bash
+-H "Authorization: Bearer $SINCH_ACCESS_TOKEN"
+```
+
+See [sinch-authentication](../sinch-authentication/SKILL.md) for full setup, most importantly how to obtain `{ACCESS_TOKEN}` (OAuth2 client-credentials — do not mint your own JWT).
 
 ### Base URL
 
@@ -47,16 +66,19 @@ Regional — must match the Conversation API app region:
 | EU | `https://eu.conversation.api.sinch.com` |
 | BR | `https://br.conversation.api.sinch.com` |
 
+**Note:** Ensure that the base URL matches the region of your Conversation API application. For example, if your app is set up in the EU region, requests to `https://us.conversation.api.sinch.com` will fail and must instead be directed to `https://eu.conversation.api.sinch.com`.
+
 ### First API Call
 
 **curl:**
 
 ```bash
-curl -X POST "https://us.conversation.api.sinch.com/v1/projects/{PROJECT_ID}/messages:send" \
+curl -X POST \
+  "https://$SINCH_REGION.conversation.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/messages:send" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer {ACCESS_TOKEN}" \
   -d '{
-    "app_id": "{APP_ID}",
+    "app_id": "'$SINCH_APP_ID'",
     "recipient": {
       "identified_by": {
         "channel_identities": [{
@@ -71,10 +93,22 @@ curl -X POST "https://us.conversation.api.sinch.com/v1/projects/{PROJECT_ID}/mes
       }
     },
     "channel_properties": {
-      "SMS_SENDER": "+15559876543"
+      "SMS_SENDER": "$SINCH_SMS_SENDER_ID"
     }
   }'
 ```
+
+Ensure the `Content-Type` header is explicitly set to `application/json` when making API calls. For example:
+
+```bash
+-H "Content-Type: application/json"
+```
+
+Omitting this header will result in API errors as the server expects JSON-formatted data.
+
+Verify that the base URL matches the region of your Sinch Conversation API application before making requests.
+
+Using the incorrect base URL will result in `404` errors. Set the region properly in your environment variable, e.g. `SINCH_REGION="us"`.
 
 ## Key Concepts
 
@@ -109,14 +143,6 @@ curl -X POST "https://us.conversation.api.sinch.com/v1/projects/{PROJECT_ID}/mes
 ## Executable Scripts
 
 Bundled Node.js scripts in `scripts/` for sending messages (SMS, RCS text/card/carousel/choice/media/location/template), listing messages, and webhook CRUD. All read credentials from environment variables and support `--help`.
-
-```bash
-export SINCH_PROJECT_ID="your-project-id"
-export SINCH_KEY_ID="your-key-id"
-export SINCH_KEY_SECRET="your-key-secret"
-export SINCH_APP_ID="your-app-id"
-export SINCH_REGION="us"  # us|eu|br, default: us
-```
 
 Examples:
 

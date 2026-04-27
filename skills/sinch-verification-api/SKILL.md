@@ -3,7 +3,7 @@ name: sinch-verification-api
 description: Verify phone numbers via SMS, Flashcall, Phone Call, Data (seamless carrier-level), or WhatsApp with Sinch Verification API. Use when implementing user phone verification, OTP, two-factor authentication, or number ownership confirmation flows.
 metadata:
   author: Sinch
-  version: 1.0.1
+  version: 1.0.2
   category: Verification
   tags: verification, otp, sms, flashcall, 2fa, phone-verification, whatsapp
   uses:
@@ -55,9 +55,10 @@ See [sinch-sdks](../sinch-sdks/SKILL.md) for installation and client initializat
 
 ```bash
 # Uses Basic Auth (-u) for simplicity. Use Application Signed Requests in production.
-curl -X POST https://verification.api.sinch.com/verification/v1/verifications \
-  -H 'Content-Type: application/json' \
+curl -X POST \
+  "https://verification.api.sinch.com/verification/v1/verifications" \
   -u {APPLICATION_KEY}:{APPLICATION_SECRET} \
+  -H 'Content-Type: application/json' \
   -d '{
     "identity": { "type": "number", "endpoint": "+12025550134" },
     "method": "sms"

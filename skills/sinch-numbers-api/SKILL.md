@@ -3,7 +3,7 @@ name: sinch-numbers-api
 description: "Search, rent, manage, and release phone numbers with the Sinch Numbers API. Use when listing active numbers, searching available numbers, renting or releasing numbers, updating number configuration (SMS/voice/callback), managing emergency addresses, or checking available regions."
 metadata:
   author: Sinch
-  version: 1.1.1
+  version: 1.1.2
   category: Numbers
   tags: numbers, phone-numbers, rent, release, search, sms, voice, configuration
   uses:
@@ -39,8 +39,10 @@ See [sinch-authentication](../sinch-authentication/SKILL.md) for full setup.
 ### Step 3: Verify connectivity
 
 ```bash
-curl -X GET "https://numbers.api.sinch.com/v1/projects/{PROJECT_ID}/activeNumbers?regionCode=US&type=LOCAL&pageSize=10" \
-  -H "Authorization: Bearer {ACCESS_TOKEN}"
+curl -X GET \
+  "https://numbers.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/activeNumbers?regionCode=US&type=LOCAL&pageSize=10" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN" \
+  -H "Content-Type: application/json"
 ```
 
 A 200 response confirms credentials and project access.

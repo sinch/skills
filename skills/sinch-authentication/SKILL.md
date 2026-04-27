@@ -3,7 +3,7 @@ name: sinch-authentication
 description: Configures Sinch API credentials and authentication. Use when setting up OAuth2, Basic auth, application signing, or API keys for any Sinch product including Conversation API, Voice, Verification, Numbers, Fax, and Mailgun. Also use when troubleshooting 401 Unauthorized, 403 Forbidden, invalid signature, or credential errors against any Sinch API. For SDKs usage, see sinch-sdks.
 metadata:
   author: Sinch
-  version: 1.1.0
+  version: 1.1.1
   category: Core
   tags: authentication, oauth2, basic-auth, api-keys, credentials
 ---
@@ -60,9 +60,10 @@ export MAILGUN_DOMAIN="your-domain.com"
 **OAuth2 (recommended)** — Exchange credentials for a bearer token:
 
 ```bash
-curl -X POST https://auth.sinch.com/oauth2/token \
-  -d grant_type=client_credentials \
+curl -X POST \
+  https://auth.sinch.com/oauth2/token \
   -u "$SINCH_KEY_ID:$SINCH_KEY_SECRET"
+  -d grant_type=client_credentials \
 ```
 
 The response JSON contains an `access_token` field — this is the JWT to use as the bearer token:
@@ -71,11 +72,14 @@ The response JSON contains an `access_token` field — this is the JWT to use as
 { "access_token": "eyJ...", "token_type": "bearer", "expires_in": 3600 }
 ```
 
+> **Do not mint your own JWT.** The `access_token` above is issued and signed by Sinch's auth server. Locally-signed JWTs (e.g. `jsonwebtoken.sign({ iss: keyId }, keySecret, { algorithm: "HS256" })`) will be rejected with **HTTP 401** by every Sinch API. Always POST `grant_type=client_credentials` to the token endpoint and use the returned `access_token` verbatim.
+
 Use it in subsequent requests (expires in 3600s):
 
 ```bash
-curl -H "Authorization: Bearer $ACCESS_TOKEN" \
-  https://numbers.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/activeNumbers
+curl -X GET \
+  "https://numbers.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/activeNumbers" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN"
 ```
 
 The token endpoint `https://auth.sinch.com/oauth2/token` works for **all** project-scoped APIs, including regional ones like Conversation and Template Management. Regional aliases (`us.auth.sinch.com`, `eu.auth.sinch.com`) also exist but are not required — the global URL issues tokens valid for any region.
@@ -83,8 +87,9 @@ The token endpoint `https://auth.sinch.com/oauth2/token` works for **all** proje
 **Basic auth (quick testing only)** — Supported but **not recommended for production** (heavily rate-limited). Pass Key ID as username and Key Secret as password:
 
 ```bash
-curl -u "$SINCH_KEY_ID:$SINCH_KEY_SECRET" \
-  https://numbers.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/activeNumbers
+curl -X GET \
+  "https://numbers.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/activeNumbers" \
+  -u "$SINCH_KEY_ID:$SINCH_KEY_SECRET"
 ```
 
 Always prefer OAuth2 bearer tokens for production workloads — Basic auth has lower rate limits and exposes credentials in every request.
@@ -94,8 +99,9 @@ Always prefer OAuth2 bearer tokens for production workloads — Basic auth has l
 Use **Basic auth** (prototyping) — Application Key as username, Application Secret as password:
 
 ```bash
-curl -X POST -u "$SINCH_APP_KEY:$SINCH_APP_SECRET" \
-  https://calling.api.sinch.com/calling/v1/callouts
+curl -X POST \
+  "https://calling.api.sinch.com/calling/v1/callouts" \
+  -u "$SINCH_APP_KEY:$SINCH_APP_SECRET"
 ```
 
 Or use **HMAC Signed Requests** (production) — see signing algorithm docs:
@@ -107,8 +113,9 @@ Verification API also supports **Public Authentication** (weak, client-side SDK 
 ### Mailgun
 
 ```bash
-curl -s --user "api:$MAILGUN_API_KEY" \
-  https://api.mailgun.net/v3/$MAILGUN_DOMAIN/messages
+curl -X GET \
+  "https://api.mailgun.net/v3/$MAILGUN_DOMAIN/messages" \
+  -s --user "api:$MAILGUN_API_KEY"
 ```
 
 ## SDK Installation

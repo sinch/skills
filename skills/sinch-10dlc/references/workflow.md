@@ -37,8 +37,9 @@ See [Register a Brand](https://developers.sinch.com/docs/10dlc-registration/api-
 Registration is **asynchronous** — it takes minutes to days. There are **no webhooks**; you must poll.
 
 ```bash
-curl "https://us10dlc.numbers.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/brandRegistrations/$BRAND_REGISTRATION_ID" \
-  -H "Authorization: Bearer $ACCESS_TOKEN"
+curl -X GET \
+  "https://us10dlc.numbers.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/brandRegistrations/$BRAND_REGISTRATION_ID" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN"
 ```
 
 Example response:
@@ -92,8 +93,9 @@ Common rejection categories: `TAX_ID` (EIN mismatch), `STOCK_SYMBOL` (stock info
 Before creating a campaign, verify requirements and estimated fees:
 
 ```bash
-curl "https://us10dlc.numbers.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/campaignRegistrations:qualify?brandId=$BRAND_ID&useCase=MARKETING" \
-  -H "Authorization: Bearer $ACCESS_TOKEN"
+curl -X GET \
+  "https://us10dlc.numbers.api.sinch.com/v1/projects/$SINCH_PROJECT_ID/campaignRegistrations:qualify?brandId=$BRAND_ID&useCase=MARKETING" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN"
 ```
 
 `useCase` is **optional** — omit it to get qualification data for all use cases at once (useful when the user hasn't decided yet).

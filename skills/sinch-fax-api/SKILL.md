@@ -3,7 +3,7 @@ name: sinch-fax-api
 description: Send and receive faxes programmatically with Sinch Fax API. Use when building fax workflows, fax-to-email delivery, sending PDFs by fax, checking fax status, managing fax services, configuring cover pages, receiving fax webhooks, or integrating fax into healthcare, legal, or financial applications.
 metadata:
   author: Sinch
-  version: 1.0.2
+  version: 1.0.3
   category: Voice
   tags: fax, pdf, fax-to-email, webhooks, healthcare, legal
   uses:
@@ -34,17 +34,17 @@ See [sinch-sdks](../sinch-sdks/SKILL.md) for SDK installation and client initial
 Store credentials in environment variables — never hardcode tokens or keys in commands or source code:
 
 ```bash
-export PROJECT_ID="your-project-id"
-export ACCESS_TOKEN="your-oauth-token"
+export SINCH_PROJECT_ID="your-project-id"
+export SINCH_ACCESS_TOKEN="your-oauth-token"
 ```
 
 **curl:**
 
 ```bash
 curl -X POST \
-  "https://fax.api.sinch.com/v3/projects/$PROJECT_ID/faxes" \
-  -H 'Content-Type: application/json' \
-  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  "https://fax.api.sinch.com/v3/projects/$SINCH_PROJECT_ID/faxes" \
+  -H "Authorization: Bearer $SINCH_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
   -d '{
     "to": "+12025550134",
     "contentUrl": "https://example.com/document.pdf",
