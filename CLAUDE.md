@@ -61,6 +61,7 @@ One folder per Sinch product. The skill file is always `SKILL.md`.
 
 The shared `skills/sinch-authentication/SKILL.md` skill covers all auth methods. Product skills reference it rather than duplicating auth setup.
 
+
 - OAuth2 (most APIs): project ID + key ID + key secret → bearer token
 - Basic Auth: project ID + key ID + key secret (some APIs)
 - Application signing: Voice API, Verification API (HMAC-SHA256)
