@@ -15,10 +15,15 @@ jobs:
       contents: read
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: tesslio/setup-tessl@v2
         with:
           token: ${{ secrets.TESSL_API_KEY }}
+
+      - name: Set unique publish version
+        run: |
+          jq --arg v "1.0.${{ github.run_number }}" '.version = $v' tile.json > tile.json.tmp
+          mv tile.json.tmp tile.json
 
       - run: tessl tile publish
