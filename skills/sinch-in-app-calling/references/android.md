@@ -1,7 +1,7 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file describes the Android In-App Calling integration flow and
+> notable APIs. For SDK method signatures and payload shape (field names, nesting, encodings,
+> enums), refer to the canonical `developers.sinch.com` docs linked from the parent
+> [SKILL.md](../SKILL.md) before writing code or prose that states payload structure.
 
 <!-- Reference file for Android SDK integration.
         Read only when the user's project targets Android. -->
@@ -26,13 +26,13 @@ dependencies {
 ```
 
 ### Maven Central
-Consume the SDK directly from Maven Central. See the [SDK Downloads](https://developers.sinch.com/docs/in-app-calling/sdk-downloads#android-sdk-on-maven-central) page for the Gradle coordinates.
+Consume the SDK directly from Maven Central. See the [SDK Downloads](https://developers.sinch.com/docs/in-app-calling/sdk-downloads.md#android-sdk-on-maven-central) page for the Gradle coordinates.
 
 ## Integration steps
 
 Every integration must follow these steps in order. Do not skip or reorder them.
 
-1. **Declare permissions in AndroidManifest.xml** - Add `INTERNET`, `ACCESS_NETWORK_STATE`, `RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`, `READ_PHONE_STATE` . And  add `CAMERA` if the implementation uses video calls.
+1. **Declare permissions in AndroidManifest.xml** - Add `INTERNET`, `ACCESS_NETWORK_STATE`, `RECORD_AUDIO`, `MODIFY_AUDIO_SETTINGS`, `READ_PHONE_STATE`. Add `CAMERA` if the implementation uses video calls.
 2. **Request runtime permissions** - Before starting a call, request `RECORD_AUDIO` (and `CAMERA` for video calls) from the user at runtime using the standard Android permission flow. The SDK will not function correctly without these grants.
 3. **Set up FCM** - Add `google-services.json` to your project, include the `com.google.gms.google-services` Gradle plugin, and add `com.google.firebase:firebase-messaging` as a dependency. Obtain the FCM sender ID and registration token.
 4. **Build a PushConfiguration** - Create an `FcmPushConfiguration` with the sender ID and registration token obtained in step 3.
@@ -127,12 +127,12 @@ Implement `SinchClientListener.onCredentialsRequired()` and supply a JWT signed 
 <!-- Claude: read https://developers.sinch.com/docs/in-app-calling/android/application-authentication.md for additional auth details if needed -->
 Read https://developers.sinch.com/docs/in-app-calling/android/application-authentication.md
 
-For production application it is recommended to generate and sign the JWT token on the backend server, then send it over a secure channel to the application and Sinch client running on the device. 
-For development or test purposes it is fine to have it embeded.
+For production applications it is recommended to generate and sign the JWT token on the backend server, then send it over a secure channel to the application and Sinch client running on the device. 
+For development or test purposes it is fine to have it embedded.
 <!-- Claude: Ask the user whether it can be embedded! -->
 Ask the user whether it can be embedded.
 If it can be embedded:
-A sample code for jwt generation is provided at `assets/jwt-helper-andorid` folder. Read and adapt it.
+A sample code for jwt generation is provided at `assets/jwt-helper-android` folder. Read and adapt it.
 ```kotlin
 override fun onCredentialsRequired(clientRegistration: ClientRegistration) {
     try {
@@ -201,7 +201,7 @@ dependencies {
 
 ### Step 2. Configure FCM v1 OAuth in the Sinch Dashboard
 
-In the [Sinch Dashboard](https://dashboard.sinch.com/voice/apps), select your app and go to the "In-app Voice & Video SDKs" tab. Under "Google FCM Identification", provide your OAuth endpoints so Sinch can send push messages on your behalf. This requires implementing a backend OAuth flow. See the [FCM v1 OAuth2.0 documentation](https://developers.sinch.com/docs/in-app-calling/android/push-notifications#fcm-v1-oauth20-flow) for details.
+In the [Sinch Dashboard](https://dashboard.sinch.com/voice/apps), select your app and go to the "In-app Voice & Video SDKs" tab. Under "Google FCM Identification", provide your OAuth endpoints so Sinch can send push messages on your behalf. This requires implementing a backend OAuth flow. See the [FCM v1 OAuth2.0 documentation](https://developers.sinch.com/docs/in-app-calling/android/push-notifications.md#fcm-v1-oauth20-flow) for details.
 
 ### Step 3. Acquire sender ID and registration token
 

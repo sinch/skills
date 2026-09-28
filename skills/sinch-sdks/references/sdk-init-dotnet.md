@@ -1,7 +1,5 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file shows .NET SDK installation and client-initialization examples.
+> For SDK method signatures and initialization options, fetch the owning product's SDK syntax reference on `developers.sinch.com` (route via the product skill or [llms.txt](https://developers.sinch.com/llms.txt)) before writing code or prose that states payload structure.
 
 # SDK Installation (.NET)
 

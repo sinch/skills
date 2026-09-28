@@ -1,7 +1,6 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file inventories runnable examples and explains when to use
+> them. For payload shapes, refer to the canonical `developers.sinch.com` docs linked
+> from the parent [SKILL.md](../SKILL.md) before writing code or prose that states payload structure.
 
 # Bundled scripts
 
@@ -26,14 +25,14 @@ Each script prints a short usage hint when invoked with `--help`.
 
 Channel-specific send scripts are bundled with the channel skills:
 
-- SMS: [sinch-sms](../../sinch-sms/SKILL.md) — `scripts/send_sms.cjs`
-- RCS: [sinch-rcs](../../sinch-rcs/SKILL.md) — `scripts/send_text.cjs`, `send_card.cjs`, `send_carousel.cjs`, `send_choice.cjs`, `send_location.cjs`, `send_calendar.cjs`, `send_media.cjs`, `send_template.cjs`
+- SMS: `sinch-sms` — `scripts/send_sms.cjs`
+- RCS: `sinch-rcs` — `scripts/send_text.cjs`, `send_card.cjs`, `send_carousel.cjs`, `send_choice.cjs`, `send_location.cjs`, `send_calendar.cjs`, `send_media.cjs`, `send_template.cjs`
 
 ## Webhooks
 
 | Script | Purpose |
 |--------|---------|
-| `webhooks/create_webhook.cjs` | Register a webhook on an app (set `target`, `target_type: HTTP`, and `triggers`). |
+| `webhooks/create_webhook.cjs` | Register a webhook on an app (set `target`, `target_type: HTTP`, and `triggers`). Posts to the project-scoped `POST /v1/projects/{project_id}/webhooks` with `app_id` in the body — not to `/apps/{app_id}/webhooks`, which is list-only. |
 | `webhooks/list_webhooks.cjs` | List all webhooks registered on an app. |
 | `webhooks/get_webhook.cjs` | Fetch a single webhook by ID. |
 | `webhooks/update_webhook.cjs` | Update an existing webhook's target, triggers, or secret. |

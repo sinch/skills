@@ -1,7 +1,7 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file describes the campaign-registration fields and how carriers
+> evaluate them. For payload shape (field names, nesting, encodings, enums), refer to the
+> canonical `developers.sinch.com` docs linked from the parent [SKILL.md](../SKILL.md) before
+> writing code or prose that states payload structure.
 
 # Campaign Registration Fields
 

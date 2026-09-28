@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /*
  * EXECUTION TOOL — not a schema reference.
- * Run this to PERFORM a task (e.g. create a webhook, send a test message) when you do not
- * need to write application code. Do NOT copy its payload literals or logic into a new
- * codebase as if they were the API spec — load the authoritative developers.sinch.com doc
- * instead. See "Source of Truth" in this skill's SKILL.md.
+ * Run this script as-is to PERFORM this task when you do not need to write
+ * application code; side-effect rules still apply (billable/destructive calls
+ * need explicit user approval). Do NOT copy its payload literals or logic into
+ * a new codebase as if they were the API spec — for payload shape, load the
+ * canonical developers.sinch.com docs linked from ../SKILL.md instead.
  */
 /**
  * Send an RCS carousel message via Sinch Conversation API.
@@ -23,54 +24,59 @@
  *   SINCH_REGION       - API region: us, eu, or br (default: us)
  */
 
-var client = require("./common/sinch_client.cjs");
+const client = require("./common/sinch_client.cjs");
+const { parseArgs } = require("node:util");
 
-function parseArgs(argv) {
-  var args = { fallbackSms: false };
-  for (var i = 2; i < argv.length; i++) {
-    switch (argv[i]) {
-      case "--to":
-        args.to = argv[++i];
-        break;
-      case "--cards":
-        try {
-          args.cards = JSON.parse(argv[++i]);
-        } catch (e) {
-          console.error("Error: --cards must be valid JSON array");
-          process.exit(1);
-        }
-        break;
-      case "--outer-choices":
-        args.outerChoices = argv[++i].split(",");
-        break;
-      case "--fallback-sms":
-        args.fallbackSms = true;
-        break;
-      case "--sender":
-        args.sender = argv[++i];
-        break;
-      case "--help":
-        console.log(
-          'Usage: node send_carousel.cjs --to PHONE --cards JSON_ARRAY [--outer-choices "Choice1,Choice2"] [--fallback-sms] [--sender NUMBER]',
-        );
-        console.log(
-          'Example JSON: \'[{"title":"Card1","description":"Desc1","image":"https://...","choices":["Buy","Learn More"]}]\'',
-        );
-        process.exit(0);
-    }
+function parseArguments() {
+  const { values } = parseArgs({
+    options: {
+      "to":            { type: "string" },
+      "cards":         { type: "string" },
+      "outer-choices": { type: "string" },
+      "fallback-sms":  { type: "boolean", default: false },
+      "sender":        { type: "string" },
+      "help":          { type: "boolean" },
+    },
+  });
+
+  if (values.help) {
+    console.log(
+      'Usage: node send_carousel.cjs --to PHONE --cards JSON_ARRAY [--outer-choices "Choice1,Choice2"] [--fallback-sms] [--sender NUMBER]',
+    );
+    console.log(
+      'Example JSON: \'[{"title":"Card1","description":"Desc1","image":"https://...","choices":["Buy","Learn More"]}]\'',
+    );
+    process.exit(0);
   }
-  if (!args.to || !args.cards) {
+
+  if (!values.to || !values.cards) {
     console.error("Error: --to and --cards are required");
     console.error(
       "Usage: node send_carousel.cjs --to PHONE --cards JSON_ARRAY",
     );
     process.exit(1);
   }
-  if (args.cards.length < 1 || args.cards.length > 10) {
+
+  let cards;
+  try {
+    cards = JSON.parse(values.cards);
+  } catch {
+    console.error("Error: --cards must be valid JSON array");
+    process.exit(1);
+  }
+
+  if (cards.length < 1 || cards.length > 10) {
     console.error("Error: carousel must have 1-10 cards");
     process.exit(1);
   }
-  return args;
+
+  return {
+    to: values.to,
+    cards,
+    outerChoices: values["outer-choices"] ? values["outer-choices"].split(",") : undefined,
+    fallbackSms: values["fallback-sms"],
+    sender: values.sender,
+  };
 }
 
 function sendRcsCarousel(
@@ -84,10 +90,10 @@ function sendRcsCarousel(
   fallbackSms,
   sender,
 ) {
-  var url = client.apiUrl(region, projectId, "messages:send");
+  const url = client.apiUrl(region, projectId, "messages:send");
 
-  var cardsArray = cards.map(function (card) {
-    var cardMsg = {
+  const cardsArray = cards.map((card) => {
+    const cardMsg = {
       title: card.title,
       description: card.description,
     };
@@ -95,27 +101,23 @@ function sendRcsCarousel(
       cardMsg.media_message = { url: card.image };
     }
     if (card.choices && card.choices.length > 0) {
-      cardMsg.choices = card.choices.map(function (choice) {
-        return {
-          text_message: { text: choice },
-          postback_data: choice.toLowerCase().replace(/ /g, "_"),
-        };
-      });
+      cardMsg.choices = card.choices.map((choice) => ({
+        text_message: { text: choice },
+        postback_data: choice.toLowerCase().replaceAll(" ", "_"),
+      }));
     }
     return cardMsg;
   });
 
-  var choicesArray = [];
+  let choicesArray = [];
   if (outerChoices && outerChoices.length > 0) {
-    choicesArray = outerChoices.map(function (choice) {
-      return {
-        text_message: { text: choice },
-        postback_data: choice.toLowerCase().replace(/ /g, "_"),
-      };
-    });
+    choicesArray = outerChoices.map((choice) => ({
+      text_message: { text: choice },
+      postback_data: choice.toLowerCase().replaceAll(" ", "_"),
+    }));
   }
 
-  var body = {
+  const body = {
     app_id: appId,
     recipient: {
       identified_by: {
@@ -141,13 +143,13 @@ function sendRcsCarousel(
     }
   }
 
-  var data = JSON.stringify(body);
+  const data = JSON.stringify(body);
   return client.httpRequest(
     url,
     {
       method: "POST",
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     },
@@ -156,19 +158,19 @@ function sendRcsCarousel(
 }
 
 async function main() {
-  var args = parseArgs(process.argv);
+  const args = parseArguments();
 
-  var projectId = client.getEnv("SINCH_PROJECT_ID");
-  var keyId = client.getEnv("SINCH_KEY_ID");
-  var keySecret = client.getEnv("SINCH_KEY_SECRET");
-  var appId = client.getEnv("SINCH_APP_ID");
-  var region = client.getEnv("SINCH_REGION", "us");
+  const projectId = client.getEnv("SINCH_PROJECT_ID");
+  const keyId = client.getEnv("SINCH_KEY_ID");
+  const keySecret = client.getEnv("SINCH_KEY_SECRET");
+  const appId = client.getEnv("SINCH_APP_ID");
+  const region = client.getEnv("SINCH_REGION", "us");
 
   process.stderr.write("Authenticating...\n");
-  var token = await client.getAccessToken(keyId, keySecret);
+  const token = await client.getAccessToken(keyId, keySecret);
 
-  process.stderr.write("Sending RCS carousel message to " + args.to + "...\n");
-  var result = await sendRcsCarousel(
+  process.stderr.write(`Sending RCS carousel message to ${args.to}...\n`);
+  const result = await sendRcsCarousel(
     projectId,
     token,
     appId,
@@ -183,7 +185,7 @@ async function main() {
   console.log(JSON.stringify(result, null, 2));
 }
 
-main().catch(function (err) {
+main().catch((err) => {
   console.error(err.message);
   process.exit(1);
 });

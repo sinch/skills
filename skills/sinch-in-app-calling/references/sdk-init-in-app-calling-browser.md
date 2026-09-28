@@ -1,7 +1,7 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file shows browser (JavaScript) SDK installation and client-
+> initialization examples for In-App Calling. For SDK method signatures and initialization
+> options, refer to the canonical `developers.sinch.com` docs linked from the parent
+> [SKILL.md](../SKILL.md) before writing code or prose that states payload structure.
 
 # SDK Installation — In-App Calling (Browser / JavaScript)
 
@@ -41,7 +41,7 @@ this.addEventListener("push", (event) => {
 
 ## Initialize the SinchClient
 
-Use the wrapper class pattern from the [official getting-started guide](https://developers.sinch.com/docs/in-app-calling/getting-started/javascript/create-app):
+Use the wrapper class pattern from the [official getting-started guide](https://developers.sinch.com/docs/in-app-calling/getting-started/javascript/create-app.md):
 
 ```javascript
 const APP_KEY = "YOUR_APPLICATION_KEY";
@@ -103,16 +103,16 @@ class SinchClientWrapper {
 - **Never embed the Application Secret in client-side code** — generate JWTs on your backend
 - WebRTC requires HTTPS — ensure your site is served over a secure context
 - Supported browsers: Chrome, Firefox, Safari, Edge
-- For more complex examples, see the [reference app](https://github.com/sinch/rtc-reference-applications/tree/master/javascript) or the [SDK documentation](https://developers.sinch.com/docs/in-app-calling/js-cloud/)
+- For more complex examples, see the [reference app](https://github.com/sinch/rtc-reference-applications/tree/master/javascript) or the [SDK documentation](https://developers.sinch.com/docs/in-app-calling/js-cloud.md)
 
 ## Links
 
 - [In-App Calling Overview](https://developers.sinch.com/docs/in-app-calling/overview.md)
-- [JavaScript Getting Started: Create App](https://developers.sinch.com/docs/in-app-calling/getting-started/javascript/create-app)
-- [JavaScript Getting Started: Make a Call](https://developers.sinch.com/docs/in-app-calling/getting-started/javascript/make-call)
-- [JavaScript SDK Documentation](https://developers.sinch.com/docs/in-app-calling/js-cloud/)
-- [Authentication & Authorization (JS)](https://developers.sinch.com/docs/in-app-calling/js/application-authentication/)
-- [SDK Downloads](https://developers.sinch.com/docs/in-app-calling/sdk-downloads/)
+- [JavaScript Getting Started: Create App](https://developers.sinch.com/docs/in-app-calling/getting-started/javascript/create-app.md)
+- [JavaScript Getting Started: Make a Call](https://developers.sinch.com/docs/in-app-calling/getting-started/javascript/make-call.md)
+- [JavaScript SDK Documentation](https://developers.sinch.com/docs/in-app-calling/js-cloud.md)
+- [Authentication & Authorization (JS)](https://developers.sinch.com/docs/in-app-calling/js/application-authentication.md)
+- [SDK Downloads](https://developers.sinch.com/docs/in-app-calling/sdk-downloads.md)
 - [Reference Applications (GitHub)](https://github.com/sinch/rtc-reference-applications)
 
 ## Backend: JWT Token Generation (Node.js)
@@ -148,4 +148,4 @@ function generateSinchJWT(userId, applicationKey, applicationSecret) {
 }
 ```
 
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Authentication & Authorization (JS)](https://developers.sinch.com/docs/in-app-calling/js/application-authentication/) doc before implementing.)*
+*(Summary only — confirm exact names/encoding/enums against the authoritative [Authentication & Authorization (JS)](https://developers.sinch.com/docs/in-app-calling/js/application-authentication.md) doc before implementing.)*

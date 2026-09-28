@@ -3,7 +3,7 @@ name: sinch-mailgun-optimize
 description: Monitors email deliverability via Mailgun Optimize (InboxReady) API. Use when the user wants to test inbox placement with seed lists, monitor IP or domain blocklists, track spam traps, check email health scores, review DMARC reports, or pull Google Postmaster or Microsoft SNDS data. Also use when emails are going to spam, sender reputation is dropping, inbox rate is declining, a domain needs warmup monitoring, an IP needs blocklist removal, or the user wants to set up email deliverability monitoring.
 metadata:
   author: Sinch
-  version: 1.1.0
+  version: 1.2.0
   category: Email
   tags: email, mailgun, deliverability, inbox-placement, blocklist, dmarc, spam-traps
   uses:
@@ -17,6 +17,23 @@ metadata:
 Mailgun Optimize (by Sinch), formerly InboxReady, is a deliverability suite: inbox placement testing via seed lists, IP and domain blocklist monitoring, spam trap tracking, email health scoring, DMARC reporting, Google Postmaster Tools integration, and Microsoft SNDS data.
 
 ## Agent Instructions
+
+> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+
+<!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
+**Sinch policy digest (binding):**
+
+1. Load the shared policy once per conversation; skip duplicate copies bearing the same ID/version/fingerprint.
+2. Infer product, language, region, and environment from the request and workspace; ask one combined question only for true blockers. Prefer the official Sinch SDK unless the request or workspace decides otherwise or no official SDK covers the language or operation.
+3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
+4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
+5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
+8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
+9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
+10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+<!-- sinch-policy-digest: end -->
 
 Before generating code, gather from the user (skip any item already specified in the prompt or context):
 
@@ -73,7 +90,7 @@ Ensure that authentication headers are properly set when making API calls. Mailg
 
 *(Summary only — confirm exact names/encoding/enums against the authoritative [API Reference](https://documentation.mailgun.com/docs/inboxready/api-reference/optimize/inboxready.md) doc before implementing.)*
 
-See [sinch-authentication](../sinch-authentication/SKILL.md) for full auth setup.
+See `sinch-authentication` for full auth setup.
 
 ### Base URLs
 

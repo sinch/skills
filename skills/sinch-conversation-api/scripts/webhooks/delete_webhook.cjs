@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /*
  * EXECUTION TOOL — not a schema reference.
- * Run this to PERFORM a task (e.g. create a webhook, send a test message) when you do not
- * need to write application code. Do NOT copy its payload literals or logic into a new
- * codebase as if they were the API spec — load the authoritative developers.sinch.com doc
- * instead. See "Source of Truth" in this skill's SKILL.md.
+ * Run this script as-is to PERFORM this task when you do not need to write
+ * application code; side-effect rules still apply (billable/destructive calls
+ * need explicit user approval). Do NOT copy its payload literals or logic into
+ * a new codebase as if they were the API spec — for payload shape, load the
+ * canonical developers.sinch.com docs linked from ../../SKILL.md instead.
  */
 /**
  * Delete a webhook.
@@ -29,113 +30,87 @@
  *   node delete_webhook.js --webhook-id 01WEBHOOK123456789 --confirm
  */
 
-var client = require("../common/sinch_client.cjs");
-var readline = require("readline");
+const client = require("../common/sinch_client.cjs");
+const readline = require("node:readline/promises");
+const { parseArgs } = require("node:util");
 
-var projectId = client.getEnv("SINCH_PROJECT_ID");
-var keyId = client.getEnv("SINCH_KEY_ID");
-var keySecret = client.getEnv("SINCH_KEY_SECRET");
-var region = client.getEnv("SINCH_REGION", "us");
+const projectId = client.getEnv("SINCH_PROJECT_ID");
+const keyId = client.getEnv("SINCH_KEY_ID");
+const keySecret = client.getEnv("SINCH_KEY_SECRET");
+const region = client.getEnv("SINCH_REGION", "us");
 
-function parseArgs() {
-  var args = process.argv.slice(2);
-  var params = {};
+function parseArguments() {
+  const { values } = parseArgs({
+    options: {
+      "webhook-id": { type: "string" },
+      "confirm":    { type: "boolean", default: false },
+      "help":       { type: "boolean" },
+    },
+  });
 
-  for (var i = 0; i < args.length; i++) {
-    if (args[i] === "--help") {
-      console.log("Usage: node delete_webhook.cjs --webhook-id WEBHOOK_ID [--confirm]");
-      process.exit(0);
-    }
-    if (args[i].startsWith("--")) {
-      var key = args[i].substring(2);
-
-      if (key === "confirm") {
-        params[key] = true;
-      } else if (i + 1 < args.length && !args[i + 1].startsWith("--")) {
-        params[key] = args[++i];
-      }
-    }
+  if (values.help) {
+    console.log("Usage: node delete_webhook.cjs --webhook-id WEBHOOK_ID [--confirm]");
+    process.exit(0);
   }
 
-  if (!params["webhook-id"]) {
+  if (!values["webhook-id"]) {
     console.error("Error: --webhook-id is required");
     process.exit(1);
   }
 
-  return params;
+  return values;
 }
 
-function confirmDeletion(webhookId) {
-  return new Promise(function (resolve) {
-    var rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    });
-
-    rl.question(
-      "\nAre you sure you want to delete webhook " + webhookId + "? (yes/no): ",
-      function (answer) {
-        rl.close();
-        resolve(answer.toLowerCase() === "yes" || answer.toLowerCase() === "y");
-      },
-    );
+async function confirmDeletion(webhookId) {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
   });
+
+  try {
+    const answer = await rl.question(
+      `\nAre you sure you want to delete webhook ${webhookId}? (yes/no): `,
+    );
+    const normalized = answer.toLowerCase();
+    return normalized === "yes" || normalized === "y";
+  } finally {
+    rl.close();
+  }
 }
 
 async function deleteWebhook() {
   try {
-    var params = parseArgs();
+    const params = parseArguments();
 
     console.log("Preparing to delete webhook:", params["webhook-id"]);
 
     if (!params.confirm) {
-      var confirmed = await confirmDeletion(params["webhook-id"]);
+      const confirmed = await confirmDeletion(params["webhook-id"]);
       if (!confirmed) {
         console.log("Deletion cancelled.");
         process.exit(0);
       }
     }
 
-    var token = await client.getAccessToken(keyId, keySecret);
-    var url = client.apiUrl(
+    const token = await client.getAccessToken(keyId, keySecret);
+    const url = client.apiUrl(
       region,
       projectId,
-      "webhooks/" + params["webhook-id"],
+      `webhooks/${params["webhook-id"]}`,
     );
 
     // Note: DELETE returns empty response (204 No Content)
-    var https = require("https");
-    var parsedUrl = new URL(url);
-
-    await new Promise(function (resolve, reject) {
-      var options = {
-        hostname: parsedUrl.hostname,
-        path: parsedUrl.pathname,
-        method: "DELETE",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      };
-
-      var req = https.request(options, function (res) {
-        var data = "";
-        res.on("data", function (chunk) {
-          data += chunk;
-        });
-        res.on("end", function () {
-          if (res.statusCode === 200 || res.statusCode === 204) {
-            resolve();
-          } else {
-            reject(
-              new Error("Delete failed (" + res.statusCode + "): " + data),
-            );
-          }
-        });
-      });
-
-      req.on("error", reject);
-      req.end();
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
+
+    if (res.status !== 200 && res.status !== 204) {
+      const body = await res.text();
+      throw new Error(`Delete failed (${res.status}): ${body}`);
+    }
 
     console.log("\nWebhook deleted successfully!");
     console.log("Webhook ID:", params["webhook-id"]);

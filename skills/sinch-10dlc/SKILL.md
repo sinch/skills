@@ -3,7 +3,7 @@ name: sinch-10dlc
 description: Registers US 10DLC brands and campaigns with Sinch for A2P SMS messaging. Use when the user needs to register a brand, create a 10DLC campaign, check registration status, troubleshoot a 10DLC rejection, fix an EIN mismatch, upgrade from simplified to full registration, or qualify a campaign for US SMS sending on 10-digit long codes. Do NOT use for non-US messaging or toll-free/short code registration.
 metadata:
   author: Sinch
-  version: 1.2.0
+  version: 1.3.0
   category: Numbers
   tags: 10dlc, sms, a2p, brand-registration, campaign-registration, us-messaging, brand, campaign, tcr, registration, a2p-sms
   uses:
@@ -17,6 +17,23 @@ metadata:
 10DLC (10-Digit Long Code) is the required US registration system for Application-to-Person (A2P) SMS on standard 10-digit phone numbers. You must register a **brand** (the sending company) and a **campaign** (the messaging use case) with The Campaign Registry (TCR) via Sinch before sending any US A2P SMS.
 
 ## Agent Instructions
+
+> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+
+<!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
+**Sinch policy digest (binding):**
+
+1. Load the shared policy once per conversation; skip duplicate copies bearing the same ID/version/fingerprint.
+2. Infer product, language, region, and environment from the request and workspace; ask one combined question only for true blockers. Prefer the official Sinch SDK unless the request or workspace decides otherwise or no official SDK covers the language or operation.
+3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
+4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
+5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
+8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
+9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
+10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+<!-- sinch-policy-digest: end -->
 
 Before generating code, gather from the user (skip any item already specified in the prompt or context):
 
@@ -72,7 +89,7 @@ Ensure that authentication headers are properly set when making API calls. The 1
 -H "Authorization: Bearer $SINCH_ACCESS_TOKEN"
 ```
 
-See [sinch-authentication](../sinch-authentication/SKILL.md) for full setup, most importantly how to obtain `{SINCH_ACCESS_TOKEN}` (OAuth2 client-credentials — do not mint your own JWT).
+See `sinch-authentication` for full setup, most importantly how to obtain `{SINCH_ACCESS_TOKEN}` (OAuth2 client-credentials — do not mint your own JWT).
 
 ### Base URL
 
@@ -84,7 +101,7 @@ US-only — there are no regional variants for 10DLC.
 
 ### First API Call
 
-Register a brand:
+Mock-only brand registration example. Never remove `"mock": true` or substitute real organization data without explicit approval for a live, externally consequential submission:
 
 ```bash
 curl -X POST \
@@ -142,7 +159,7 @@ curl -X POST \
 
 Follow these steps in order. Each step depends on the previous one succeeding. For detailed curl examples, response schemas, enum values, and polling strategies, see [references/workflow.md](references/workflow.md).
 
-**Once approved**, you can send A2P SMS on US 10-digit long codes through Sinch. To send messages, see the [sinch-conversation-api](../sinch-conversation-api/SKILL.md) skill.
+**Optional handoff after approval:** 10DLC registration is complete at this point. If the user then asks to send messages, continue with `sinch-conversation-api`; it is not required to complete this registration workflow. Check that skill's availability only when the user chooses to continue into sending.
 
 ## Common Patterns
 
@@ -193,7 +210,7 @@ Follow these steps in order. Each step depends on the previous one succeeding. F
 
 ## Links
 
-- [Authentication setup](../sinch-authentication/SKILL.md)
+- `Authentication setup`
 - [10DLC Registration API Reference](https://developers.sinch.com/docs/10dlc-registration/api-reference/10dlc-registration.md)
 - [Brand Registration API](https://developers.sinch.com/docs/10dlc-registration/api-reference/10dlc-registration/10dlc-brand-registration.md)
 - [Campaign Registration API](https://developers.sinch.com/docs/10dlc-registration/api-reference/10dlc-registration/10dlc-campaign-registration.md)

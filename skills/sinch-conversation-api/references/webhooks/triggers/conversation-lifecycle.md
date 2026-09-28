@@ -1,13 +1,9 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file describes when the trigger fires and lists notable fields. For
+> payload shape (field names, nesting, encodings, enums), refer to the canonical
+> `developers.sinch.com` docs linked from the parent [SKILL.md](../../../SKILL.md) before
+> writing code or prose that states payload structure.
 
 # Conversation Lifecycle Triggers
-
-← [Back to Conversation API SKILL.md](../../../SKILL.md)
-
-**Sections:** [Overview](#overview) | [CONVERSATION_START](#conversation_start) | [CONVERSATION_STOP](#conversation_stop) | [CONVERSATION_DELETE](#conversation_delete) | [Key Points](#key-points)
 
 ## Overview
 
@@ -18,8 +14,6 @@ The three lifecycle triggers are:
 - `CONVERSATION_START` — New conversation initiated
 - `CONVERSATION_STOP` — Conversation ended/closed
 - `CONVERSATION_DELETE` — Conversation deleted from system
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
 
 ## CONVERSATION_START
 
@@ -68,8 +62,6 @@ The three lifecycle triggers are:
 | `conversation.active`                 | Always `true` for new conversations       |
 | `conversation.metadata`               | Custom metadata (if set)                  |
 | `conversation.active_channel_senders` | Active channel endpoints                  |
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
 
 ### Common Use Cases
 
@@ -127,8 +119,6 @@ Note: Does not fire automatically when user stops messaging; you must explicitly
 | `conversation.last_received` | Timestamp of last message                        |
 | `conversation.metadata`      | Use to store closure reason or resolution status |
 
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
-
 ### Common Use Cases
 
 1. **Conversation Analytics** — Calculate conversation duration and resolution time
@@ -163,8 +153,6 @@ Note: Does not fire automatically when user stops messaging; you must explicitly
 | Field             | Description                    |
 | ----------------- | ------------------------------ |
 | `conversation_id` | ID of the deleted conversation |
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
 
 Note: The callback only includes the conversation ID, not full conversation details, since the conversation is already deleted.
 

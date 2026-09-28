@@ -1,13 +1,9 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file describes when the trigger fires and lists notable fields. For
+> payload shape (field names, nesting, encodings, enums), refer to the canonical
+> `developers.sinch.com` docs linked from the parent [SKILL.md](../../../SKILL.md) before
+> writing code or prose that states payload structure.
 
 # OPT_IN and OPT_OUT Triggers
-
-← [Back to Conversation API SKILL.md](../../../SKILL.md)
-
-**Sections:** [Overview](#overview) | [When They Fire](#when-they-fire) | [Callback Structure](#callback-structure) | [Supported Channels](#supported-channels) | [Common Use Cases](#common-use-cases) | [Example Callback Payloads](#example-callback-payloads) | [Handling SMS Opt-Outs](#handling-sms-opt-outs-not-via-these-triggers) | [Key Points](#key-points)
 
 ## Overview
 
@@ -78,8 +74,6 @@ The `OPT_IN` and `OPT_OUT` triggers fire when a contact opts in or out of messag
 | `channel`    | string | Channel where opt action occurred              |
 | `identity`   | string | Channel-specific identity (e.g., phone number) |
 | `status`     | string | `OPT_IN_SUCCEEDED` or `OPT_OUT_SUCCEEDED`      |
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
 
 ## Supported Channels
 

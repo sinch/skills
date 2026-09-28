@@ -1,9 +1,9 @@
 ---
 name: sinch-voice-api
-description: Build voice apps with Sinch Voice REST API. Use for phone calls, text-to-speech (TTS), IVR menus, DTMF input, conference calling, call recording, call forwarding, answering machine detection (AMD), SIP routing, WebSocket audio streaming, and SVAML call control.
+description: Build voice apps with the Sinch Voice API v1. Use for phone calls, text-to-speech (TTS), IVR menus, DTMF input, conference calling, call recording, call forwarding, answering machine detection (AMD), SIP routing, WebSocket audio streaming, and SVAML call control. Not for Voice API v2 (public preview); use the sinch-voice-api-v2 skill for that.
 metadata:
   author: Sinch
-  version: 1.2.0
+  version: 1.3.0
   category: Voice
   tags: voice, calls, tts, ivr, dtmf, conference, recording, svaml, sip, amd, webrtc
   uses:
@@ -17,14 +17,33 @@ metadata:
 
 The Sinch Voice API lets you make, receive, and control voice calls programmatically via REST. It uses **SVAML** (Sinch Voice Application Markup Language) to define call flows through callback events.
 
+> **Version scope: Voice API v1 only.** This skill covers the `/calling/v1` API, its SVAML dialect, and its ICE/ACE/PIE/DiCE callbacks. Sinch also offers **Voice API 2.0**, currently in public preview, with a different API surface. If the user asks for Voice 2.0, v2 endpoints, or the preview API, do not adapt the v1 guidance below. Load the `sinch-voice-api-v2` skill instead.
+
 ## Agent Instructions
+
+> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+
+<!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
+**Sinch policy digest (binding):**
+
+1. Load the shared policy once per conversation; skip duplicate copies bearing the same ID/version/fingerprint.
+2. Infer product, language, region, and environment from the request and workspace; ask one combined question only for true blockers. Prefer the official Sinch SDK unless the request or workspace decides otherwise or no official SDK covers the language or operation.
+3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
+4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
+5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
+8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
+9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
+10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+<!-- sinch-policy-digest: end -->
 
 Before generating code, gather from the user (skip any item already specified in the prompt or context):
 
 1. **Approach** — SDK or direct API calls (curl/fetch/requests)?
 2. **Language** — for SDK: Node.js, Python, Java, or .NET. For direct API: any language, or curl.
 
-When the user chooses **SDK**, refer to the [sinch-sdks](../sinch-sdks/SKILL.md) skill for installation and client initialization, then to the bundled examples and SDK reference linked in Links.
+When the user chooses **SDK**, refer to the `sinch-sdks` skill for installation and client initialization, then to the bundled examples and SDK reference linked in Links.
 
 When the user chooses **direct API calls**, refer to the Voice API Reference linked in Links for request/response schemas.
 
@@ -74,7 +93,7 @@ Ensure that authentication headers are properly set when making API calls. The V
 -u "$SINCH_APPLICATION_KEY:$SINCH_APPLICATION_SECRET"
 ```
 
-See the [sinch-authentication](../sinch-authentication/SKILL.md) skill for full setup.
+See the `sinch-authentication` skill for full setup.
 
 - **Basic Auth**: `Authorization: Basic base64(APPLICATION_KEY:APPLICATION_SECRET)` *(Summary only — confirm exact names/encoding/enums against the authoritative [Authentication Guide](https://developers.sinch.com/docs/voice/api-reference/authentication.md) doc before implementing.)*
 - **Signed Requests** (production): HMAC-SHA256 signing. See [Authentication Guide](https://developers.sinch.com/docs/voice/api-reference/authentication.md).
@@ -94,7 +113,7 @@ Configuration endpoints (numbers, callbacks) use: `https://callingapi.sinch.com`
 
 ### SDK Installation
 
-See [sinch-sdks](../sinch-sdks/SKILL.md) for installation and client initialization across all languages.
+See `sinch-sdks` for installation and client initialization across all languages.
 
 ### First API Call: TTS Callout
 
@@ -302,10 +321,12 @@ Paths starting with `/calling/v1/` use the **regional base URL** from the table 
 
 - Bundled examples: [Node.js](references/examples/nodejs.md) | [Python](references/examples/python.md) | [Java](references/examples/java.md) | [.NET](references/examples/dotnet.md)
 - [Voice API Reference (Markdown)](https://developers.sinch.com/docs/voice/api-reference/voice.md)
+- [Voice API 2.0 docs (public preview; see the `sinch-voice-api-v2` skill)](https://developers.sinch.com/docs/voice-2.0)
 - [Voice API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/voice/api-reference/voice.yaml?download)
-- [SVAML Actions](https://developers.sinch.com/docs/voice/api-reference/svaml.md#actions) | [SVAML Instructions](https://developers.sinch.com/docs/voice/api-reference/svaml.md#instructions)
-- [Callbacks](https://developers.sinch.com/docs/voice/api-reference/voice/callbacks/ice.md) | [Callouts](https://developers.sinch.com/docs/voice/api-reference/voice/callouts/callouts.md)
-- [Authentication](https://developers.sinch.com/docs/voice/api-reference/authentication.md) | [Callback Signing](https://developers.sinch.com/docs/voice/api-reference/authentication/callback-signed-request.md)
+- SVAML actions and instructions: see [references/svaml.md](references/svaml.md)
+- Callbacks (ICE, ACE, DiCE, PIE) and callback signing: see [references/callbacks.md](references/callbacks.md)
+- [Callouts](https://developers.sinch.com/docs/voice/api-reference/voice/callouts/callouts.md)
+- [Authentication](https://developers.sinch.com/docs/voice/api-reference/authentication.md)
 - [Node.js SDK Reference](https://developers.sinch.com/docs/voice/sdk/node/syntax-reference.md)
 - [Python SDK Reference](https://developers.sinch.com/docs/voice/sdk/py/syntax-reference.md)
 - [Java SDK Reference](https://developers.sinch.com/docs/voice/sdk/java/syntax-reference.md)

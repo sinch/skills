@@ -1,13 +1,9 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file describes when the trigger fires and lists notable fields. For
+> payload shape (field names, nesting, encodings, enums), refer to the canonical
+> `developers.sinch.com` docs linked from the parent [SKILL.md](../../../SKILL.md) before
+> writing code or prose that states payload structure.
 
 # System Events Triggers
-
-← [Back to Conversation API SKILL.md](../../../SKILL.md)
-
-**Sections:** [Overview](#overview) | [CHANNEL_EVENT](#channel_event) | [BATCH_STATUS_UPDATE](#batch_status_update) | [RECORD_NOTIFICATION](#record_notification) | [UNSUPPORTED](#unsupported) | [Key Points](#key-points)
 
 ## Overview
 
@@ -19,8 +15,6 @@ The four system triggers are:
 - `BATCH_STATUS_UPDATE` — Batch message processing completion/failure
 - `RECORD_NOTIFICATION` — Recording availability notifications (Voice)
 - `UNSUPPORTED` — Raw channel callbacks not mapped to Conversation API
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
 
 ## CHANNEL_EVENT
 
@@ -56,8 +50,6 @@ Delivers channel-specific notifications that are unique to particular messaging 
   }
 }
 ```
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
 
 ### Common Event Types
 
@@ -113,8 +105,6 @@ Notifies when batch message processing completes or fails. Batch sends allow sen
 }
 ```
 
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
-
 ### Status Values
 
 | Status      | Description                                       |
@@ -157,8 +147,6 @@ Notifies when call recordings are available for download. Used with Sinch Voice 
 }
 ```
 
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
-
 ### Common Use Cases
 
 1. **Call Recording Storage** — Download and archive recordings to your own storage
@@ -196,8 +184,6 @@ Delivers raw channel callbacks that are not mapped to standard Conversation API 
   }
 }
 ```
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
 
 ### Common Use Cases
 

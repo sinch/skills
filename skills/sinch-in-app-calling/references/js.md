@@ -1,11 +1,11 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file describes the JavaScript In-App Calling integration flow and
+> notable APIs. For SDK method signatures and payload shape (field names, nesting, encodings,
+> enums), refer to the canonical `developers.sinch.com` docs linked from the parent
+> [SKILL.md](../SKILL.md) before writing code or prose that states payload structure.
 
 <!-- Reference file for JavaScript SDK integration. 
         Read only when the user's project targets JavaScript/Web. -->
-# Sinch Javascript Voice and Video SDK 
+# Sinch JavaScript Voice and Video SDK 
 
 ## Add the Sinch library
 You can include Sinch in several ways. Pick the one that fits your setup.
@@ -79,7 +79,7 @@ Implement `SinchClientListener.onCredentialsRequired()` and supply a JWT signed 
 <!-- Claude: read this URL for additional auth details if needed -->
 Read https://developers.sinch.com/docs/in-app-calling/js/application-authentication.md
 
-For production application it is recommended to generate and sign the JWT token on the backend server, then send it over a secure channel to the application and Sinch client running on the device.
+For production applications it is recommended to generate and sign the JWT token on the backend server, then send it over a secure channel to the application and Sinch client running on the device.
 <!-- Claude: Ask the user whether it can be embedded!-->
 Ask the user whether it can be embedded. 
 If it can be embedded:
@@ -96,7 +96,7 @@ onCredentialsRequired(sinchClient, clientRegistration) {
         }
     }
 ```
-If it can not be embedded:
+If it cannot be embedded:
 Implement the required functionality on your backend and fetch a signed registration token when required.
 
 ```javascript
@@ -171,7 +171,7 @@ var call = callClient.callUser('<remote user id>');
 // var call = callClient.callUserVideo('<remote user id>');
 call.addListener(...);
 ```
-The returned call object includes participant details, start time, state,and possible errors.
+The returned call object includes participant details, start time, state, and possible errors.
 
 Assuming the callee’s device is available,
 [CallListener.onCallProgressing()](https://download.sinch.com/js/latest/reference/interfaces/CallListener.html#oncallprogressing)
@@ -192,7 +192,7 @@ On poor networks, it can take longer—consider showing a “connecting”
 indicator.
 
 **Important:**
-For *App-to-App* calls, you must enable managed push by calling `sinchClient.setSupportManagedPush()`, even if you are the caller. See the full setup in [Push notifications](https://developers.sinch.com/docs/in-app-calling/js/push-notifications).
+For *App-to-App* calls, you must enable managed push by calling `sinchClient.setSupportManagedPush()`, even if you are the caller. See the full setup in [Push notifications](https://developers.sinch.com/docs/in-app-calling/js/push-notifications.md).
 
 ### Set up an *App-to-Phone* call
 
@@ -247,7 +247,7 @@ var callClient = sinchClient.callClient;
 callClient.addListener(...);
 ```
 
-When the incoming call method is executed, the call can either be connected automatically without any user action, or it can wait for the user to press the answer or the hangup button. If the call is set up to wait for a user response, we recommended that a ringtone is played to notify the user that there is an incoming call.
+When the incoming call method is executed, the call can either be connected automatically without any user action, or it can wait for the user to press the answer or the hangup button. If the call is set up to wait for a user response, we recommend that a ringtone is played to notify the user that there is an incoming call.
 
 
 ```javascript
@@ -293,7 +293,7 @@ When a PSTN or SIP call comes in, respond to the ICE callback with a `connectMxp
 
 #### Incoming video call
 
-When an incoming call is a video call, the [CallClientListener.onIncomingCall()](https://download.sinch.com/js/latest/reference/interfaces/CallClientListener.html) section for details on how to add video views.
+When an incoming call is a video call, [CallClientListener.onIncomingCall()](https://download.sinch.com/js/latest/reference/interfaces/CallClientListener.html#onincomingcall) is executed as with voice calls. See the Video Calling section below for details on how to add video views.
 
 #### Answer incoming call
 
@@ -363,7 +363,7 @@ Set up video calls with the Sinch JavaScript Voice and Video SDK.
 
 Video calls follow the same flow as audio calls.
 Use [CallClient.callUserVideo()](https://download.sinch.com/js/latest/reference/interfaces/CallClient.html#calluservideo) to start a video call with a specific user.
-You’ll receive the same callbacks as for audio: progressing, ringing, answered, and established. For lifecycle details, see [Audio calling](https://developers.sinch.com/docs/in-app-calling/js/calling).
+You’ll receive the same callbacks as for audio: progressing, ringing, answered, and established. For lifecycle details, see [Audio calling](https://developers.sinch.com/docs/in-app-calling/js/calling.md).
 
 ### Showing the video streams
 Once you have a `Call`, you can access two MediaStreams:

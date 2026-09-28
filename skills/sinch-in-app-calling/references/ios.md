@@ -1,7 +1,7 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file describes the iOS In-App Calling integration flow and notable
+> APIs. For SDK method signatures and payload shape (field names, nesting, encodings, enums),
+> refer to the canonical `developers.sinch.com` docs linked from the parent
+> [SKILL.md](../SKILL.md) before writing code or prose that states payload structure.
 
 <!-- Reference file for iOS SDK integration (Swift).
         Read only when the user's project targets iOS. -->
@@ -142,7 +142,7 @@ In general it is not suggested to embed the Application Secret in a production a
 <!-- Claude: Ask the user whether it can be embedded! -->
 Ask the user whether it can be embedded.
 If it can be embedded:
-The Swift reference application on [GitHub](https://github.com/sinch/rtc-reference-applications/tree/master/ios) includes a `SinchJWT.swift` helper that demonstrates how to create and sign the JWT locally. I can be also found in `assets/SinchJWT.swift` Read and adapt it.
+The Swift reference application on [GitHub](https://github.com/sinch/rtc-reference-applications/tree/master/ios) includes a `SinchJWT.swift` helper that demonstrates how to create and sign the JWT locally. It can also be found in `assets/SinchJWT.swift`. Read and adapt it.
 
 ```swift
 func clientRequiresRegistrationCredentials(_ client: SinchRTC.SinchClient,
@@ -158,7 +158,7 @@ func clientRequiresRegistrationCredentials(_ client: SinchRTC.SinchClient,
   }
 }
 ```
-If it can not be embedded:
+If it cannot be embedded:
 Implement the required functionality on your backend and fetch a signed registration token when required.
 
 ```swift
@@ -360,7 +360,7 @@ When full audio connectivity is established, `callDidEstablish(_:)` is called. U
 Typically, connectivity is already established when the call is answered, so `callDidEstablish` may follow immediately after `callDidAnswer`. On poor networks, it can take longer; consider showing a "connecting" indicator.
 
 **Important:**
-For *App-to-App* calls, you must enable managed push by calling `sinchClient.enableManagedPushNotifications()`, even if you are the caller. See the full setup in [Push notifications](https://developers.sinch.com/docs/in-app-calling/ios/push-notifications).
+For *App-to-App* calls, you must enable managed push by calling `sinchClient.enableManagedPushNotifications()`, even if you are the caller. See the full setup in [Push notifications](https://developers.sinch.com/docs/in-app-calling/ios/push-notifications.md).
 
 ### Set up an *App-to-Phone* call
 
@@ -593,7 +593,7 @@ An incoming video call triggers `client(_:didReceiveIncomingCall:)` like a voice
 iOS **12.0** minimum deployment target.
 
 ### User ID restrictions
-User IDs must not be longer than 255 bytes and must only contain URL-safe characters: `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghjiklmnopqrstuvwxyz0123456789-_=`. Consider base64url-encoding IDs that contain other characters. *(Summary only — confirm exact names/encoding/enums against the authoritative [iOS auth doc](https://developers.sinch.com/docs/in-app-calling/ios/auth.md) doc before implementing.)*
+User IDs must not be longer than 255 bytes and must only contain URL-safe characters: `ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_=`. Consider base64url-encoding IDs that contain other characters. *(Summary only — confirm exact names/encoding/enums against the authoritative [iOS auth doc](https://developers.sinch.com/docs/in-app-calling/ios/auth.md) before implementing.)*
 
 ### Call details
 The `SinchCallDetails` class holds metadata about a call including timestamps (`startedTime`, `progressedTime`, `rungTime`, `answeredTime`, `establishedTime`, `endedTime`), end cause (`.timeout`, `.denied`, `.noAnswer`, `.error`, `.hungUp`, `.canceled`, `.otherDeviceAnswered`, etc.), and error information.

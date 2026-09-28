@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /*
  * EXECUTION TOOL — not a schema reference.
- * Run this to PERFORM a task (e.g. create a webhook, send a test message) when you do not
- * need to write application code. Do NOT copy its payload literals or logic into a new
- * codebase as if they were the API spec — load the authoritative developers.sinch.com doc
- * instead. See "Source of Truth" in this skill's SKILL.md.
+ * Run this script as-is to PERFORM this task when you do not need to write
+ * application code; side-effect rules still apply (billable/destructive calls
+ * need explicit user approval). Do NOT copy its payload literals or logic into
+ * a new codebase as if they were the API spec — for payload shape, load the
+ * canonical developers.sinch.com docs linked from ../SKILL.md instead.
  */
 /**
  * Send an RCS template message via Sinch Conversation API.
@@ -13,6 +14,7 @@
  *   node send_template.cjs --to +15551234567 --template-id 01TEMPLATE123 --params '{"name":"John"}'
  *   node send_template.cjs --to +15551234567 --template-id 01TEMPLATE123 --params '{"name":"María"}' --language es
  *   node send_template.cjs --to +15551234567 --template-id 01TEMPLATE123 --params '{"name":"John"}' --fallback-sms --sender +15559876543
+ *   node send_template.cjs --to +15551234567 --template-id 01TEMPLATE123 --params '{"name":"John"}' --version 3
  *
  * Environment variables (required):
  *   SINCH_PROJECT_ID   - Sinch project ID
@@ -24,45 +26,38 @@
  *   SINCH_REGION       - API region: us, eu, or br (default: us)
  */
 
-var client = require("./common/sinch_client.cjs");
+const client = require("./common/sinch_client.cjs");
+const { parseArgs } = require("node:util");
 
-function parseArgs(argv) {
-  var args = { fallbackSms: false };
-  for (var i = 2; i < argv.length; i++) {
-    switch (argv[i]) {
-      case "--to":
-        args.to = argv[++i];
-        break;
-      case "--template-id":
-        args.templateId = argv[++i];
-        break;
-      case "--params":
-        args.params = argv[++i];
-        break;
-      case "--language":
-        args.language = argv[++i];
-        break;
-      case "--fallback-sms":
-        args.fallbackSms = true;
-        break;
-      case "--sender":
-        args.sender = argv[++i];
-        break;
-      case "--help":
-        console.log(
-          "Usage: node send_template.cjs --to PHONE --template-id ID --params JSON [--language CODE] [--fallback-sms] [--sender NUMBER]",
-        );
-        console.log("\nExamples:");
-        console.log(
-          '  node send_template.cjs --to +15551234567 --template-id 01ABC --params \'{"name":"John","order":"123"}\'',
-        );
-        console.log(
-          '  node send_template.cjs --to +15551234567 --template-id 01ABC --params \'{"name":"María"}\' --language es',
-        );
-        process.exit(0);
-    }
+function parseArguments() {
+  const { values } = parseArgs({
+    options: {
+      "to":           { type: "string" },
+      "template-id":  { type: "string" },
+      "params":       { type: "string" },
+      "language":     { type: "string" },
+      "version":      { type: "string", default: "latest" },
+      "fallback-sms": { type: "boolean", default: false },
+      "sender":       { type: "string" },
+      "help":         { type: "boolean" },
+    },
+  });
+
+  if (values.help) {
+    console.log(
+      "Usage: node send_template.cjs --to PHONE --template-id ID --params JSON [--language CODE] [--fallback-sms] [--sender NUMBER]",
+    );
+    console.log("\nExamples:");
+    console.log(
+      '  node send_template.cjs --to +15551234567 --template-id 01ABC --params \'{"name":"John","order":"123"}\'',
+    );
+    console.log(
+      '  node send_template.cjs --to +15551234567 --template-id 01ABC --params \'{"name":"María"}\' --language es',
+    );
+    process.exit(0);
   }
-  if (!args.to || !args.templateId || !args.params) {
+
+  if (!values.to || !values["template-id"] || !values.params) {
     console.error("Error: --to, --template-id, and --params are required");
     console.error(
       "Usage: node send_template.cjs --to PHONE --template-id ID --params JSON",
@@ -70,16 +65,25 @@ function parseArgs(argv) {
     process.exit(1);
   }
 
-  // Parse JSON parameters
+  let parsedParams;
   try {
-    args.parsedParams = JSON.parse(args.params);
-  } catch (e) {
+    parsedParams = JSON.parse(values.params);
+  } catch {
     console.error("Error: --params must be valid JSON");
     console.error("Example: --params '{\"name\":\"John\",\"order\":\"123\"}'");
     process.exit(1);
   }
 
-  return args;
+  return {
+    to: values.to,
+    templateId: values["template-id"],
+    params: values.params,
+    parsedParams,
+    language: values.language,
+    version: values.version,
+    fallbackSms: values["fallback-sms"],
+    sender: values.sender,
+  };
 }
 
 function sendRcsTemplate(
@@ -91,28 +95,33 @@ function sendRcsTemplate(
   parameters,
   region,
   languageCode,
+  version,
   fallbackSms,
   sender,
 ) {
-  var url = client.apiUrl(region, projectId, "messages:send");
+  const url = client.apiUrl(region, projectId, "messages:send");
 
-  var templateMessage = {
+  // template_message requires either `omni_template` or `channel_template`;
+  // a flat template_id/parameters object is rejected by the API. `version`
+  // is required by omni_template — "latest" resolves to the newest version.
+  const omniTemplate = {
     template_id: templateId,
+    version: version,
     parameters: parameters,
   };
 
   if (languageCode) {
-    templateMessage.language_code = languageCode;
+    omniTemplate.language_code = languageCode;
   }
 
-  var body = {
+  const body = {
     app_id: appId,
     recipient: {
       identified_by: {
         channel_identities: [{ channel: "RCS", identity: to }],
       },
     },
-    message: { template_message: templateMessage },
+    message: { template_message: { omni_template: omniTemplate } },
   };
 
   if (fallbackSms) {
@@ -126,13 +135,13 @@ function sendRcsTemplate(
     }
   }
 
-  var data = JSON.stringify(body);
+  const data = JSON.stringify(body);
   return client.httpRequest(
     url,
     {
       method: "POST",
       headers: {
-        Authorization: "Bearer " + token,
+        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
     },
@@ -140,14 +149,13 @@ function sendRcsTemplate(
   );
 }
 
-// Main execution
-(function main() {
-  var args = parseArgs(process.argv);
-  var projectId = client.getEnv("SINCH_PROJECT_ID");
-  var keyId = client.getEnv("SINCH_KEY_ID");
-  var keySecret = client.getEnv("SINCH_KEY_SECRET");
-  var appId = client.getEnv("SINCH_APP_ID");
-  var region = client.getEnv("SINCH_REGION", "us");
+async function main() {
+  const args = parseArguments();
+  const projectId = client.getEnv("SINCH_PROJECT_ID");
+  const keyId = client.getEnv("SINCH_KEY_ID");
+  const keySecret = client.getEnv("SINCH_KEY_SECRET");
+  const appId = client.getEnv("SINCH_APP_ID");
+  const region = client.getEnv("SINCH_REGION", "us");
 
   console.log("Sending RCS template message...");
   console.log("To:", args.to);
@@ -163,32 +171,30 @@ function sendRcsTemplate(
     }
   }
 
-  client
-    .getAccessToken(keyId, keySecret)
-    .then(function (token) {
-      return sendRcsTemplate(
-        projectId,
-        token,
-        appId,
-        args.to,
-        args.templateId,
-        args.parsedParams,
-        region,
-        args.language,
-        args.fallbackSms,
-        args.sender,
-      );
-    })
-    .then(function (response) {
-      console.log("\nTemplate message sent successfully.");
-      console.log("Message ID:", response.message_id);
-      if (response.accepted_time) {
-        console.log("Accepted time:", response.accepted_time);
-      }
-    })
-    .catch(function (error) {
-      console.error("\nFailed to send template message:");
-      console.error(error.message || error);
-      process.exit(1);
-    });
-})();
+  const token = await client.getAccessToken(keyId, keySecret);
+  const response = await sendRcsTemplate(
+    projectId,
+    token,
+    appId,
+    args.to,
+    args.templateId,
+    args.parsedParams,
+    region,
+    args.language,
+    args.version,
+    args.fallbackSms,
+    args.sender,
+  );
+
+  console.log("\nTemplate message sent successfully.");
+  console.log("Message ID:", response.message_id);
+  if (response.accepted_time) {
+    console.log("Accepted time:", response.accepted_time);
+  }
+}
+
+main().catch((error) => {
+  console.error("\nFailed to send template message:");
+  console.error(error.message || error);
+  process.exit(1);
+});

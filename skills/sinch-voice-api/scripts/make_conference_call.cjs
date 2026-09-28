@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /*
  * EXECUTION TOOL — not a schema reference.
- * Run this to PERFORM a task (e.g. create a webhook, send a test message) when you do not
- * need to write application code. Do NOT copy its payload literals or logic into a new
- * codebase as if they were the API spec — load the authoritative developers.sinch.com doc
- * instead. See "Source of Truth" in this skill's SKILL.md.
+ * Run this script as-is to PERFORM this task when you do not need to write
+ * application code; side-effect rules still apply (billable/destructive calls
+ * need explicit user approval). Do NOT copy its payload literals or logic into
+ * a new codebase as if they were the API spec — for payload shape, load the
+ * canonical developers.sinch.com docs linked from ../SKILL.md instead.
  */
 /**
  * Make a conference callout via Sinch Voice API.

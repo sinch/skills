@@ -17,13 +17,16 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - name: Validate skill catalog
+        run: |
+          python3 scripts/sync_sinch_skill_references.py --check
+          python3 scripts/validate_sinch_skills.py
+
       - uses: tesslio/setup-tessl@v2
         with:
           token: ${{ secrets.TESSL_API_KEY }}
 
-      - name: Set unique publish version
-        run: |
-          jq --arg v "1.0.${{ github.run_number }}" '.version = $v' tile.json > tile.json.tmp
-          mv tile.json.tmp tile.json
-
-      - run: tessl tile publish
+      # --bump patch lets the registry auto-increment when the manifest version
+      # already exists, so re-running this workflow can never collide the way
+      # the old 1.0.<run_number> scheme did (run_number is stable across re-runs).
+      - run: tessl tile publish --bump patch

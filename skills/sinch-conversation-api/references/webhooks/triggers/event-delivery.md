@@ -1,11 +1,9 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file describes when the trigger fires and lists notable fields. For
+> payload shape (field names, nesting, encodings, enums), refer to the canonical
+> `developers.sinch.com` docs linked from the parent [SKILL.md](../../../SKILL.md) before
+> writing code or prose that states payload structure.
 
 # EVENT_DELIVERY Trigger
-
-← [Back to Conversation API SKILL.md](../../../SKILL.md)
 
 ## Overview
 
@@ -33,8 +31,6 @@ The webhook callback contains an `event_delivery_report` object with these key f
 | `reason`           | object | Error details (if status is `FAILED`)                        |
 | `metadata`         | string | Metadata attached to the original event                      |
 
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
-
 ### Status Values
 
 | Status              | Description                                   |
@@ -42,8 +38,6 @@ The webhook callback contains an `event_delivery_report` object with these key f
 | `QUEUED_ON_CHANNEL` | Event submitted to channel, awaiting delivery |
 | `DELIVERED`         | Event delivered successfully                  |
 | `FAILED`            | Event delivery failed                         |
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
 
 ### Reason Object (for FAILED status)
 

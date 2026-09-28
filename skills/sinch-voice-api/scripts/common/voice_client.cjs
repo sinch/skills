@@ -1,9 +1,9 @@
 /*
- * EXECUTION TOOL — not a schema reference.
- * Run this to PERFORM a task (e.g. create a webhook, send a test message) when you do not
- * need to write application code. Do NOT copy its payload literals or logic into a new
- * codebase as if they were the API spec — load the authoritative developers.sinch.com doc
- * instead. See "Source of Truth" in this skill's SKILL.md.
+ * EXECUTION-TOOL HELPER — not a schema reference.
+ * Shared by the sibling runnable scripts; keep it alongside them. Do NOT copy
+ * its payload literals or logic into a new codebase as if they were the API
+ * spec — for payload shape, load the canonical developers.sinch.com docs
+ * linked from ../../SKILL.md instead.
  */
 /**
  * Shared Sinch Voice API client utilities.

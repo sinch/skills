@@ -3,7 +3,7 @@ name: sinch-elastic-sip-trunking
 description: Provisions SIP trunks, endpoints, ACLs, credential lists, and phone numbers via the Sinch Elastic SIP Trunking REST API. Use when the user needs SIP connectivity, trunk provisioning, inbound/outbound PSTN voice routing, PBX integration, or SIP-to-PSTN bridging.
 metadata:
   author: Sinch
-  version: 1.1.1
+  version: 1.2.1
   category: Voice
   tags: sip, trunking, est, pstn, voice, pbx, inbound, outbound
   uses:
@@ -19,6 +19,23 @@ The Sinch Elastic SIP Trunking (EST) API lets you programmatically provision SIP
 
 ## Agent Instructions
 
+> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+
+<!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
+**Sinch policy digest (binding):**
+
+1. Load the shared policy once per conversation; skip duplicate copies bearing the same ID/version/fingerprint.
+2. Infer product, language, region, and environment from the request and workspace; ask one combined question only for true blockers. Prefer the official Sinch SDK unless the request or workspace decides otherwise or no official SDK covers the language or operation.
+3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
+4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
+5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
+8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
+9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
+10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+<!-- sinch-policy-digest: end -->
+
 Before generating code, gather from the user (skip any item already specified in the prompt or context):
 
 1. **Direction** — inbound (receive calls from PSTN), outbound (send calls to PSTN), or both?
@@ -27,7 +44,7 @@ Before generating code, gather from the user (skip any item already specified in
 4. **Approach** — SDK or direct API calls (curl/fetch/requests)?
 5. **Language** — for SDK: Node.js. For direct API: any language, or curl. Python, Java, and .NET must use direct HTTP — only Node.js has SDK support.
 
-When the user chooses **SDK**, refer to the [sinch-sdks](../sinch-sdks/SKILL.md) skill for installation and client initialization, then to the API references linked in References.
+When the user chooses **SDK**, refer to the `sinch-sdks` skill for installation and client initialization, then to the API references linked in References.
 
 When the user chooses **direct API calls**, refer to the API references linked in References for request/response schemas.
 
@@ -52,8 +69,8 @@ User wants EST →
    `Create Trunk` → `Create ACL/Credentials` → `Link to Trunk` → `Assign Phone Numbers` → `Create Endpoint`
 2. **The Domain Trap.** Never send SIP INVITEs to `trunk.pstn.sinch.com`. ALWAYS use `{your-hostname}.pstn.sinch.com`.
 3. **60-second propagation.** After linking ACLs or Credentials, wait 60 seconds before testing.
-4. **Lower priority = higher preference.** Endpoint `priority: 1` is primary; `priority: 100` is failover.
-5. **PUT replaces the entire object.** Omitted fields become `null`.
+4. **Lower priority = higher preference.** Endpoint `priority: 1` is primary. Equal priorities round-robin. Use a small integer above 1 for failover (for example `2`) — do not use `100`. The published schema only guarantees `minimum: 1` (example `1`); older docs said 1–9, and routing behaviour above that range is not confirmed.
+5. **PUT replaces the entire resource.** On a trunk, ACL, credential list, or endpoint, omitted fields become `null`. This does not apply to link collections — see gotcha 6.
 
 ## Source of Truth — what to load, and what is authoritative
 
@@ -96,11 +113,11 @@ Ensure that authentication headers are properly set when making API calls. The E
 -H "Authorization: Bearer $SINCH_ACCESS_TOKEN"
 ```
 
-See [sinch-authentication](../sinch-authentication/SKILL.md) for full setup, most importantly how to obtain `{SINCH_ACCESS_TOKEN}` (OAuth2 client-credentials — do not mint your own JWT).
+See `sinch-authentication` for full setup, most importantly how to obtain `{SINCH_ACCESS_TOKEN}` (OAuth2 client-credentials — do not mint your own JWT).
 
 ### SDK Installation
 
-See [sinch-sdks](../sinch-sdks/SKILL.md) for installation and client initialization. Note: EST is only supported in the **Node.js SDK** — for Java, Python, and .NET, use direct HTTP calls.
+See `sinch-sdks` for installation and client initialization. Note: EST is only supported in the **Node.js SDK** — for Java, Python, and .NET, use direct HTTP calls.
 
 ### First API Call — Create a Trunk
 
@@ -208,7 +225,9 @@ For SDK examples, see the [Getting Started Guide](https://developers.sinch.com/d
 2. **Country permissions** — US/Canada enabled by default. Other countries blocked; use `updateCountryPermissions`.
 3. **Project ID ≠ App Key** — EST uses `projectId`, not the Voice Application Key.
 4. **Default CPS limit** — 1 call per second. Exceeding it → 603. Contact Sinch to increase.
-5. **Teardown order** — Delete in reverse: unassign phone numbers → delete endpoints → unlink ACLs/credentials → delete trunk. Deleting out of order can orphan resources.
+5. **Teardown order** — Delete in reverse: unassign phone numbers → delete endpoints → unlink ACLs/credentials → delete trunk. The API does not orphan resources; it rejects the delete with `400` until dependents are gone. A credential list has two independent attachments (the trunk, and any endpoint that references its username) — detaching from the trunk is not enough if an endpoint still uses the username.
+6. **Link collections: POST appends.** `POST /trunks/{trunkId}/accessControlLists` and `POST /trunks/{trunkId}/credentialLists` add the IDs you send. The `200` body echoes the IDs in that request, not the full set now on the trunk — confirm with `GET`. Credential lists also have `PUT /trunks/{trunkId}/credentialLists` (`bulkUpdateCredentialListsForTrunk`), which replaces the whole set; omitting an ID detaches it. There is no matching bulk-replace for ACLs — remove one with `DELETE /trunks/{trunkId}/accessControlLists/{accessControlListId}`.
+7. **Assigning a phone number does not prove the project owns it.** `POST /phoneNumbers` can return `201` for a number that is not active on the project. Inbound then never arrives, with no provisioning error. After assign, confirm the number with `GET /projects/{projectId}/phoneNumbers` (or `GET /phoneNumbers/{phoneNumber}`) and that it is actually rented to the project.
 
 ## Troubleshooting
 

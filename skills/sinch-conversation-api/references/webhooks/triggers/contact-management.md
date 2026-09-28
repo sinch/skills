@@ -1,13 +1,9 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file describes when the trigger fires and lists notable fields. For
+> payload shape (field names, nesting, encodings, enums), refer to the canonical
+> `developers.sinch.com` docs linked from the parent [SKILL.md](../../../SKILL.md) before
+> writing code or prose that states payload structure.
 
 # Contact Management Triggers
-
-← [Back to Conversation API SKILL.md](../../../SKILL.md)
-
-**Sections:** [Overview](#overview) | [CONTACT_CREATE](#contact_create) | [CONTACT_UPDATE](#contact_update) | [CONTACT_DELETE](#contact_delete) | [CONTACT_MERGE](#contact_merge) | [CONTACT_IDENTITIES_DUPLICATION](#contact_identities_duplication) | [Key Points](#key-points)
 
 ## Overview
 
@@ -20,8 +16,6 @@ The five contact management triggers are:
 - `CONTACT_DELETE` — Contact deleted
 - `CONTACT_MERGE` — Two contacts merged into one
 - `CONTACT_IDENTITIES_DUPLICATION` — Duplicate channel identities detected
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
 
 ## CONTACT_CREATE
 
@@ -67,8 +61,6 @@ The five contact management triggers are:
 | `contact.external_id`        | Your system's identifier for this contact                      |
 | `contact.metadata`           | Custom JSON metadata                                           |
 | `contact.language`           | Preferred language code                                        |
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
 
 ### Common Use Cases
 
@@ -119,7 +111,7 @@ The five contact management triggers are:
 
 ### Key Fields
 
-Same as `CONTACT_CREATE`, but represents the updated state after the change. *(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
+Same as `CONTACT_CREATE`, but represents the updated state after the change.
 
 ### Common Use Cases
 
@@ -154,8 +146,6 @@ Same as `CONTACT_CREATE`, but represents the updated state after the change. *(S
 | Field        | Description               |
 | ------------ | ------------------------- |
 | `contact_id` | ID of the deleted contact |
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
 
 Note: Only the contact ID is provided; the contact is already deleted.
 
@@ -260,8 +250,6 @@ Note: Only the contact ID is provided; the contact is already deleted.
 | `channel`                       | Channel where duplication occurred                  |
 | `identity`                      | The duplicate channel identity (e.g., phone number) |
 | `contact_ids`                   | Array of contact IDs sharing this identity          |
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
 
 ### Common Use Cases
 

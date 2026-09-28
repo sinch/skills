@@ -3,54 +3,12 @@
 > copy field names, nesting, encodings, or enums from here into shipped code without
 > confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
 
-# FunctionContext services — SDK, cache, storage, database (Node.js)
+# FunctionContext services — cache, storage, database (Node.js)
 
-Reference for calling the bundled Sinch SDK and the cache/storage/database services on `FunctionContext`. Loaded on-demand from [SKILL.md](../SKILL.md).
-
-## Using the bundled SDK
-
-**The complete Sinch SDK is bundled and pre-configured** — you do NOT install `@sinch/sdk-core` separately, and you do NOT handle authentication. SDK clients are auto-initialized from environment variables when your function starts. If credentials for a particular product aren't set, that property is `null` — always use optional chaining. See the [Sinch Node SDK reference](https://developers.sinch.com/docs/sdks.md) for method signatures.
-
-```typescript
-// Send an SMS confirmation from the ICE handler
-// data.cli is the caller's phone number in E.164 format
-async ice(context, data) {
-  await context.sms?.batches.send({
-    sendSMSRequestBody: {
-      to: [data.cli ?? ''],
-      from: context.env.SMS_SENDER,
-      body: 'Thanks for calling! A summary will arrive shortly.',
-    },
-  });
-
-  return new IceSvamlBuilder().say('Connecting you now.').connectPstn('+15551234567').build();
-}
-
-// Send a WhatsApp message — message body shape is standard Conversation API.
-// See the sinch-conversation-api skill for channels, templates, rich cards, etc.
-await context.conversation?.messages.send({
-  sendMessageRequestBody: {
-    app_id: context.env.CONVERSATION_APP_ID,
-    recipient: { identified_by: { channel_identities: [{ channel: 'WHATSAPP', identity: '+15551234567' }] } },
-    message: { text_message: { text: 'Hello!' } },
-  },
-});
-
-// Make an outbound voice call
-await context.voice?.calls.callouts.call({
-  calloutRequestBody: {
-    method: 'ttsCallout',
-    ttsCallout: {
-      destination: { type: 'number', endpoint: '+15551234567' },
-      locale: 'en-US',
-      text: 'Your appointment is confirmed.',
-    },
-  },
-});
-
-// Rent a phone number
-await context.numbers?.availableNumbers.rent({ ... });
-```
+Reference for the cache/storage/database services on `FunctionContext`. Loaded on-demand from
+[SKILL.md](../SKILL.md). For the bundled Sinch SDK clients (`context.voice`, `context.conversation`,
+`context.sms`, `context.numbers`, and any other product), see "The bundled SDK" in SKILL.md, the
+`sinch-sdks` skill, and the product skill.
 
 ## Cache
 

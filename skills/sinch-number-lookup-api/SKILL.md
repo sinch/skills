@@ -3,7 +3,7 @@ name: sinch-number-lookup-api
 description: Looks up phone number details via Sinch Number Lookup API. Use when checking carrier, line type, porting status, SIM swap, VoIP detection, or reassigned number detection (RND) for fraud prevention or routing decisions.
 metadata:
   author: Sinch
-  version: 1.1.0
+  version: 1.2.0
   category: Numbers
   tags: number-lookup, carrier, line-type, sim-swap, voip-detection, fraud-prevention
   uses:
@@ -19,12 +19,29 @@ Queries phone numbers for carrier, line type, porting, SIM swap, VoIP detection,
 
 ## Agent Instructions
 
+> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+
+<!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
+**Sinch policy digest (binding):**
+
+1. Load the shared policy once per conversation; skip duplicate copies bearing the same ID/version/fingerprint.
+2. Infer product, language, region, and environment from the request and workspace; ask one combined question only for true blockers. Prefer the official Sinch SDK unless the request or workspace decides otherwise or no official SDK covers the language or operation.
+3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
+4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
+5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
+8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
+9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
+10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+<!-- sinch-policy-digest: end -->
+
 Before generating code, gather from the user (skip any item already specified in the prompt or context):
 
 1. **Approach** — SDK or direct API calls (curl/fetch/requests)?
 2. **Language** — for SDK: Node.js or Python (partial). For direct API: any language, or curl. Java and .NET must use direct HTTP — there is no SDK wrapper.
 
-When the user chooses **SDK**, refer to the [sinch-sdks](../sinch-sdks/SKILL.md) skill for installation and client initialization, then to the API Reference linked in Links.
+When the user chooses **SDK**, refer to the `sinch-sdks` skill for installation and client initialization, then to the API Reference linked in Links.
 
 When the user chooses **direct API calls**, refer to the API Reference linked in Links for request/response schemas.
 
@@ -71,7 +88,7 @@ Ensure that authentication headers are properly set when making API calls. The N
 -H "Authorization: Bearer $SINCH_ACCESS_TOKEN"
 ```
 
-See [sinch-authentication](../sinch-authentication/SKILL.md) for full setup, most importantly how to obtain `{SINCH_ACCESS_TOKEN}` (OAuth2 client-credentials — do not mint your own JWT).
+See `sinch-authentication` for full setup, most importantly how to obtain `{SINCH_ACCESS_TOKEN}` (OAuth2 client-credentials — do not mint your own JWT).
 
 ### Base URL
 

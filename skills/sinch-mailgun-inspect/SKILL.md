@@ -3,7 +3,7 @@ name: sinch-mailgun-inspect
 description: Checks email quality before sending via Mailgun Inspect API. Use when previewing emails across clients, checking accessibility (WCAG), validating links, validating images, or analyzing email HTML/CSS compatibility.
 metadata:
   author: Sinch
-  version: 1.1.0
+  version: 1.2.0
   category: Email
   tags: email, mailgun, inspect, accessibility, links, images, previews, qa
   uses:
@@ -30,6 +30,23 @@ For full endpoint tables and request schemas, see [references/api-endpoints.md](
 
 ## Agent Instructions
 
+> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+
+<!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
+**Sinch policy digest (binding):**
+
+1. Load the shared policy once per conversation; skip duplicate copies bearing the same ID/version/fingerprint.
+2. Infer product, language, region, and environment from the request and workspace; ask one combined question only for true blockers. Prefer the official Sinch SDK unless the request or workspace decides otherwise or no official SDK covers the language or operation.
+3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
+4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
+5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
+8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
+9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
+10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+<!-- sinch-policy-digest: end -->
+
 Before generating code, gather from the user (skip any item already specified in the prompt or context):
 
 1. **Scope** — broad QC (run all four HTML-based tests in parallel) or a specific capability (e.g. "check links" → run only that one)?
@@ -38,7 +55,7 @@ Before generating code, gather from the user (skip any item already specified in
 4. **Language** — any language, or curl. This API is REST-only; there is no SDK wrapper.
 
 Product gotchas to apply unconditionally:
-- **Always poll** — test-creation POST endpoints are typically async; poll GET until status is `"Complete"` or `"Completed"`; treat `"Failed"` as terminal error.
+- **Bound polling** — test-creation POST endpoints are typically async. Honor `Retry-After` when present; otherwise use exponential backoff with jitter. Stop at a caller-configurable deadline (default 10 minutes), treat documented failure states as terminal, and report the last state as unknown on timeout.
 - **V2 preview shortcut** — `POST /v2/preview/tests` can trigger accessibility, link validation, image validation, and code analysis in a single call by adding content-checking fields to the body. Use this when the user wants previews + quality checks together.
 
 Refer to the API references linked in Links for request/response schemas.
@@ -87,7 +104,7 @@ Ensure that authentication headers are properly set when making API calls. Mailg
 
 Keep the Mailgun private API key in environment variables or a secret manager. Avoid generating commands or code that embed the key next to `--user` except via a variable (as in the example above).
 
-See the [sinch-authentication](../sinch-authentication/SKILL.md) skill for full auth setup.
+See the `sinch-authentication` skill for full auth setup.
 
 ### Base URLs
 

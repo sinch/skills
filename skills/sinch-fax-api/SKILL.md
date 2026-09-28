@@ -3,7 +3,7 @@ name: sinch-fax-api
 description: Send and receive faxes programmatically with Sinch Fax API. Use when building fax workflows, fax-to-email delivery, sending PDFs by fax, checking fax status, managing fax services, configuring cover pages, receiving fax webhooks, or integrating fax into healthcare, legal, or financial applications.
 metadata:
   author: Sinch
-  version: 1.1.0
+  version: 1.2.0
   category: Voice
   tags: fax, pdf, fax-to-email, webhooks, healthcare, legal
   uses:
@@ -19,13 +19,30 @@ The Sinch Fax API lets you send and receive faxes programmatically. It supports 
 
 ## Agent Instructions
 
+> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+
+<!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
+**Sinch policy digest (binding):**
+
+1. Load the shared policy once per conversation; skip duplicate copies bearing the same ID/version/fingerprint.
+2. Infer product, language, region, and environment from the request and workspace; ask one combined question only for true blockers. Prefer the official Sinch SDK unless the request or workspace decides otherwise or no official SDK covers the language or operation.
+3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
+4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
+5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
+8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
+9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
+10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+<!-- sinch-policy-digest: end -->
+
 Before generating code, gather from the user (skip any item already specified in the prompt or context):
 
 1. **Use case** — sending, receiving, fax-to-email, or managing services?
 2. **Approach** — SDK or direct API calls (curl/fetch/requests)?
 3. **Language** — for SDK: Node.js (preview) or .NET (partial). For direct API: any language, or curl. Java and Python must use direct HTTP — there is no SDK wrapper.
 
-When the user chooses **SDK**, refer to the [sinch-sdks](../sinch-sdks/SKILL.md) skill for installation and client initialization, then to the Fax API Reference linked in Links.
+When the user chooses **SDK**, refer to the `sinch-sdks` skill for installation and client initialization, then to the Fax API Reference linked in Links.
 
 When the user chooses **direct API calls**, refer to the Fax API Reference linked in Links for request/response schemas.
 
@@ -72,7 +89,7 @@ Ensure that authentication headers are properly set when making API calls. The F
 -H "Authorization: Bearer $SINCH_ACCESS_TOKEN"
 ```
 
-See [sinch-authentication](../sinch-authentication/SKILL.md) for full setup, most importantly how to obtain `{SINCH_ACCESS_TOKEN}` (OAuth2 client-credentials — do not mint your own JWT).
+See `sinch-authentication` for full setup, most importantly how to obtain `{SINCH_ACCESS_TOKEN}` (OAuth2 client-credentials — do not mint your own JWT).
 
 ### First API Call — Send a Fax
 
@@ -158,7 +175,7 @@ For HTTPS URLs, ensure your SSL certificate (including intermediate certs) is va
 
 ## Links
 
-- [Authentication setup](../sinch-authentication/SKILL.md)
+- `Authentication setup`
 - [Fax API Reference (Markdown)](https://developers.sinch.com/docs/fax/api-reference/fax.md)
 - [Fax API OpenAPI Spec (YAML)](https://developers.sinch.com/_bundle/docs/fax/api-reference/fax.yaml?download)
 - [Getting Started Guide](https://developers.sinch.com/docs/fax/getting-started.md)

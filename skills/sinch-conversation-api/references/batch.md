@@ -1,22 +1,11 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
-
-← [Back to Conversation API SKILL.md](../SKILL.md)
+> **Not a schema.** This file describes when to use the Batch API, its base URLs, endpoints,
+> and pitfalls. For payload shape (field names, nesting, encodings, enums), refer to the
+> canonical `developers.sinch.com` docs linked from the parent [SKILL.md](../SKILL.md) before
+> writing code or prose that states payload structure.
 
 # Batch API Reference
 
 The Batch API sends a **single message definition** to **up to 1000 recipients** in one API call, with per-recipient `${parameter}` substitution. Also supports bulk contact creation/deletion and consent records.
-
-**Sections:** [SDK Reference](#sdk-reference) | [When to Use](#when-to-use) | [Base URLs](#base-urls-separate-from-conversation-api) | [API Endpoints](#api-endpoints) | [Request Structure](#correct-request-structure) | [Top-Level Fields](#top-level-request-fields) | [Per-Recipient Fields](#per-recipient-fields) | [Managing Batches](#managing-batches) | [Bulk Contacts](#bulk-contacts) | [Callbacks](#callbacks) | [Common Pitfalls](#common-pitfalls) | [Links](#links)
-
-## SDK Reference
-
-- [Node.js](https://developers.sinch.com/docs/conversation/sdk/node/syntax-reference.md)
-- [Python](https://developers.sinch.com/docs/conversation/sdk/python/syntax-reference.md)
-- [Java](https://developers.sinch.com/docs/conversation/sdk/java/syntax-reference.md)
-- [.NET](https://developers.sinch.com/docs/conversation/sdk/dotnet/syntax-reference.md)
 
 ## When to Use
 
@@ -53,42 +42,7 @@ All endpoints prefixed with `/v1/projects/{project_id}`.
 
 ## CORRECT Request Structure
 
-ONE `message` at top level + `recipient_and_params` array:
-
-```json
-{
-  "app_id": "YOUR_APP_ID",
-  "message": {
-    "text_message": {
-      "text": "Hello ${user}! Your code is ${code}"
-    }
-  },
-  "recipient_and_params": [
-    {
-      "recipient": {
-        "identified_by": {
-          "channel_identities": [
-            { "channel": "SMS", "identity": "+1234567890" }
-          ]
-        }
-      },
-      "parameters": { "user": "Jane", "code": "123" }
-    },
-    {
-      "recipient": {
-        "identified_by": {
-          "channel_identities": [
-            { "channel": "SMS", "identity": "+0987654321" }
-          ]
-        }
-      },
-      "parameters": { "user": "John", "code": "456" }
-    }
-  ]
-}
-```
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Batch Messages API](https://developers.sinch.com/docs/conversation/api-reference/batch-api/batch/messages.md) doc before implementing.)*
+ONE `message` at top level + `recipient_and_params` array. Field names, nesting, and enums must come from the authoritative [Batch Messages API](https://developers.sinch.com/docs/conversation/api-reference/batch-api/batch/messages.md) doc — do not lift them from this file.
 
 **WRONG** — do NOT use a `messages` array. The Batch API uses ONE message + many recipients.
 
@@ -108,8 +62,6 @@ ONE `message` at top level + `recipient_and_params` array:
 | `ttl`                    | string   | No       | Timeout in seconds, e.g. `"86400s"`                                |
 | `channel_properties`     | object   | No       | Channel-specific properties                                        |
 
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Batch Messages API](https://developers.sinch.com/docs/conversation/api-reference/batch-api/batch/messages.md) doc before implementing.)*
-
 ## Per-Recipient Fields
 
 | Field                  | Type   | Required | Description                                           |
@@ -119,13 +71,11 @@ ONE `message` at top level + `recipient_and_params` array:
 | `message_metadata`     | object | No       | Merged with top-level (recipient takes precedence)    |
 | `conversation_metadata`| object | No       | Merged with top-level (recipient takes precedence)    |
 
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Batch Messages API](https://developers.sinch.com/docs/conversation/api-reference/batch-api/batch/messages.md) doc before implementing.)*
-
 ## Managing Batches
 
 - **Cancel**: `DELETE /v1/projects/{project_id}/messages` with `batch_id` in body
 - **Get status**: `GET /v1/projects/{project_id}/messages/{batch_id}`
-- Statuses: `READY`, `SCHEDULED`, `PROCESSED`, `CANCELLED` *(Summary only — confirm exact names/encoding/enums against the authoritative [Batch Messages API](https://developers.sinch.com/docs/conversation/api-reference/batch-api/batch/messages.md) doc before implementing.)*
+- Statuses: `READY`, `SCHEDULED`, `PROCESSED`, `CANCELLED`
 
 See [Batch Messages API](https://developers.sinch.com/docs/conversation/api-reference/batch-api/batch/messages.md).
 
@@ -137,7 +87,7 @@ See [Batch Messages API](https://developers.sinch.com/docs/conversation/api-refe
 
 - `BATCH_STATUS_UPDATE` webhook trigger for batch-level status changes
 - `MESSAGE_DELIVERY` for per-message delivery receipts (includes `_batch_id` in metadata)
-- Failed receipts include `batch_id` and `message_index` *(Summary only — confirm exact names/encoding/enums against the authoritative [Batch Messages API](https://developers.sinch.com/docs/conversation/api-reference/batch-api/batch/messages.md) doc before implementing.)*
+- Failed receipts include `batch_id` and `message_index`
 
 ## Common Pitfalls
 

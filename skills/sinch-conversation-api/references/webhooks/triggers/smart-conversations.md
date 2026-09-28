@@ -1,14 +1,9 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file describes when the trigger fires and lists notable fields. For
+> payload shape (field names, nesting, encodings, enums), refer to the canonical
+> `developers.sinch.com` docs linked from the parent [SKILL.md](../../../SKILL.md) before
+> writing code or prose that states payload structure.
 
 # Smart Conversations Triggers
-
-← [Back to Conversation API SKILL.md](../../../SKILL.md)
-
-**Sections:** [Overview](#overview) | [Prerequisites](#prerequisites) | [SMART_CONVERSATION](#smart_conversation) | [MESSAGE_INBOUND_SMART_CONVERSATION_REDACTION](#message_inbound_smart_conversation_redaction) | [Key Points](#key-points)
-
 ## Overview
 
 Smart Conversations triggers deliver AI analysis results and redacted message content when Sinch's Smart Conversations feature is enabled. Smart Conversations uses machine learning to analyze message content for sentiment, intent, PII, offensive content, and more. These triggers require Smart Conversations to be enabled on your Conversation API app.
@@ -82,8 +77,6 @@ Delivers AI-powered analysis of message content, including sentiment, intent cla
 }
 ```
 
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
-
 ### Analysis Fields
 
 | Field                        | Description                                                       |
@@ -112,8 +105,6 @@ Delivers AI-powered analysis of message content, including sentiment, intent cla
 - `ADDRESS` — Physical addresses
 - `DATE_OF_BIRTH` — Dates of birth
 - `BANK_ACCOUNT` — Bank account numbers
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
 
 ### Common Use Cases
 
@@ -176,8 +167,6 @@ PII is replaced with standardized tokens:
 - `[ADDRESS_REDACTED]` — Physical addresses
 - `[DOB_REDACTED]` — Dates of birth
 - `[BANK_ACCOUNT_REDACTED]` — Bank account numbers
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md) doc before implementing.)*
 
 ### Common Use Cases
 

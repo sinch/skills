@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /*
  * EXECUTION TOOL — not a schema reference.
- * Run this to PERFORM a task (e.g. create a webhook, send a test message) when you do not
- * need to write application code. Do NOT copy its payload literals or logic into a new
- * codebase as if they were the API spec — load the authoritative developers.sinch.com doc
- * instead. See "Source of Truth" in this skill's SKILL.md.
+ * Run this script as-is to PERFORM this task when you do not need to write
+ * application code; side-effect rules still apply (billable/destructive calls
+ * need explicit user approval). Do NOT copy its payload literals or logic into
+ * a new codebase as if they were the API spec — for payload shape, load the
+ * canonical developers.sinch.com docs linked from ../../SKILL.md instead.
  */
 /**
  * List messages from Sinch Conversation API.
@@ -24,66 +25,64 @@
  *   SINCH_REGION       - API region: us, eu, or br (default: us)
  */
 
-var querystring = require("querystring");
-var client = require("./sinch_client.cjs");
+const client = require("./sinch_client.cjs");
+const { parseArgs } = require("node:util");
 
-function parseArgs(argv) {
-  var args = { pageSize: 10 };
-  for (var i = 2; i < argv.length; i++) {
-    switch (argv[i]) {
-      case "--contact-id":
-        args.contactId = argv[++i];
-        break;
-      case "--conversation-id":
-        args.conversationId = argv[++i];
-        break;
-      case "--channel":
-        args.channel = argv[++i];
-        break;
-      case "--app-id":
-        args.appId = argv[++i];
-        break;
-      case "--page-size":
-        args.pageSize = parseInt(argv[++i], 10);
-        break;
-      case "--page-token":
-        args.pageToken = argv[++i];
-        break;
-      case "--help":
-        console.log("Usage: node list_messages.js [--contact-id ID] [--conversation-id ID] [--channel SMS] [--page-size 10] [--page-token TOKEN]");
-        process.exit(0);
-    }
+function parseArguments() {
+  const { values } = parseArgs({
+    options: {
+      "contact-id":      { type: "string" },
+      "conversation-id": { type: "string" },
+      "channel":         { type: "string" },
+      "app-id":          { type: "string" },
+      "page-size":       { type: "string" },
+      "page-token":      { type: "string" },
+      "help":            { type: "boolean" },
+    },
+  });
+
+  if (values.help) {
+    console.log("Usage: node list_messages.js [--contact-id ID] [--conversation-id ID] [--channel SMS] [--page-size 10] [--page-token TOKEN]");
+    process.exit(0);
   }
-  return args;
+
+  return {
+    contactId: values["contact-id"],
+    conversationId: values["conversation-id"],
+    channel: values.channel,
+    appId: values["app-id"],
+    pageSize: values["page-size"] !== undefined ? parseInt(values["page-size"], 10) : 10,
+    pageToken: values["page-token"],
+  };
 }
 
 function listMessages(projectId, token, region, options) {
-  var params = { page_size: String(options.pageSize || 10) };
+  const params = { page_size: String(options.pageSize || 10) };
   if (options.contactId) params.contact_id = options.contactId;
   if (options.conversationId) params.conversation_id = options.conversationId;
   if (options.channel) params.channel = options.channel;
   if (options.appId) params.app_id = options.appId;
   if (options.pageToken) params.page_token = options.pageToken;
 
-  var query = querystring.stringify(params);
-  var url = client.apiUrl(region, projectId, "messages?" + query);
+  const query = new URLSearchParams(params).toString();
+  const url = client.apiUrl(region, projectId, `messages?${query}`);
 
   return client.httpRequest(url, {
     method: "GET",
     headers: {
-      Authorization: "Bearer " + token,
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
   });
 }
 
 function extractText(msg) {
-  var contactMsg = msg.contact_message;
+  const contactMsg = msg.contact_message;
   if (contactMsg && contactMsg.text_message) {
     return contactMsg.text_message.text || "";
   }
 
-  var appMsg = msg.app_message;
+  const appMsg = msg.app_message;
   if (appMsg && appMsg.text_message) {
     return appMsg.text_message.text || "";
   }
@@ -92,52 +91,52 @@ function extractText(msg) {
 }
 
 function printMessage(msg) {
-  var msgId = msg.id || "N/A";
-  var acceptTime = msg.accept_time || "N/A";
-  var direction = msg.direction || "N/A";
-  var channelIdentity = msg.channel_identity || {};
-  var msgChannel = channelIdentity.channel || "N/A";
-  var identity = channelIdentity.identity || "N/A";
-  var text = extractText(msg);
+  const msgId = msg.id || "N/A";
+  const acceptTime = msg.accept_time || "N/A";
+  const direction = msg.direction || "N/A";
+  const channelIdentity = msg.channel_identity || {};
+  const msgChannel = channelIdentity.channel || "N/A";
+  const identity = channelIdentity.identity || "N/A";
+  const text = extractText(msg);
 
-  console.log("[" + acceptTime + "] " + direction + " via " + msgChannel + " (" + identity + "): " + text);
-  console.log("  ID: " + msgId);
+  console.log(`[${acceptTime}] ${direction} via ${msgChannel} (${identity}): ${text}`);
+  console.log(`  ID: ${msgId}`);
   console.log();
 }
 
 async function main() {
-  var args = parseArgs(process.argv);
+  const args = parseArguments();
 
-  var projectId = client.getEnv("SINCH_PROJECT_ID");
-  var keyId = client.getEnv("SINCH_KEY_ID");
-  var keySecret = client.getEnv("SINCH_KEY_SECRET");
-  var region = client.getEnv("SINCH_REGION", "us");
+  const projectId = client.getEnv("SINCH_PROJECT_ID");
+  const keyId = client.getEnv("SINCH_KEY_ID");
+  const keySecret = client.getEnv("SINCH_KEY_SECRET");
+  const region = client.getEnv("SINCH_REGION", "us");
 
   process.stderr.write("Authenticating...\n");
-  var token = await client.getAccessToken(keyId, keySecret);
+  const token = await client.getAccessToken(keyId, keySecret);
 
   process.stderr.write("Listing messages...\n");
-  var result = await listMessages(projectId, token, region, args);
+  const result = await listMessages(projectId, token, region, args);
 
-  var messages = result.messages || [];
-  var nextToken = result.next_page_token;
+  const messages = result.messages || [];
+  const nextToken = result.next_page_token;
 
   if (messages.length === 0) {
     console.log("No messages found.");
     return;
   }
 
-  var reversed = messages.slice().reverse();
-  for (var i = 0; i < reversed.length; i++) {
-    printMessage(reversed[i]);
+  const reversed = messages.slice().reverse();
+  for (const msg of reversed) {
+    printMessage(msg);
   }
 
   if (nextToken) {
-    console.log("Next page token: " + nextToken);
+    console.log(`Next page token: ${nextToken}`);
   }
 }
 
-main().catch(function (err) {
+main().catch((err) => {
   console.error(err.message);
   process.exit(1);
 });

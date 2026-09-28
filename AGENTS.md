@@ -30,7 +30,7 @@ Load the smallest set of skills that owns the behavior. Start with the product s
 | Provision WhatsApp senders, RCS agents, KakaoTalk senders | `sinch-provisioning-api` |
 | US 10DLC brand and campaign registration | `sinch-10dlc` |
 | Voice calls, IVR, TTS, conferencing with the Voice API v1 | `sinch-voice-api` |
-| Voice API 2.0 (public preview) | Not covered by a skill yet; use https://developers.sinch.com/docs/voice-2.0 |
+| Voice API v2 (public preview): calls, SVAML v2, webhooks, Voice Relay, audio streams | `sinch-voice-api-v2` |
 | In-app voice and video SDKs (Android, iOS, JavaScript) | `sinch-in-app-calling` |
 | SIP trunks, endpoints, ACLs | `sinch-elastic-sip-trunking` |
 | Phone number verification (SMS, flashcall, call, data, WhatsApp) | `sinch-verification-api` |

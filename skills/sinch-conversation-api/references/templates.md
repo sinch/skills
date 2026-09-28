@@ -1,24 +1,13 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
-
-← [Back to Conversation API SKILL.md](../SKILL.md)
+> **Not a schema.** This file describes when to use Template Management, its base URLs,
+> endpoints, and pitfalls. For payload shape (field names, nesting, encodings, enums), refer
+> to the canonical `developers.sinch.com` docs linked from the parent [SKILL.md](../SKILL.md)
+> before writing code or prose that states payload structure.
 
 # Template Management API Reference
 
 Manages **omni-channel templates** — pre-defined message formats with dynamic parameters, multiple languages, and channel-specific overrides (e.g., WhatsApp-approved templates).
 
 **Use V2 exclusively** — V1 reached end-of-life on January 31, 2026.
-
-**Sections:** [SDK Reference](#sdk-reference) | [When to Use](#when-to-use) | [Base URLs](#base-urls-separate-from-conversation-api) | [API Endpoints](#api-endpoints-v2) | [Key Concepts](#key-concepts) | [Template Structure](#template-structure) | [Creating Templates](#creating-templates) | [Updating Templates](#updating-templates) | [Translation Types](#translation-message-types) | [Channel-Specific](#channel-specific-templates-not-managed-here) | [Common Pitfalls](#common-pitfalls) | [Links](#links)
-
-## SDK Reference
-
-- [Node.js](https://developers.sinch.com/docs/conversation/sdk/node/syntax-reference.md)
-- [Python](https://developers.sinch.com/docs/conversation/sdk/python/syntax-reference.md)
-- [Java](https://developers.sinch.com/docs/conversation/sdk/java/syntax-reference.md)
-- [.NET](https://developers.sinch.com/docs/conversation/sdk/dotnet/syntax-reference.md)
 
 ## When to Use
 
@@ -61,29 +50,7 @@ All endpoints prefixed with `/v2/projects/{project_id}`.
 
 ## Template Structure
 
-```json
-{
-  "id": "01F8MECHZX3TBDSZ7XRADM79XE",
-  "description": "Order confirmation template",
-  "version": 1,
-  "default_translation": "en-US",
-  "translations": [
-    {
-      "language_code": "en-US",
-      "version": "1",
-      "variables": [
-        { "key": "customer_name", "preview_value": "Jane Doe" },
-        { "key": "order_number", "preview_value": "ORD-12345" }
-      ],
-      "text_message": {
-        "text": "Hi ${customer_name}, your order ${order_number} has been confirmed!"
-      }
-    }
-  ]
-}
-```
-
-*(Summary only — confirm exact names/encoding/enums against the authoritative [Templates V2 API](https://developers.sinch.com/docs/conversation/api-reference/template/templates-v2.md) doc before implementing.)*
+A template combines an `id`, `version`, `default_translation`, and one or more `translations` (each keyed by BCP-47 `language_code`, carrying `variables` and one message-type body). Field names, nesting, and enums must come from the authoritative [Templates V2 API](https://developers.sinch.com/docs/conversation/api-reference/template/templates-v2.md) doc — do not lift them from this file.
 
 ## Creating Templates
 
@@ -91,7 +58,7 @@ All endpoints prefixed with `/v2/projects/{project_id}`.
 
 Key patterns:
 - **Simple text**: Set `text_message` in a translation with `${variable}` placeholders
-- **WhatsApp override**: Add `channel_template_overrides.WHATSAPP.template_reference` pointing to an approved Meta template, with `parameter_mappings` linking channel-specific keys to omni-channel variable keys. On WhatsApp: uses the approved channel-specific template. On all other channels: uses the generic message. *(Summary only — confirm exact names/encoding/enums against the authoritative [Templates V2 API](https://developers.sinch.com/docs/conversation/api-reference/template/templates-v2.md) doc before implementing.)*
+- **WhatsApp override**: Add `channel_template_overrides.WHATSAPP.template_reference` pointing to an approved Meta template, with `parameter_mappings` linking channel-specific keys to omni-channel variable keys. On WhatsApp: uses the approved channel-specific template. On all other channels: uses the generic message.
 - **Multi-language**: Add multiple translations with different `language_code` values
 
 ## Updating Templates
@@ -100,7 +67,7 @@ Key patterns:
 
 ## Translation Message Types
 
-Each translation supports one of: `text_message`, `card_message`, `carousel_message`, `choice_message`, `location_message`, `media_message`, `template_message`, `list_message`. *(Summary only — confirm exact names/encoding/enums against the authoritative [Templates V2 API](https://developers.sinch.com/docs/conversation/api-reference/template/templates-v2.md) doc before implementing.)*
+Each translation supports one of: `text_message`, `card_message`, `carousel_message`, `choice_message`, `location_message`, `media_message`, `template_message`, `list_message`.
 
 Plus: `channel_template_overrides`, `variables`, `language_code`, `version`.
 

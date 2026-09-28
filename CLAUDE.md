@@ -11,7 +11,7 @@ Official Sinch API skills for AI coding agents. Each `skills/<product>/SKILL.md`
 1. Pick the product skill whose `description` matches the request. Use the routing table in [AGENTS.md](AGENTS.md#choosing-the-right-skill). Load the smallest set of skills that owns the behavior; the product skill says which supporting skills to load and when.
 2. Read the skill's **Agent Instructions** section before writing code. It holds the binding policy digest, what to infer versus ask, and which other skills to load.
 3. Read `references/shared-policy.md` once per conversation. Skip further copies with the same ID, version, and fingerprint.
-4. Check the **Overview** for version scope. For example, `sinch-voice-api` covers Voice API v1 only; Voice API 2.0 is documented at https://developers.sinch.com/docs/voice-2.0 and has no skill yet.
+4. Check the **Overview** for version scope. For example, `sinch-voice-api` covers Voice API v1 only; the preview Voice API v2 is covered by `sinch-voice-api-v2`.
 5. Follow **Getting Started** and **Common Patterns** for the implementation, and **Gotchas** and **Security** before finishing.
 
 ## Rules That Change What You Do

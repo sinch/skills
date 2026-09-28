@@ -1,7 +1,7 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file describes common SIP failure symptoms and troubleshooting steps.
+> For payload shape (field names, nesting, encodings, enums), refer to the canonical
+> `developers.sinch.com` docs linked from the parent [SKILL.md](../SKILL.md) before writing
+> code or prose that states payload structure.
 
 # Elastic SIP Trunking — Diagnostics
 
@@ -19,6 +19,20 @@ If calls or registrations fail, check the SIP response code:
 | **408** | Call timeout | Network/firewall issue | Ensure SIP ports (5060 UDP/TCP, 5061 TLS) are open to Sinch edge IPs. |
 | **503** | Inbound call fails | No active endpoints | Ensure at least one SIP endpoint exists on the trunk AND (if registered) the UA is actively registered. |
 | **603** | Outbound call fails | Rate limit (CPS) | Reduce call frequency. Default is 1 CPS; contact Sinch to increase. |
+
+## HTTP provisioning errors (4xx)
+
+Provisioning failures surface as HTTP status codes, not SIP codes. These are the ones the API returns with a usable message:
+
+| Status | When | What it means |
+|--------|------|---------------|
+| **400** `VALIDATION_FAILED` / `Failed to read HTTP message` | Creating an ACL | Body shape is wrong. `ipRanges` is an array of `{ipAddress, range}` objects (`range` is an integer 1–32), and `enabled` is required. A CIDR string such as `"203.0.113.10/32"` produces this error. |
+| **400** | Creating a credential | Password policy: at least 12 characters, with one uppercase, one lowercase, and one numeric. |
+| **400** `Cannot delete SIP Trunk ... when there are phone numbers assigned` | `DELETE` trunk | Unassign phone numbers first. The API blocks the delete; it does not orphan the trunk. |
+| **400** `Credential List cannot be deleted while attached to a SIP Trunk` | `DELETE` credential list | Unlink it from the trunk first (`DELETE /trunks/{trunkId}/credentialLists/{credentialListId}`). |
+| **400** `Credential List cannot be deleted while attached to a SIP Endpoint` | `DELETE` credential list | Separate constraint from the trunk link. Delete or update the endpoint that references the username, then delete the list. |
+| **404** `NO_RESOURCE_FOUND` | `GET /trunks/{trunkId}/phoneNumbers` | That path does not exist. List numbers with `GET /projects/{projectId}/phoneNumbers`. |
+| **404** `CREDENTIAL_NOT_FOUND` | Creating a registered endpoint | `credentialUsername` is not in any credential list in the project. This check does **not** require the list to be linked to the trunk — a `201` can still leave REGISTER failing with SIP 401. |
 
 ## Verification Checklist
 

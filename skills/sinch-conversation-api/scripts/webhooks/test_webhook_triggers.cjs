@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /*
  * EXECUTION TOOL — not a schema reference.
- * Run this to PERFORM a task (e.g. create a webhook, send a test message) when you do not
- * need to write application code. Do NOT copy its payload literals or logic into a new
- * codebase as if they were the API spec — load the authoritative developers.sinch.com doc
- * instead. See "Source of Truth" in this skill's SKILL.md.
+ * Run this script as-is to PERFORM this task when you do not need to write
+ * application code; side-effect rules still apply (billable/destructive calls
+ * need explicit user approval). Do NOT copy its payload literals or logic into
+ * a new codebase as if they were the API spec — for payload shape, load the
+ * canonical developers.sinch.com docs linked from ../../SKILL.md instead.
  */
 /**
  * Test webhook triggers by sending example payloads to a test URL.
@@ -53,16 +54,15 @@
  *     --webhook-secret your_webhook_secret_key
  */
 
-var client = require("../common/sinch_client.cjs");
-var crypto = require("crypto");
-var https = require("https");
-var http = require("http");
+const client = require("../common/sinch_client.cjs");
+const crypto = require("node:crypto");
+const { parseArgs } = require("node:util");
 
 // Environment variables (only required for mode 1 with --webhook-id)
-var projectId, keyId, keySecret, region;
+let projectId, keyId, keySecret, region;
 
 // Example payloads for each trigger type
-var EXAMPLE_PAYLOADS = {
+const EXAMPLE_PAYLOADS = {
   MESSAGE_INBOUND: {
     app_id: "01EB37HMH1M6SV18ABNS3G135H",
     accepted_time: "2026-02-13T08:17:44.993024Z",
@@ -474,29 +474,27 @@ var EXAMPLE_PAYLOADS = {
   },
 };
 
-function parseArgs() {
-  var args = process.argv.slice(2);
-  var params = {};
+function parseArguments() {
+  const { values } = parseArgs({
+    options: {
+      "webhook-id":     { type: "string" },
+      "trigger":        { type: "string" },
+      "test-url":       { type: "string" },
+      "webhook-secret": { type: "string" },
+      "triggers":       { type: "string" },
+      "no-signature":   { type: "boolean", default: false },
+      "help":           { type: "boolean" },
+    },
+  });
 
-  for (var i = 0; i < args.length; i++) {
-    if (args[i] === "--help") {
-      console.log("Usage: node test_webhook_triggers.cjs --webhook-id WEBHOOK_ID --test-url URL [--triggers TRIGGERS]");
-      console.log("       node test_webhook_triggers.cjs --trigger TRIGGER_NAME --test-url URL [--webhook-secret SECRET] [--no-signature]");
-      process.exit(0);
-    }
-    if (args[i].startsWith("--")) {
-      var key = args[i].substring(2);
-
-      if (key === "no-signature") {
-        params[key] = true;
-      } else if (i + 1 < args.length && !args[i + 1].startsWith("--")) {
-        params[key] = args[++i];
-      }
-    }
+  if (values.help) {
+    console.log("Usage: node test_webhook_triggers.cjs --webhook-id WEBHOOK_ID --test-url URL [--triggers TRIGGERS]");
+    console.log("       node test_webhook_triggers.cjs --trigger TRIGGER_NAME --test-url URL [--webhook-secret SECRET] [--no-signature]");
+    process.exit(0);
   }
 
   // Validate arguments based on mode
-  if (!params["webhook-id"] && !params["trigger"]) {
+  if (!values["webhook-id"] && !values["trigger"]) {
     console.error("Error: Either --webhook-id or --trigger is required");
     console.error("");
     console.error("Mode 1: --webhook-id WEBHOOK_ID --test-url URL");
@@ -506,7 +504,7 @@ function parseArgs() {
     process.exit(1);
   }
 
-  if (params["webhook-id"] && params["trigger"]) {
+  if (values["webhook-id"] && values["trigger"]) {
     console.error("Error: Cannot use both --webhook-id and --trigger");
     console.error(
       "Use --webhook-id to test a webhook, or --trigger to test a specific trigger",
@@ -514,15 +512,15 @@ function parseArgs() {
     process.exit(1);
   }
 
-  if (!params["test-url"]) {
+  if (!values["test-url"]) {
     console.error("Error: --test-url is required");
     process.exit(1);
   }
 
   // Mode 2 validation
-  if (params["trigger"]) {
-    if (!EXAMPLE_PAYLOADS[params["trigger"]]) {
-      console.error("Error: Unknown trigger '" + params["trigger"] + "'");
+  if (values["trigger"]) {
+    if (!EXAMPLE_PAYLOADS[values["trigger"]]) {
+      console.error(`Error: Unknown trigger '${values["trigger"]}'`);
       console.error(
         "Available triggers:",
         Object.keys(EXAMPLE_PAYLOADS).join(", "),
@@ -530,7 +528,7 @@ function parseArgs() {
       process.exit(1);
     }
 
-    if (params["triggers"]) {
+    if (values["triggers"]) {
       console.error(
         "Error: --triggers option is only available in webhook mode (--webhook-id)",
       );
@@ -541,7 +539,7 @@ function parseArgs() {
     }
   }
 
-  return params;
+  return values;
 }
 
 function generateNonce() {
@@ -549,87 +547,68 @@ function generateNonce() {
 }
 
 function generateHmacSignature(body, secret) {
-  var nonce = generateNonce();
-  var timestamp = Math.floor(Date.now() / 1000);
-  var signedData = body + "." + nonce + "." + timestamp;
-  var signature = crypto
+  const nonce = generateNonce();
+  const timestamp = Math.floor(Date.now() / 1000);
+  const signedData = `${body}.${nonce}.${timestamp}`;
+  const signature = crypto
     .createHmac("sha256", secret)
     .update(signedData)
     .digest("base64");
 
   return {
-    signature: signature,
-    nonce: nonce,
-    timestamp: timestamp,
+    signature,
+    nonce,
+    timestamp,
     algorithm: "HmacSHA256",
   };
 }
 
-function sendTestPayload(testUrl, payload, secret, skipSignature) {
-  return new Promise(function (resolve, reject) {
-    var body = JSON.stringify(payload);
-    var parsedUrl = new URL(testUrl);
-    var protocol = parsedUrl.protocol === "https:" ? https : http;
+async function sendTestPayload(testUrl, payload, secret, skipSignature) {
+  const body = JSON.stringify(payload);
 
-    var headers = {
-      "Content-Type": "application/json",
-      "Content-Length": Buffer.byteLength(body),
-    };
+  const headers = {
+    "Content-Type": "application/json",
+  };
 
-    if (secret && !skipSignature) {
-      var hmac = generateHmacSignature(body, secret);
-      headers["x-sinch-webhook-signature"] = hmac.signature;
-      headers["x-sinch-webhook-signature-timestamp"] =
-        hmac.timestamp.toString();
-      headers["x-sinch-webhook-signature-nonce"] = hmac.nonce;
-      headers["x-sinch-webhook-signature-algorithm"] = hmac.algorithm;
-    }
+  if (secret && !skipSignature) {
+    const hmac = generateHmacSignature(body, secret);
+    headers["x-sinch-webhook-signature"] = hmac.signature;
+    headers["x-sinch-webhook-signature-timestamp"] = hmac.timestamp.toString();
+    headers["x-sinch-webhook-signature-nonce"] = hmac.nonce;
+    headers["x-sinch-webhook-signature-algorithm"] = hmac.algorithm;
+  }
 
-    var options = {
-      hostname: parsedUrl.hostname,
-      port: parsedUrl.port || (parsedUrl.protocol === "https:" ? 443 : 80),
-      path: parsedUrl.pathname + parsedUrl.search,
-      method: "POST",
-      headers: headers,
-    };
-
-    var req = protocol.request(options, function (res) {
-      var data = "";
-      res.on("data", function (chunk) {
-        data += chunk;
-      });
-      res.on("end", function () {
-        resolve({
-          statusCode: res.statusCode,
-          body: data,
-        });
-      });
-    });
-
-    req.on("error", reject);
-    req.write(body);
-    req.end();
+  const res = await fetch(testUrl, {
+    method: "POST",
+    headers,
+    body,
   });
+
+  const data = await res.text();
+  return {
+    statusCode: res.status,
+    body: data,
+  };
 }
 
 async function getWebhook(webhookId) {
-  var token = await client.getAccessToken(keyId, keySecret);
-  var url = client.apiUrl(region, projectId, "webhooks/" + webhookId);
+  const token = await client.getAccessToken(keyId, keySecret);
+  const url = client.apiUrl(region, projectId, `webhooks/${webhookId}`);
 
   return await client.httpRequest(url, {
     method: "GET",
     headers: {
-      Authorization: "Bearer " + token,
+      Authorization: `Bearer ${token}`,
     },
   });
 }
 
 async function testWebhookTriggers() {
   try {
-    var params = parseArgs();
-    var webhook = null;
-    var webhookSecret = null;
-    var triggersToTest = [];
+    const params = parseArguments();
+    let webhook = null;
+    let webhookSecret = null;
+    let triggersToTest = [];
 
     // Mode 1: Test existing webhook
     if (params["webhook-id"]) {
@@ -651,9 +630,7 @@ async function testWebhookTriggers() {
 
       webhookSecret = webhook.secret;
       triggersToTest = params.triggers
-        ? params.triggers.split(",").map(function (t) {
-            return t.trim();
-          })
+        ? params.triggers.split(",").map((t) => t.trim())
         : webhook.triggers;
     }
     // Mode 2: Test specific trigger without webhook
@@ -674,38 +651,34 @@ async function testWebhookTriggers() {
       triggersToTest = [params["trigger"]];
     }
 
-    console.log("Testing " + triggersToTest.length + " trigger(s)...");
+    console.log(`Testing ${triggersToTest.length} trigger(s)...`);
     console.log("─".repeat(80));
 
-    var results = {
+    const results = {
       success: 0,
       failed: 0,
       details: [],
     };
 
-    for (var i = 0; i < triggersToTest.length; i++) {
-      var trigger = triggersToTest[i];
-      var payload = EXAMPLE_PAYLOADS[trigger];
+    for (let i = 0; i < triggersToTest.length; i++) {
+      const trigger = triggersToTest[i];
+      const payload = EXAMPLE_PAYLOADS[trigger];
 
       if (!payload) {
-        console.log(
-          "\n[" + (i + 1) + "/" + triggersToTest.length + "] " + trigger,
-        );
+        console.log(`\n[${i + 1}/${triggersToTest.length}] ${trigger}`);
         console.log("  ⚠️  No example payload available for this trigger");
         results.details.push({
-          trigger: trigger,
+          trigger,
           status: "skipped",
           reason: "no example payload",
         });
         continue;
       }
 
-      console.log(
-        "\n[" + (i + 1) + "/" + triggersToTest.length + "] " + trigger,
-      );
+      console.log(`\n[${i + 1}/${triggersToTest.length}] ${trigger}`);
 
       try {
-        var response = await sendTestPayload(
+        const response = await sendTestPayload(
           params["test-url"],
           payload,
           webhookSecret,
@@ -713,22 +686,22 @@ async function testWebhookTriggers() {
         );
 
         if (response.statusCode >= 200 && response.statusCode < 300) {
-          console.log("  ✅ Success (HTTP " + response.statusCode + ")");
+          console.log(`  ✅ Success (HTTP ${response.statusCode})`);
           if (webhookSecret && !params["no-signature"]) {
             console.log("  🔐 HMAC signature included");
           }
           results.success++;
           results.details.push({
-            trigger: trigger,
+            trigger,
             status: "success",
             statusCode: response.statusCode,
           });
         } else {
-          console.log("  ❌ Failed (HTTP " + response.statusCode + ")");
+          console.log(`  ❌ Failed (HTTP ${response.statusCode})`);
           console.log("  Response:", response.body.substring(0, 200));
           results.failed++;
           results.details.push({
-            trigger: trigger,
+            trigger,
             status: "failed",
             statusCode: response.statusCode,
           });
@@ -737,14 +710,14 @@ async function testWebhookTriggers() {
         console.log("  ❌ Error:", error.message);
         results.failed++;
         results.details.push({
-          trigger: trigger,
+          trigger,
           status: "error",
           error: error.message,
         });
       }
     }
 
-    console.log("\n" + "─".repeat(80));
+    console.log(`\n${"─".repeat(80)}`);
     console.log("\nTest Summary:");
     console.log("  Total:", triggersToTest.length);
     console.log("  Success:", results.success);

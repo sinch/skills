@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /*
  * EXECUTION TOOL — not a schema reference.
- * Run this to PERFORM a task (e.g. create a webhook, send a test message) when you do not
- * need to write application code. Do NOT copy its payload literals or logic into a new
- * codebase as if they were the API spec — load the authoritative developers.sinch.com doc
- * instead. See "Source of Truth" in this skill's SKILL.md.
+ * Run this script as-is to PERFORM this task when you do not need to write
+ * application code; side-effect rules still apply (billable/destructive calls
+ * need explicit user approval). Do NOT copy its payload literals or logic into
+ * a new codebase as if they were the API spec — for payload shape, load the
+ * canonical developers.sinch.com docs linked from ../SKILL.md instead.
  */
 /**
  * Send an RCS choice message with a calendar action via Sinch Conversation API.
@@ -30,57 +31,52 @@
  *   SINCH_REGION       - API region: us, eu, or br (default: us)
  */
 
-var client = require("./common/sinch_client.cjs");
+const client = require("./common/sinch_client.cjs");
+const { parseArgs } = require("node:util");
 
-function parseArgs(argv) {
-    var args = {fallbackSms: false};
-    for (var i = 2; i < argv.length; i++) {
-        switch (argv[i]) {
-            case "--to":
-                args.to = argv[++i];
-                break;
-            case "--message":
-                args.message = argv[++i];
-                break;
-            case "--fallback-sms":
-                args.fallbackSms = true;
-                break;
-            case "--sender":
-                args.sender = argv[++i];
-                break;
-            case "--cal-title":
-                args.calTitle = argv[++i];
-                break;
-            case "--event-start":
-                args.eventStart = argv[++i];
-                break;
-            case "--event-end":
-                args.eventEnd = argv[++i];
-                break;
-            case "--event-title":
-                args.eventTitle = argv[++i];
-                break;
-            case "--event-description":
-                args.eventDescription = argv[++i];
-                break;
-            case "--event-fallback-url":
-                args.eventFallbackUrl = argv[++i];
-                break;
-            case "--postback":
-                args.postback = argv[++i];
-                break;
-            case "--help":
-                console.log("Usage: node send_calendar_choice.cjs --to PHONE --message TEXT \\");
-                console.log('  --cal-title "Button Title" --event-start ISO8601 --event-end ISO8601 \\');
-                console.log('  [--event-title TEXT] [--event-description TEXT] [--event-fallback-url URL]');
-                process.exit(0);
-        }
+function parseArguments() {
+    const { values } = parseArgs({
+        options: {
+            "to":                 { type: "string" },
+            "message":            { type: "string" },
+            "fallback-sms":       { type: "boolean", default: false },
+            "sender":             { type: "string" },
+            "cal-title":          { type: "string" },
+            "event-start":        { type: "string" },
+            "event-end":          { type: "string" },
+            "event-title":        { type: "string" },
+            "event-description":  { type: "string" },
+            "event-fallback-url": { type: "string" },
+            "postback":           { type: "string" },
+            "help":               { type: "boolean" },
+        },
+    });
+
+    if (values.help) {
+        console.log("Usage: node send_calendar_choice.cjs --to PHONE --message TEXT \\");
+        console.log('  --cal-title "Button Title" --event-start ISO8601 --event-end ISO8601 \\');
+        console.log('  [--event-title TEXT] [--event-description TEXT] [--event-fallback-url URL]');
+        process.exit(0);
     }
-    if (!args.to || !args.message || !args.eventStart || !args.eventEnd || !args.eventTitle || !args.eventFallbackUrl) {
+
+    if (!values.to || !values.message || !values["event-start"] || !values["event-end"] || !values["event-title"] || !values["event-fallback-url"]) {
         console.error("Error: --to, --message, --event-start, --event-end, --event-title, and --event-fallback-url are required");
         process.exit(1);
     }
-    return args;
+
+    return {
+        to: values.to,
+        message: values.message,
+        fallbackSms: values["fallback-sms"],
+        sender: values.sender,
+        calTitle: values["cal-title"],
+        eventStart: values["event-start"],
+        eventEnd: values["event-end"],
+        eventTitle: values["event-title"],
+        eventDescription: values["event-description"],
+        eventFallbackUrl: values["event-fallback-url"],
+        postback: values.postback,
+    };
 }
 
 function sendRcsCalendarChoice(
@@ -94,9 +90,9 @@ function sendRcsCalendarChoice(
     fallbackSms,
     sender,
 ) {
-    var url = client.apiUrl(region, projectId, "messages:send");
+    const url = client.apiUrl(region, projectId, "messages:send");
 
-    var body = {
+    const body = {
         app_id: appId,
         recipient: {
             identified_by: {
@@ -134,13 +130,13 @@ function sendRcsCalendarChoice(
         }
     }
 
-    var data = JSON.stringify(body);
+    const data = JSON.stringify(body);
     return client.httpRequest(
         url,
         {
             method: "POST",
             headers: {
-                Authorization: "Bearer " + token,
+                Authorization: `Bearer ${token}`,
                 "Content-Type": "application/json",
             },
         },
@@ -149,19 +145,19 @@ function sendRcsCalendarChoice(
 }
 
 async function main() {
-    var args = parseArgs(process.argv);
+    const args = parseArguments();
 
-    var projectId = client.getEnv("SINCH_PROJECT_ID");
-    var keyId = client.getEnv("SINCH_KEY_ID");
-    var keySecret = client.getEnv("SINCH_KEY_SECRET");
-    var appId = client.getEnv("SINCH_APP_ID");
-    var region = client.getEnv("SINCH_REGION", "us");
+    const projectId = client.getEnv("SINCH_PROJECT_ID");
+    const keyId = client.getEnv("SINCH_KEY_ID");
+    const keySecret = client.getEnv("SINCH_KEY_SECRET");
+    const appId = client.getEnv("SINCH_APP_ID");
+    const region = client.getEnv("SINCH_REGION", "us");
 
     process.stderr.write("Authenticating...\n");
-    var token = await client.getAccessToken(keyId, keySecret);
+    const token = await client.getAccessToken(keyId, keySecret);
 
-    process.stderr.write("Sending RCS calendar choice message to " + args.to + "...\n");
-    var result = await sendRcsCalendarChoice(
+    process.stderr.write(`Sending RCS calendar choice message to ${args.to}...\n`);
+    const result = await sendRcsCalendarChoice(
         projectId,
         token,
         appId,
@@ -182,7 +178,7 @@ async function main() {
     console.log(JSON.stringify(result, null, 2));
 }
 
-main().catch(function (err) {
+main().catch((err) => {
     console.error(err.message);
     process.exit(1);
 });

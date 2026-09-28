@@ -1,23 +1,23 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file shows Android SDK installation and client-initialization
+> examples for In-App Calling. For SDK method signatures and initialization options, refer to
+> the canonical `developers.sinch.com` docs linked from the parent [SKILL.md](../SKILL.md)
+> before writing code or prose that states payload structure.
 
 # SDK Installation — In-App Calling (Android)
 
 In-App Calling uses the **Sinch RTC SDK** — a separate client-side SDK from `@sinch/sdk-core`. Authentication is handled via JWT tokens generated on your backend using Application Key + Application Secret credentials.
 
-Based on the [official getting-started guide](https://developers.sinch.com/docs/in-app-calling/getting-started/android/create-app).
+Based on the [official getting-started guide](https://developers.sinch.com/docs/in-app-calling/getting-started/android/create-app.md).
 
 ## Prerequisites
 
 - Android Studio and Android SDK tools
-- In-App Calling [SDK for Android](https://developers.sinch.com/docs/in-app-calling/sdk-downloads/)
+- In-App Calling [SDK for Android](https://developers.sinch.com/docs/in-app-calling/sdk-downloads.md)
 - Two physical Android devices (or one device and one emulator)
 
 ## Add the SDK
 
-Download the SDK from the [SDK download page](https://developers.sinch.com/docs/in-app-calling/sdk-downloads/), extract the AAR from the `libs` folder, and copy it to your `app/libs` directory.
+Download the SDK from the [SDK download page](https://developers.sinch.com/docs/in-app-calling/sdk-downloads.md), extract the AAR from the `libs` folder, and copy it to your `app/libs` directory.
 
 ```groovy
 repositories {
@@ -31,7 +31,7 @@ dependencies {
 }
 ```
 
-Alternatively, the SDK is available on [Maven Central](https://developers.sinch.com/docs/in-app-calling/sdk-downloads#android-sdk-on-maven-central).
+Alternatively, the SDK is available on [Maven Central](https://developers.sinch.com/docs/in-app-calling/sdk-downloads.md#android-sdk-on-maven-central).
 
 Required permissions in `AndroidManifest.xml`:
 
@@ -123,9 +123,9 @@ private fun bindService() {
 ## Links
 
 - [In-App Calling Overview](https://developers.sinch.com/docs/in-app-calling/overview.md)
-- [Android Getting Started: Create App](https://developers.sinch.com/docs/in-app-calling/getting-started/android/create-app)
-- [Android Getting Started: Make a Call](https://developers.sinch.com/docs/in-app-calling/getting-started/android/make-call)
-- [Authentication & Authorization (Android)](https://developers.sinch.com/docs/in-app-calling/android/application-authentication/)
-- [Android SinchClient Docs](https://developers.sinch.com/docs/in-app-calling/android/sinch-client/)
-- [SDK Downloads](https://developers.sinch.com/docs/in-app-calling/sdk-downloads/)
+- [Android Getting Started: Create App](https://developers.sinch.com/docs/in-app-calling/getting-started/android/create-app.md)
+- [Android Getting Started: Make a Call](https://developers.sinch.com/docs/in-app-calling/getting-started/android/make-call.md)
+- [Authentication & Authorization (Android)](https://developers.sinch.com/docs/in-app-calling/android/application-authentication.md)
+- [Android SinchClient Docs](https://developers.sinch.com/docs/in-app-calling/android/sinch-client.md)
+- [SDK Downloads](https://developers.sinch.com/docs/in-app-calling/sdk-downloads.md)
 - [Reference Applications (GitHub)](https://github.com/sinch/rtc-reference-applications)

@@ -3,7 +3,7 @@ name: sinch-authentication
 description: Configures Sinch API credentials and authentication. Use when setting up OAuth2, Basic auth, application signing, or API keys for any Sinch product including Conversation API, Voice, Verification, Numbers, Fax, and Mailgun. Also use when troubleshooting 401 Unauthorized, 403 Forbidden, invalid signature, or credential errors against any Sinch API. For SDKs usage, see sinch-sdks.
 metadata:
   author: Sinch
-  version: 1.2.0
+  version: 1.3.0
   category: Core
   tags: authentication, oauth2, basic-auth, api-keys, credentials
 ---
@@ -13,6 +13,23 @@ metadata:
 Cross-cutting skill that covers credential setup and authentication for all Sinch APIs. Determines the correct auth model, provides curl examples, SDK init code, and troubleshooting for common auth errors.
 
 ## Agent Instructions
+
+> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+
+<!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
+**Sinch policy digest (binding):**
+
+1. Load the shared policy once per conversation; skip duplicate copies bearing the same ID/version/fingerprint.
+2. Infer product, language, region, and environment from the request and workspace; ask one combined question only for true blockers. Prefer the official Sinch SDK unless the request or workspace decides otherwise or no official SDK covers the language or operation.
+3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
+4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
+5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
+8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
+9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
+10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+<!-- sinch-policy-digest: end -->
 
 If the user hasn't specified which Sinch product they're integrating, ask first — the auth model depends on the product. Use the decision table in Step 1 to route to the correct credentials.
 
@@ -82,8 +99,8 @@ export MAILGUN_DOMAIN="your-domain.com"
 ```bash
 curl -X POST \
   https://auth.sinch.com/oauth2/token \
-  -u "$SINCH_KEY_ID:$SINCH_KEY_SECRET"
-  -d grant_type=client_credentials \
+  -u "$SINCH_KEY_ID:$SINCH_KEY_SECRET" \
+  -d grant_type=client_credentials
 ```
 
 *(Summary only — confirm exact names/encoding/enums against the authoritative [Sinch Docs](https://developers.sinch.com/llms.txt) doc before implementing.)*
@@ -142,7 +159,7 @@ curl -X GET \
 
 ## SDK Installation
 
-For SDK installation and client initialization, see the [sinch-sdks](../sinch-sdks/SKILL.md) skill.
+For SDK installation and client initialization, see the `sinch-sdks` skill.
 
 ## Gotchas
 
@@ -175,8 +192,10 @@ Authenticated Console Links (human operators):
 
 Public Documentation Links (agent-friendly):
 
+- Project OAuth Docs: https://developers.sinch.com/docs/numbers/api-reference/authentication/oauth
 - Voice Auth Docs: https://developers.sinch.com/docs/voice/api-reference/authentication.md
 - Verification Auth Docs: https://developers.sinch.com/docs/verification/api-reference/authentication.md
+- Mailgun Auth Docs: https://documentation.mailgun.com/docs/mailgun/api-reference/mg-auth.md
 - In-App Calling: https://developers.sinch.com/docs/in-app-calling/overview.md
 - How to Create Access Keys: https://community.sinch.com/t5/Conversation-API/How-do-I-create-new-Access-Keys-for-use-with-the-Conversation/ta-p/8120
 - Sinch Docs: https://developers.sinch.com/llms.txt

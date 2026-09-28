@@ -1,23 +1,23 @@
-> **Summary — not the spec.** This file orients you and links to the authoritative
-> `developers.sinch.com` doc; it may lag, omit fields, or simplify nesting. Do **not**
-> copy field names, nesting, encodings, or enums from here into shipped code without
-> confirming them in the linked doc. See "Source of Truth" in this skill's SKILL.md.
+> **Not a schema.** This file shows iOS SDK installation and client-initialization examples
+> for In-App Calling. For SDK method signatures and initialization options, refer to the
+> canonical `developers.sinch.com` docs linked from the parent [SKILL.md](../SKILL.md) before
+> writing code or prose that states payload structure.
 
 # SDK Installation — In-App Calling (iOS)
 
 In-App Calling uses the **Sinch RTC SDK** (Swift) — a separate client-side SDK from `@sinch/sdk-core`. Authentication is handled via JWT tokens generated on your backend using Application Key + Application Secret credentials.
 
-Based on the [official getting-started guide](https://developers.sinch.com/docs/in-app-calling/getting-started/ios/create-app).
+Based on the [official getting-started guide](https://developers.sinch.com/docs/in-app-calling/getting-started/ios/create-app.md).
 
 ## Prerequisites
 
 - Xcode
-- In-App Calling [SDK for iOS](https://developers.sinch.com/docs/in-app-calling/sdk-downloads/)
+- In-App Calling [SDK for iOS](https://developers.sinch.com/docs/in-app-calling/sdk-downloads.md)
 - APNs signing key from your [Apple Developer Account](https://developer.apple.com/) uploaded to your [Sinch Developer Account](https://dashboard.sinch.com/voice/apps)
 
 ## Add the SDK
 
-Download the Sinch Swift SDK from the [SDK download page](https://developers.sinch.com/docs/in-app-calling/sdk-downloads/) and add `SinchRTC.xcframework` to your Xcode project. Set it to **Embed & Sign** — otherwise you'll get `dylib` loading failures.
+Download the Sinch Swift SDK from the [SDK download page](https://developers.sinch.com/docs/in-app-calling/sdk-downloads.md) and add `SinchRTC.xcframework` to your Xcode project. Set it to **Embed & Sign** — otherwise you'll get `dylib` loading failures.
 
 In your project's Target → Signing & Capabilities:
 - Enable **Voice over IP** under Background Modes (required for CallKit / LiveCommunicationKit)
@@ -111,7 +111,7 @@ extension SinchClientMediator: SinchClientDelegate {
 
 ## Push Notifications (APNs)
 
-Upload your APNs signing key to your Sinch application configuration. See [configuring APNs](https://developers.sinch.com/docs/in-app-calling/ios/push-notifications/#configuring-an-apns-authentication-signing-key) for details. Expired certificates cause silent failures.
+Upload your APNs signing key to your Sinch application configuration. See [configuring APNs](https://developers.sinch.com/docs/in-app-calling/ios/push-notifications.md#configuring-an-apns-authentication-signing-key) for details. Expired certificates cause silent failures.
 
 ## Enable Logging (Optional)
 
@@ -139,8 +139,8 @@ SinchRTC.setLogCallback { (severity: SinchRTC.LogSeverity,
 ## Links
 
 - [In-App Calling Overview](https://developers.sinch.com/docs/in-app-calling/overview.md)
-- [iOS Getting Started: Create App](https://developers.sinch.com/docs/in-app-calling/getting-started/ios/create-app)
-- [iOS First Time Setup](https://developers.sinch.com/docs/in-app-calling/ios/first-time-setup/)
-- [iOS Push Notifications](https://developers.sinch.com/docs/in-app-calling/ios/push-notifications/)
-- [SDK Downloads](https://developers.sinch.com/docs/in-app-calling/sdk-downloads/)
+- [iOS Getting Started: Create App](https://developers.sinch.com/docs/in-app-calling/getting-started/ios/create-app.md)
+- [iOS First Time Setup](https://developers.sinch.com/docs/in-app-calling/ios/first-time-setup.md)
+- [iOS Push Notifications](https://developers.sinch.com/docs/in-app-calling/ios/push-notifications.md)
+- [SDK Downloads](https://developers.sinch.com/docs/in-app-calling/sdk-downloads.md)
 - [Reference Applications (GitHub)](https://github.com/sinch/rtc-reference-applications/tree/master/ios)

@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 /*
  * EXECUTION TOOL — not a schema reference.
- * Run this to PERFORM a task (e.g. create a webhook, send a test message) when you do not
- * need to write application code. Do NOT copy its payload literals or logic into a new
- * codebase as if they were the API spec — load the authoritative developers.sinch.com doc
- * instead. See "Source of Truth" in this skill's SKILL.md.
+ * Run this script as-is to PERFORM this task when you do not need to write
+ * application code; side-effect rules still apply (billable/destructive calls
+ * need explicit user approval). Do NOT copy its payload literals or logic into
+ * a new codebase as if they were the API spec — for payload shape, load the
+ * canonical developers.sinch.com docs linked from ../../SKILL.md instead.
  */
 /**
  * Create a webhook for Sinch Conversation API.
@@ -35,63 +36,65 @@
  *     --secret my-webhook-secret-123
  */
 
-var client = require("../common/sinch_client.cjs");
+const client = require("../common/sinch_client.cjs");
+const { parseArgs } = require("node:util");
 
-var projectId = client.getEnv("SINCH_PROJECT_ID");
-var keyId = client.getEnv("SINCH_KEY_ID");
-var keySecret = client.getEnv("SINCH_KEY_SECRET");
-var region = client.getEnv("SINCH_REGION", "us");
+const projectId = client.getEnv("SINCH_PROJECT_ID");
+const keyId = client.getEnv("SINCH_KEY_ID");
+const keySecret = client.getEnv("SINCH_KEY_SECRET");
+const region = client.getEnv("SINCH_REGION", "us");
 
-function parseArgs() {
-  var args = process.argv.slice(2);
-  var params = {};
+function parseArguments() {
+  const { values } = parseArgs({
+    options: {
+      "app-id":              { type: "string" },
+      "target":              { type: "string" },
+      "triggers":            { type: "string" },
+      "secret":              { type: "string" },
+      "oauth-client-id":     { type: "string" },
+      "oauth-client-secret": { type: "string" },
+      "oauth-endpoint":      { type: "string" },
+      "help":                { type: "boolean" },
+    },
+  });
 
-  for (var i = 0; i < args.length; i++) {
-    if (args[i] === "--help") {
-      console.log("Usage: node create_webhook.cjs --app-id APP_ID --target URL --triggers TRIGGERS [--secret SECRET] [--oauth-client-id ID --oauth-client-secret SECRET --oauth-endpoint URL]");
-      process.exit(0);
-    }
-    if (args[i].startsWith("--")) {
-      var key = args[i].substring(2);
-      var value = args[++i];
-      params[key] = value;
-    }
+  if (values.help) {
+    console.log("Usage: node create_webhook.cjs --app-id APP_ID --target URL --triggers TRIGGERS [--secret SECRET] [--oauth-client-id ID --oauth-client-secret SECRET --oauth-endpoint URL]");
+    process.exit(0);
   }
 
-  if (!params["app-id"]) {
+  if (!values["app-id"]) {
     console.error("Error: --app-id is required");
     process.exit(1);
   }
-  if (!params.target) {
+  if (!values.target) {
     console.error("Error: --target is required");
     process.exit(1);
   }
-  if (!params.triggers) {
+  if (!values.triggers) {
     console.error("Error: --triggers is required");
     process.exit(1);
   }
 
-  if (params.target.length > 742) {
+  if (values.target.length > 742) {
     console.error("Error: --target URL exceeds 742 character limit");
     process.exit(1);
   }
 
-  if (!params.target.startsWith("https://")) {
+  if (!values.target.startsWith("https://")) {
     console.error("Error: --target must use HTTPS protocol");
     process.exit(1);
   }
 
-  return params;
+  return values;
 }
 
 function buildWebhookPayload(params) {
-  var payload = {
+  const payload = {
     app_id: params["app-id"],
     target: params.target,
     target_type: "HTTP",
-    triggers: params.triggers.split(",").map(function (t) {
-      return t.trim();
-    }),
+    triggers: params.triggers.split(",").map((t) => t.trim()),
   };
 
   if (params.secret) {
@@ -116,24 +119,24 @@ function buildWebhookPayload(params) {
 
 async function createWebhook() {
   try {
-    var params = parseArgs();
-    var payload = buildWebhookPayload(params);
+    const params = parseArguments();
+    const payload = buildWebhookPayload(params);
 
     console.log("Creating webhook...");
     console.log("App ID:", params["app-id"]);
     console.log("Target:", params.target);
     console.log("Triggers:", payload.triggers.join(", "));
 
-    var token = await client.getAccessToken(keyId, keySecret);
-    var url = client.apiUrl(region, projectId, "webhooks");
-    var body = JSON.stringify(payload);
+    const token = await client.getAccessToken(keyId, keySecret);
+    const url = client.apiUrl(region, projectId, "webhooks");
+    const body = JSON.stringify(payload);
 
-    var result = await client.httpRequest(
+    const result = await client.httpRequest(
       url,
       {
         method: "POST",
         headers: {
-          Authorization: "Bearer " + token,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       },

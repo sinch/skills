@@ -3,7 +3,7 @@ name: sinch-in-app-calling
 description: Integrate Sinch In-App Voice and Video SDK for real-time calling in Android, iOS, or JavaScript apps. Use when the user mentions In-App Calling, VoIP integration, WebRTC with Sinch, app-to-phone calling, video calling, or building voice/video features in a mobile or web app.
 metadata:
   author: Sinch
-  version: 1.1.0
+  version: 1.2.0
   category: Voice & Video
   tags: in-app-calling, voip, webrtc, voice, video, android, ios, javascript
   uses:
@@ -24,8 +24,25 @@ Real-time voice and video SDK for **Android**, **iOS**, and **JavaScript (Web)**
 
 ## Agent Instructions
 
+> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+
+<!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
+**Sinch policy digest (binding):**
+
+1. Load the shared policy once per conversation; skip duplicate copies bearing the same ID/version/fingerprint.
+2. Infer product, language, region, and environment from the request and workspace; ask one combined question only for true blockers. Prefer the official Sinch SDK unless the request or workspace decides otherwise or no official SDK covers the language or operation.
+3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
+4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
+5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
+8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
+9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
+10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+<!-- sinch-policy-digest: end -->
+
 ### Prerequisites
-The user needs a Sinch account with an application key and secret from the [Sinch Build Dashboard](https://dashboard.sinch.com/voice/apps). See [sinch-authentication](../sinch-authentication/SKILL.md) for credential setup — In-App Calling uses **application-scoped** auth (Application Key + Application Secret).
+The user needs a Sinch account with an application key and secret from the [Sinch Build Dashboard](https://dashboard.sinch.com/voice/apps). See `sinch-authentication` for credential setup — In-App Calling uses **application-scoped** auth (Application Key + Application Secret).
 
 ### Integration workflow
 
@@ -37,11 +54,11 @@ The user needs a Sinch account with an application key and secret from the [Sinc
 
 2. **Walk through the integration steps** in the platform reference. Go step by step — confirm each step is in place before moving to the next.
 
-3. **Ask about auth approach**: Can the Application Secret be embedded (prototyping only) or must JWTs come from a backend (production)?
+3. **Use backend-issued authentication by default**: Never embed the Application Secret in shipped mobile or browser code. For a throwaway local prototype, explain the exposure and require explicit user confirmation before showing a secret-bearing client example.
 
 **Security**: See the Security section below for url fetching policy and credential handling.
 
-4. **Ask about call types**: Which types does the user need? This determines which sections to cover.
+4. **Determine call types from context**: Ask only when the requested call path remains unclear after inspecting the prompt and project.
 
 5. **For Phone-to-App / SIP-to-App**: The user needs a backend ICE callback handler. See the "Phone-to-App / SIP-to-App backend" section below.
 
@@ -72,7 +89,7 @@ Receiving inbound PSTN or SIP calls requires:
 }
 ```
 
-*(Summary only — confirm exact names/encoding/enums against the authoritative [In-App Calling Overview](https://developers.sinch.com/docs/in-app-calling.md) doc before implementing.)*
+*(Summary only — confirm exact names/encoding/enums against the authoritative [In-App Calling Overview](https://developers.sinch.com/docs/in-app-calling/overview.md) doc before implementing.)*
 
 ## Source of Truth — what to load, and what is authoritative
 
@@ -129,16 +146,7 @@ If the above steps don't resolve the issue, instruct the user to contact [Sinch 
 
 ## Public endpoints
 
-Set `environmentHost` when creating the Sinch client:
-
-| Endpoint | Region |
-|---|---|
-| `ocra.api.sinch.com` | Global (auto-routed) |
-| `ocra-euc1.api.sinch.com` | Europe |
-| `ocra-use1.api.sinch.com` | North America |
-| `ocra-sae1.api.sinch.com` | South America |
-| `ocra-apse1.api.sinch.com` | South East Asia 1 |
-| `ocra-apse2.api.sinch.com` | South East Asia 2 |
+Set `environmentHost` when creating the Sinch client. See [references/misc/endpoints.md](references/misc/endpoints.md) for the regional endpoint list.
 
 ## Security
 
@@ -147,7 +155,7 @@ Set `environmentHost` when creating the Sinch client:
 
 ## Links
 
-- [In-App Calling Overview](https://developers.sinch.com/docs/in-app-calling.md)
+- [In-App Calling Overview](https://developers.sinch.com/docs/in-app-calling/overview.md)
 - [SDK Downloads](https://developers.sinch.com/docs/in-app-calling/sdk-downloads.md)
 - [Reference Applications (GitHub)](https://github.com/sinch/rtc-reference-applications)
 - [Android SDK Reference](https://download.sinch.com/android/latest/reference/index.html)
