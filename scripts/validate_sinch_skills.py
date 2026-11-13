@@ -32,7 +32,7 @@ DOCS_ROOT = REPO_ROOT / "docs"
 POLICY = DOCS_ROOT / "SINCH_SHARED_POLICY.md"
 # Deliberate tripwire: adding or removing a skill must be an explicit edit here,
 # so an accidentally dropped or half-added skill folder fails the build.
-EXPECTED_SKILL_COUNT = 28
+EXPECTED_SKILL_COUNT = 30
 CONVERSATION_OPENAPI_URL = "https://developers.sinch.com/_bundle/docs/conversation/api-reference/conversation.yaml?download"
 SMS_PROPERTIES_URL = "https://developers.sinch.com/docs/conversation/channel-support/sms/properties.md"
 LEGACY_PATTERNS = {

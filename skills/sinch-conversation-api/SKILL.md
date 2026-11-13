@@ -19,7 +19,7 @@ One unified API to send and receive messages across SMS, WhatsApp, RCS, MMS, Vib
 
 ## Agent Instructions
 
-> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+> **Policy gate `sinch-shared-policy@7` (`sha256:587240ed6627`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
 
 <!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
 **Sinch policy digest (binding):**
@@ -29,11 +29,12 @@ One unified API to send and receive messages across SMS, WhatsApp, RCS, MMS, Vib
 3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
 4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
 5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
-6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL. Base every fact on a fetched canonical document, not on recall, search snippets, or bundled files.
 7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
 8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
 9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
 10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+11. Do the work yourself when a Sinch API, SDK, or CLI command can do it. Before telling the user to do a step in the dashboard, check the canonical docs and the CLI for a way to automate it; for one-off setup that the code under construction does not depend on, the CLI is enough when it is installed and logged in; hand a step to the user only when no API or CLI covers it, it needs their identity, a secret only they can see, or their legal acceptance, or they asked to do it themselves.
 <!-- sinch-policy-digest: end -->
 
 Apply the shared evidence tiers. Fetch the exact canonical operation, schema, or security page before emitting Tier B details; record one source per coherent contract in the evidence ledger. If the fetch fails, follow the shared fail-closed rule instead of substituting bundled content.
@@ -77,7 +78,7 @@ Store credentials in environment variables — never hardcode tokens or keys in 
 export SINCH_PROJECT_ID="your-project-id"
 export SINCH_KEY_ID="your-key-id"
 export SINCH_KEY_SECRET="your-key-secret"
-export SINCH_APP_ID="your-app-id"  # Conversation API App ID — found at https://dashboard.sinch.com/convapi/apps. Not the same as SINCH_PROJECT_ID.
+export SINCH_APP_ID="your-app-id"  # Conversation API App ID. List or create apps with the Conversation API (see the OpenAPI spec in Links); the dashboard at https://dashboard.sinch.com/convapi/apps also shows them. Not the same as SINCH_PROJECT_ID.
 export SINCH_REGION="us"  # us|eu|br, default: us
 export SINCH_SMS_SENDER_ID="your-sms-sender-id"  # Alphanumeric or phone number, required for SMS channel
 export RECIPIENT_PHONE_NUMBER="recipient-phone-number"  # E.164 format
@@ -145,7 +146,7 @@ Using the incorrect base URL will result in `404` errors. Set the region explici
 
 *Field names, enums, and limits below are summaries. Confirm against the linked doc for each concept before writing code or prose that states payload structure.*
 
-- **Apps** — Container for channel integrations. Each app has channels, webhooks, and a processing mode. Created via dashboard or API.
+- **Apps** — Container for channel integrations. Each app has channels, webhooks, and a processing mode. Agents create and list apps through the API, including the channel credentials, rather than sending the user to the dashboard.
 - **Contacts** — End-users with channel identities. Auto-created in CONVERSATION mode.
 - **Conversations** — Message threads between app and contact. Only exist in CONVERSATION mode.
 - **Processing modes** — `DISPATCH` (default): no contacts/conversations, for high-volume unidirectional messaging. `CONVERSATION`: auto-creates contacts/conversations, enables 2-way flows. Set per app. See [Processing Modes](https://developers.sinch.com/docs/conversation/processing-modes.md).
@@ -179,7 +180,7 @@ Using the incorrect base URL will result in `404` errors. Set the region explici
 - Rich messages transcoded to text on unsupported channels — test across target channels.
 - Implement idempotent webhook handlers — Sinch retries with exponential backoff.
 - Load credentials from environment variables. Never hardcode.
-- **`SINCH_APP_ID` is not `SINCH_PROJECT_ID`:** `SINCH_APP_ID` is the Conversation API App ID, found at https://dashboard.sinch.com/convapi/apps. `SINCH_PROJECT_ID` is the project/account identifier from the dashboard. Using the project ID where the app ID is required will cause `404` or `400` errors.
+- **`SINCH_APP_ID` is not `SINCH_PROJECT_ID`:** `SINCH_APP_ID` is the Conversation API App ID. List the project's apps through the API to find it, or create one if none exists; the dashboard at https://dashboard.sinch.com/convapi/apps shows the same apps. `SINCH_PROJECT_ID` is the project/account identifier from the dashboard. Using the project ID where the app ID is required will cause `404` or `400` errors.
 - **Region mismatch causes `404`:** All Conversation API URLs are region-specific (`{region}.conversation.api.sinch.com`). If you get a `404`, verify the app's region in the Sinch dashboard and ensure the base URL or SDK region config matches. See `sinch-sdks` for SDK-specific region setup.
 - Error codes: `400` malformed or duplicate resource (e.g., webhook with same target already exists), `401` bad credentials, `403` no access/billing limit, `404` not found/region mismatch, `429` rate limit, `500/503` retry with backoff. `501 UNIMPLEMENTED` means no such method exists on that path (typically a `POST` to the app-scoped webhooks list path) — fix the route, do not retry.
 - **Messages not delivered:** Verify app region matches base URL region (mismatches cause `404`). Check delivery status via webhook or `GET /messages/{message_id}`. Channel fallback: `SWITCHING_CHANNEL` status means fallback occurred — each attempted channel may incur charges. For channel-specific delivery rules (WhatsApp 24h window, RCS device support, MMS size limits), see the channel skills.

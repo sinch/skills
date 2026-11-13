@@ -14,6 +14,8 @@ These skills can also be installed via the [Sinch Plugins](https://github.com/si
 
 | Skill | Version | Category | Description |
 |-------|---------|----------|-------------|
+| `sinch-get-started` | 1.0.0 | Core | Global entry point: connect an AI agent to Sinch (CLI, skills, Docs MCP, plugins), verify an access key, route to a product; hands sign-up and testing to `sinch-onboarding` |
+| `sinch-onboarding` | 1.0.0 | Onboarding | Sign-up and guided testing: from no account through a free trial to a live sender, phase by phase, with launcher prompts for Claude Code and Lovable (SMS US and global) |
 | `sinch-authentication` | 1.3.0 | Core | Sinch API auth setup (OAuth2, API keys, dashboard links) |
 | `sinch-sdks` | 1.2.0 | Core | SDK installation and client initialization (Node.js, Python, Java, .NET) |
 | `sinch-conversation-api` | 2.1.0 | Messaging | Omnichannel messaging API layer — apps, contacts, message types, templates, batch sending, and webhooks |
