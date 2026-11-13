@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "summary": "Official Sinch API skills for AI coding agents — SMS, Voice, Verification, Numbers, Mailgun email, and more.",
   "skills": {
+    "sinch-get-started": { "path": "skills/sinch-get-started/SKILL.md" },
+    "sinch-onboarding": { "path": "skills/sinch-onboarding/SKILL.md" },
     "sinch-authentication": { "path": "skills/sinch-authentication/SKILL.md" },
     "sinch-sdks": { "path": "skills/sinch-sdks/SKILL.md" },
     "sinch-conversation-api": {

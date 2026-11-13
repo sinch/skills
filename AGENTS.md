@@ -20,6 +20,8 @@ Load the smallest set of skills that owns the behavior. Start with the product s
 
 | Task | Start with |
 |------|-----------|
+| Start here: connect an AI agent to Sinch (CLI, skills, Docs MCP, or plugins), then store and verify an access key | `sinch-get-started` |
+| No account yet, sign up, try or test Sinch on a free trial up to going live, launcher prompts (Claude Code or Lovable) | `sinch-onboarding` |
 | Credentials, OAuth2, Basic auth, application signing, API keys | `sinch-authentication` |
 | Install or initialize an official Sinch SDK (Node.js, Python, Java, .NET) | `sinch-sdks` |
 | Send or receive SMS | `sinch-sms` |
