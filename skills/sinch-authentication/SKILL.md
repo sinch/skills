@@ -3,7 +3,7 @@ name: sinch-authentication
 description: Configures Sinch API credentials and authentication. Use when setting up OAuth2, Basic auth, application signing, or API keys for any Sinch product including Conversation API, Voice, Verification, Numbers, Fax, and Mailgun. Also use when troubleshooting 401 Unauthorized, 403 Forbidden, invalid signature, or credential errors against any Sinch API. For SDKs usage, see sinch-sdks.
 metadata:
   author: Sinch
-  version: 1.3.0
+  version: 1.4.0
   category: Core
   tags: authentication, oauth2, basic-auth, api-keys, credentials
 ---
@@ -14,7 +14,7 @@ Cross-cutting skill that covers credential setup and authentication for all Sinc
 
 ## Agent Instructions
 
-> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+> **Policy gate `sinch-shared-policy@7` (`sha256:587240ed6627`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
 
 <!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
 **Sinch policy digest (binding):**
@@ -24,11 +24,12 @@ Cross-cutting skill that covers credential setup and authentication for all Sinc
 3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
 4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
 5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
-6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL. Base every fact on a fetched canonical document, not on recall, search snippets, or bundled files.
 7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
 8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
 9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
 10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+11. Do the work yourself when a Sinch API, SDK, or CLI command can do it. Before telling the user to do a step in the dashboard, check the canonical docs and the CLI for a way to automate it; for one-off setup that the code under construction does not depend on, the CLI is enough when it is installed and logged in; hand a step to the user only when no API or CLI covers it, it needs their identity, a secret only they can see, or their legal acceptance, or they asked to do it themselves.
 <!-- sinch-policy-digest: end -->
 
 If the user hasn't specified which Sinch product they're integrating, ask first — the auth model depends on the product. Use the decision table in Step 1 to route to the correct credentials.
@@ -59,11 +60,11 @@ Determine which model applies based on the Sinch product:
 
 | Auth Model | Products | Credentials Needed |
 |-----------|----------|-------------------|
-| **Project-scoped** (Basic or OAuth2) | Conversation API, Numbers, Fax, EST, 10DLC, Number Lookup, Provisioning | Project ID + Key ID + Key Secret |
-| **Application-scoped** (Basic or Signed) | Voice API, Verification API, In-App Calling SDKs | Application Key + Application Secret |
+| **Project-scoped** (Basic or OAuth2) | Conversation API, Voice API v2, Numbers, Fax, EST, 10DLC, Number Lookup, Provisioning | Project ID + Key ID + Key Secret |
+| **Application-scoped** (Basic or Signed) | Voice API v1, Verification API, In-App Calling SDKs | Application Key + Application Secret |
 | **API key** | Mailgun | API Key (username is literal `api`) |
 
-> Voice/Verification credentials are a **separate credential set** from project Access Keys (different dashboard pages and auth models). In multi-product SDK clients, you may provide both sets together, but do not substitute one set for the other.
+> Voice API v2, the default for new voice projects, uses project Access Keys like the other project-scoped APIs; see the `sinch-voice-api-v2` skill. Voice v1/Verification credentials are a **separate credential set** from project Access Keys (different dashboard pages and auth models). In multi-product SDK clients, you may provide both sets together, but do not substitute one set for the other.
 
 ## Step 2: Get Credentials
 
@@ -133,7 +134,9 @@ curl -X GET \
 
 Always prefer OAuth2 bearer tokens for production workloads — Basic auth has lower rate limits and exposes credentials in every request.
 
-### Voice, Verification & In-App Calling
+### Voice API v1, Verification & In-App Calling
+
+This section does not apply to Voice API v2, which uses the project-scoped OAuth2 flow above.
 
 Use **Basic auth** (prototyping) — Application Key as username, Application Secret as password:
 
@@ -164,7 +167,7 @@ For SDK installation and client initialization, see the `sinch-sdks` skill.
 ## Gotchas
 
 - OAuth2 tokens expire in 3600s. SDKs auto-refresh; for curl, re-request before expiry.
-- **Voice/Verification use application credentials**, not project Access Keys. These are entirely separate credential sets from different dashboard pages.
+- **Voice v1/Verification use application credentials**, not project Access Keys. Voice API v2 uses project Access Keys. These are entirely separate credential sets from different dashboard pages.
 - Key Secrets are shown only once. If lost, create a new Access Key.
 - **Never hardcode credentials** — Always load Key IDs, Key Secrets, and API keys from environment variables or a secret manager. Do not embed credentials in source code, shell history, or agent instructions.
 - **Basic auth is rate-limited** — Use OAuth2 bearer tokens in production for higher throughput.

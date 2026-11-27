@@ -77,7 +77,7 @@ One controller handles every channel — dispatch on `callback.GetChannel()` (`"
 
 ## Required environment variables
 
-`CONVERSATION_APP_ID`, plus the project credentials (`PROJECT_ID`, `PROJECT_ID_API_KEY`, `PROJECT_ID_API_SECRET`) and `CONVERSATION_REGION` (`"US"` default, `"EU"`, `"BR"`) — see the **sinch-authentication** and **sinch-conversation-api** skills. Store secrets via `sinch secrets add CONVERSATION_APP_ID your-app-id`.
+`CONVERSATION_APP_ID`, plus the project credentials (`PROJECT_ID`, `PROJECT_ID_API_KEY`, `PROJECT_ID_API_SECRET`) and `CONVERSATION_REGION` (`"US"` default, `"EU"`, `"BR"`) — see the **sinch-authentication** and **sinch-conversation-api** skills. `CONVERSATION_APP_ID` is an identifier, not a secret: put it in `appsettings.json` as a variable. Store the API key secret with `sinch secrets add`, run by the user.
 
 ## Related
 

@@ -13,6 +13,10 @@ Reference for `sinch conversation` (omnichannel messaging), `sinch fax`, and `si
 
 Send SMS, WhatsApp, RCS, and other messages through the unified Conversation API. SMS is sent via `sinch conversation send --channel SMS`, **not** a separate `sinch sms` command.
 
+**Region (since 0.9.0).** A Conversation app lives in one region: `us`, `eu` or `br`. Every `sinch conversation` command takes `--region us|eu|br`; without it the CLI uses the profile's `conversationRegion` (`sinch config set conversationRegion eu`), asks when it can prompt, and otherwise falls back to `us` silently. Pass `--region` in scripts that touch EU or BR apps. `apps list` queries all three regions (each app shows its `region`) unless `--region` is given.
+
+**Channels.** The CLI checks which channels the app has configured and fails fast on `--channel` for a channel the app lacks.
+
 ```bash
 # Interactive wizard — prompts for channel, recipient, message type
 sinch conversation send
@@ -45,8 +49,9 @@ sinch conversation send +15551234567 -c WHATSAPP \
 ### Management commands
 
 ```bash
-sinch conversation apps list                       # list Conversation apps
-sinch conversation apps create [name]              # create a new Conversation app
+sinch conversation apps list                       # all regions; --region to narrow
+sinch conversation apps create "My App" --region eu --sms-plan <servicePlanId>   # token from SINCH_SMS_TOKEN
+sinch conversation apps update <id> --display-name "New name"   # sends only the fields you pass
 sinch conversation apps get <id>                   # get app details
 sinch conversation apps delete <id>                # delete an app
 
@@ -54,7 +59,7 @@ sinch conversation contacts --limit 20             # list contacts
 sinch conversation conversations --state ACTIVE    # list conversations by state
 sinch conversation messages list --channel WHATSAPP
 sinch conversation messages get <id>               # get a specific message
-sinch conversation messages delete <id>            # delete a message
+sinch conversation messages delete <id> --force    # asks to confirm otherwise; exit 66 with no terminal
 sinch conversation messages update <id> --metadata <json>
 
 sinch conversation webhooks list --app app_abc     # list webhooks for an app
@@ -88,9 +93,24 @@ sinch fax get <fax-id>
 
 # List configured fax services (verify setup)
 sinch fax services list
+
+# List and download
+sinch fax list --json                          # { "faxes": [...] }
+sinch fax download <fax-id> -o out.pdf          # -o - writes the PDF to stdout
+sinch fax delete-content <fax-id> --force      # destructive
+
+# Services, fax-to-email, cover pages
+sinch fax services get|create|update|delete|numbers ...
+sinch fax emails list|add|update|delete|numbers ...
+sinch fax cover-pages list|get|add|delete ...
+
+# Receive incoming fax events locally (no tunnel; --url sets the service webhook, restored on Ctrl+C)
+sinch fax listen --port 3000 --url https://<public-forwarding-url>
 ```
 
-**Supported file types:** PDF, TIFF, DOC, DOCX, TXT, HTML (max 20 MB).
+Commands that need a service use `--service-id`, then the configured default, then an API lookup (which fails without a prompt if there are several services). `fax send` takes repeatable `--to`, `--file` and `--content-url`, plus `--from`, `--header-text`, `--resolution FINE|SUPERFINE`. `fax listen` changes the service's webhook content type to JSON, and that change is not reverted.
+
+**Supported file types:** PDF, TIF, TIFF, DOC, DOCX, TXT, HTML, HTM, JPG, PNG (CLI max 20 MB).
 
 ### Fax status flags
 
@@ -103,14 +123,14 @@ sinch fax services list
 
 ## Elastic SIP Trunking (`sinch sip`)
 
-Manage SIP trunks, endpoints, ACLs, calls, credential lists, and countries.
+Manage SIP trunks, endpoints, ACLs, call history, trunk credential-list assignment, and country dialing permissions.
 
 ```bash
 # Manage SIP trunks
 sinch sip trunks list
 sinch sip trunks create --name "main-trunk" --host-name sip.example.com
 sinch sip trunks update <trunk-id> --caller-id
-sinch sip trunks delete <trunk-id>
+sinch sip trunks delete <trunk-id> --force   # exit 66 with no terminal and no --force
 
 # Endpoints (registered SIP devices)
 sinch sip endpoints list --json
@@ -129,18 +149,22 @@ sinch sip trunks acls add <trunk-id> <acl-id>
 sinch sip trunks acls remove <trunk-id> <acl-id>
 sinch sip trunks credential-lists update <trunk-id> <cred-list-id...>
 
-# Credential lists (username/password pairs)
-sinch sip credential-lists list
-sinch sip credential-lists create
-sinch sip credential-lists delete <list-id>
+# Which trunks use a credential list (the only credential-lists subcommand;
+# the CLI cannot list, create or delete credential lists)
+sinch sip credential-lists trunks <cred-list-id>
 
-# Call history
-sinch sip calls list --trunk <id> --from 2026-01-01 --limit 50
+# Call history (--from/--to are phone numbers, not dates; --date picks the period)
+sinch sip calls list --trunk-id <id> --date 2026-11 --direction INBOUND --page-size 50
 sinch sip calls get <call-id>
 
-# Supported countries
-sinch sip countries
+# Country dialing permissions
+sinch sip countries list
+sinch sip countries get US
+sinch sip countries enable CA
+sinch sip countries disable '*'      # quote * so the shell does not expand it
 ```
+
+`sip trunks credential-lists update` **replaces** the trunk's whole set with the IDs you pass, so include every list the trunk should keep.
 
 All SIP subcommands support `--json`. Create and update commands support `--non-interactive` for CI/CD use.
 

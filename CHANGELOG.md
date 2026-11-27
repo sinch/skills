@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. Individual skills have their own versions in metadata.
 
+## 2026-11-27
+
+### Added
+
+- `sinch-get-started` v1.0.0 — Entry point for connecting an AI agent to Sinch. Installs the Sinch CLI, the Sinch skills, and the Sinch Docs MCP server (`https://developers.sinch.com/mcp`), asking first whether to install per project or globally. Then creates an access key kept out of chat, runs a read-only credential check, and routes to the right product skill. Host files under `references/hosts/` give the exact steps for Claude Code, Cursor, Gemini CLI, Antigravity CLI, OpenAI Codex, and chat apps (Claude, ChatGPT, Gemini, Grok, Lovable). Non-developers get a lighter path without CLI or MCP jargon. Users without an account are handed to `sinch-onboarding`.
+- `sinch-onboarding` v1.0.0 — Guided onboarding from free trial to a live SMS sender, phase by phase with checkpoints. Agent entry files for Claude Code, Lovable, and ChatGPT (where the user runs the code locally); region guides for the US and global SMS.
+- `sinch-conversation-api` v2.2.0 — New reference files for the optional per-app add-ons: Consent Management (opt-in/opt-out keywords, consent lists, Primary/Secondary modes) and Smart Conversations (sentiment, NLU intents, image comprehension, PII masking, offensive content, speech-to-text, redaction). Corrected the opt-in/opt-out and Smart Conversations webhook trigger references to match the real callbacks.
+
+### Changed
+
+- Voice API v2 is now the default for new voice projects, following the Voice API v2 [AI best practices](https://developers.sinch.com/docs/voice-2.0/ai-support.md). Use v1 only for existing v1 code or when a project strictly requires a GA API, conferencing, or In-App voice.
+  - `sinch-voice-api-v2` v0.4.0 — "Choosing between v1 and v2" section; SDK support (Node.js 1.6.0+, Python 2.2.0+, Java 2.3.0+; no .NET) with method namespaces and SVAML helper classes; Sinch Functions and CLI hosting option; links to the AMD, call pacing, and number masking pages.
+  - `sinch-voice-api` v1.4.0 — Scoped to existing v1 integrations and strict GA, conferencing, or In-App needs. Python is no longer listed as an SDK option.
+  - `sinch-authentication` v1.4.0 — Voice API v2 listed with the project-scoped (Access Key, OAuth2) APIs; application-key auth scoped to Voice API v1.
+  - `AGENTS.md`, `CLAUDE.md`, `README.md` — Routing updated to match.
+- `sinch-sdks` v1.3.0 — Synced with the latest SDK releases (Node.js 1.8.0, Python 2.4.0, Java 2.4.0, .NET 1.5.1). Rebuilt the product coverage table with SMS and Voice API v2 rows and minimum versions per cell. Documents the Python 2.x removal of Voice API v1 and Verification, the Elastic SIP Trunking deprecation in Node.js, retry and client options, and links to each SDK's release notes.
+- `sinch-cli` v1.3.0 — Updated for CLI 0.9.1: Node.js 24+, browser login (preview), `sinch login`/`sinch logout` shortcuts, `--profile` on every command, `--json` and `--force` behavior, exit codes for scripts, CI/CD environment-variable auth, opt-in auto-update, and Functions `versions`/`rollback`.
+- `sinch-functions` v1.3.0, `sinch-functions-node` v1.3.0, `sinch-functions-dotnet` v1.3.0 — Deploys now set `VOICE_SERVICE_SECRET`, so voice webhook signatures are verified on deployed functions. `sinch-functions` explains how secrets reach a deploy and that a deploy drops any secret not declared in `.env` or `appsettings.json`.
+- `sinch-verification-api` v1.3.0 — Python is no longer listed as an SDK option (removed in Python SDK 2.0.0).
+- `sinch-number-lookup-api` v1.3.0 — Java (2.1.0+) added as an SDK option.
+- `sinch-provisioning-api` v1.3.0 — Documents partial Node.js SDK coverage (Webhooks API, RCS account activities).
+- `sinch-elastic-sip-trunking` v1.3.0 — EST support in the Node.js SDK is deprecated since 1.6.0; direct HTTP is recommended for new code.
+- Shared policy `sinch-shared-policy@7` — New rule: when a Sinch API, SDK, or CLI command can do a step, the agent does it rather than sending the user to the dashboard. Three rules that security scanners misread were reworded without changing their meaning. Applied to every skill; skills whose only change is the policy are bumped to the next minor version (`sinch-10dlc` and `sinch-numbers-api` v1.4.0; `sinch-fax-api`, `sinch-imported-numbers-hosting-orders`, `sinch-in-app-calling`, `sinch-mailgun`, `sinch-mailgun-inspect`, `sinch-mailgun-optimize`, `sinch-mailgun-validate`, `sinch-mms`, `sinch-number-order-api`, `sinch-porting-api`, `sinch-rcs`, `sinch-sms`, `sinch-whatsapp` v1.3.0). `sinch-sms` and `sinch-conversation-api` now say to list or create Conversation API apps through the API.
+- `sinch-sms`, `sinch-mailgun`, `sinch-fax-api`, `sinch-conversation-api`, `sinch-voice-api-v2` — Reworded untrusted-input warnings that scanners flagged as prompt injection.
+- `tile.json` — Added `sinch-get-started`, `sinch-onboarding`, and `sinch-voice-api-v2`.
+
 ## 2026-09-23
 
 ### Changed
