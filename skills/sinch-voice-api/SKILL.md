@@ -1,9 +1,9 @@
 ---
 name: sinch-voice-api
-description: Build voice apps with the Sinch Voice API v1. Use for phone calls, text-to-speech (TTS), IVR menus, DTMF input, conference calling, call recording, call forwarding, answering machine detection (AMD), SIP routing, WebSocket audio streaming, and SVAML call control. Not for Voice API v2 (public preview); use the sinch-voice-api-v2 skill for that.
+description: Build and maintain voice apps on the Sinch Voice API v1 (GA). Use for existing v1 integrations (callouts, ICE/ACE/PIE/DiCE callbacks, v1 SVAML, application key and secret), and for new projects only when they strictly require a GA API, conference calling, or In-App voice. Covers phone calls, TTS, IVR menus, DTMF, conferencing, recording, call forwarding, AMD, and SIP routing on v1. For any other new voice project, including AI voice agents and batch calling, use the sinch-voice-api-v2 skill.
 metadata:
   author: Sinch
-  version: 1.3.0
+  version: 1.4.0
   category: Voice
   tags: voice, calls, tts, ivr, dtmf, conference, recording, svaml, sip, amd, webrtc
   uses:
@@ -17,11 +17,13 @@ metadata:
 
 The Sinch Voice API lets you make, receive, and control voice calls programmatically via REST. It uses **SVAML** (Sinch Voice Application Markup Language) to define call flows through callback events.
 
-> **Version scope: Voice API v1 only.** This skill covers the `/calling/v1` API, its SVAML dialect, and its ICE/ACE/PIE/DiCE callbacks. Sinch also offers **Voice API 2.0**, currently in public preview, with a different API surface. If the user asks for Voice 2.0, v2 endpoints, or the preview API, do not adapt the v1 guidance below. Load the `sinch-voice-api-v2` skill instead.
+> **Version scope: Voice API v1 only.** This skill covers the `/calling/v1` API, its SVAML dialect, and its ICE/ACE/PIE/DiCE callbacks. Sinch also offers **Voice API v2**, in public preview, with a different API surface. If the user asks for Voice 2.0, v2 endpoints, or the preview API, do not adapt the v1 guidance below. Load the `sinch-voice-api-v2` skill instead.
+
+> **Use v2 for new projects.** Sinch recommends Voice API v2 for all new projects, especially those with AI capabilities (Voice Relay, audio streams) or voice campaigns (batch calling). Use this v1 skill for a new project only when one of these is a strict requirement: the API must be generally available (GA), or the project needs In-App voice or conferencing, which v2 does not offer yet. Otherwise load the `sinch-voice-api-v2` skill. Existing v1 integrations stay on this skill unless the user asks to migrate. See [AI best practices: choosing between v1 and v2](https://developers.sinch.com/docs/voice-2.0/ai-support.md).
 
 ## Agent Instructions
 
-> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+> **Policy gate `sinch-shared-policy@7` (`sha256:587240ed6627`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
 
 <!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
 **Sinch policy digest (binding):**
@@ -31,17 +33,20 @@ The Sinch Voice API lets you make, receive, and control voice calls programmatic
 3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
 4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
 5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
-6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL. Base every fact on a fetched canonical document, not on recall, search snippets, or bundled files.
 7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
 8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
 9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
 10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+11. Do the work yourself when a Sinch API, SDK, or CLI command can do it. Before telling the user to do a step in the dashboard, check the canonical docs and the CLI for a way to automate it; for one-off setup that the code under construction does not depend on, the CLI is enough when it is installed and logged in; hand a step to the user only when no API or CLI covers it, it needs their identity, a secret only they can see, or their legal acceptance, or they asked to do it themselves.
 <!-- sinch-policy-digest: end -->
+
+**Confirm v1 is the right API.** Continue with this skill only when the workspace already uses Voice API v1, the user asked for v1, or a new project strictly needs a GA API, In-App voice, or conferencing. For any other new voice project, load the `sinch-voice-api-v2` skill instead and tell the user why in one line. Do not choose v1 only because it is GA unless the user said GA is required.
 
 Before generating code, gather from the user (skip any item already specified in the prompt or context):
 
 1. **Approach** — SDK or direct API calls (curl/fetch/requests)?
-2. **Language** — for SDK: Node.js, Python, Java, or .NET. For direct API: any language, or curl.
+2. **Language** — for SDK: Node.js, Java, or .NET. The Python SDK 2.x removed Voice API v1 (use `sinch<2`, direct HTTP, or Voice API v2). For direct API: any language, or curl. Confirm SDK versions in the [Voice API support by SDK version](https://developers.sinch.com/docs/sdks.md) table.
 
 When the user chooses **SDK**, refer to the `sinch-sdks` skill for installation and client initialization, then to the bundled examples and SDK reference linked in Links.
 

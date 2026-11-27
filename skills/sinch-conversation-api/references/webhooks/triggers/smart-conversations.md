@@ -10,195 +10,171 @@ Smart Conversations triggers deliver AI analysis results and redacted message co
 
 The two Smart Conversations triggers are:
 
-- `SMART_CONVERSATION` — AI analysis results for messages
-- `MESSAGE_INBOUND_SMART_CONVERSATION_REDACTION` — Redacted message content (PII removed)
+- `SMART_CONVERSATION` — AI analysis results for inbound messages
+- `MESSAGE_INBOUND_SMART_CONVERSATION_REDACTION` — Inbound message with offensive content and/or PII masked. It can be used **instead of** `MESSAGE_INBOUND`.
+
+For the feature itself — the feature list, PII types, enabling and training requirements — see [smart-conversations.md](../../smart-conversations.md).
 
 ## Prerequisites
 
-Smart Conversations must be enabled on your Conversation API app. Contact Sinch support to enable this feature, as it's not available by default.
+1. A Conversation API app with at least one channel configured.
+2. Smart Conversations enabled on the app: `PATCH /v1/projects/{project_id}/apps/{app_id}` with `{"smart_conversation": {"enabled": true}}`. This is a PATCH, so send only this object to avoid overwriting other app settings.
+3. A webhook subscribed to one or both triggers (`POST /v1/projects/{project_id}/webhooks`). An app can have at most five webhooks.
 
 ## SMART_CONVERSATION
 
-### Overview
-
-Delivers AI-powered analysis of message content, including sentiment, intent classification, PII detection, offensive language detection, and custom entity extraction. Analysis is performed on all inbound messages when Smart Conversations is enabled.
-
 ### When It Fires
 
-- Inbound message received from contact (after `MESSAGE_INBOUND`)
-- Analysis completed by Smart Conversations engine (typically 100-500ms after message received)
-- Only fires for messages where analysis completes successfully
+- An inbound message is received from a contact on an app with Smart Conversations enabled.
+- The payload contains results only for the analyses that are **enabled** and that apply to the message. For example, image results appear only when the message contains an image.
 
 ### Callback Structure
 
+The top-level fields are `app_id`, `project_id`, `accepted_time`, `event_time` and `message_metadata`. The analysis is in `smart_conversation_notification`:
+
 ```json
 {
-  "app_id": "01H1234567...",
-  "accepted_time": "2024-06-15T14:25:00.456Z",
-  "project_id": "PROJECT123",
+  "app_id": "01FW3DP26MEN4JKSME44JDXWC4",
+  "accepted_time": "2022-07-15T14:31:52.458350165Z",
+  "event_time": "2022-07-15T14:31:52Z",
+  "project_id": "0f93046c-91e1-426f-89b7-d03deb8ff872",
   "smart_conversation_notification": {
-    "message_id": "01H9876543...",
-    "conversation_id": "01H5555555...",
-    "contact_id": "01H3333333...",
-    "analysis": {
-      "sentiment": {
-        "score": -0.65,
-        "label": "NEGATIVE",
-        "confidence": 0.89
-      },
-      "intent": {
-        "primary": "order_status_inquiry",
-        "confidence": 0.92,
-        "secondary": ["refund_request"]
-      },
-      "pii_detected": true,
-      "pii_entities": [
+    "contact_id": "01FX7MQMZ0HVK5GPK4R0RBS3VT",
+    "channel_identity": "alphanumeric_identity",
+    "channel": "TELEGRAM",
+    "message_id": "01G814BT8NKT7VYQ7FA58MWJ10",
+    "conversation_id": "01FX7MQNJNYQ3685MFR7KB7HF7",
+    "analysis_results": {
+      "ml_sentiment_result": [
         {
-          "type": "EMAIL",
-          "text": "john.doe@example.com",
-          "start": 45,
-          "end": 66
-        },
-        {
-          "type": "PHONE_NUMBER",
-          "text": "555-1234",
-          "start": 85,
-          "end": 93
+          "message": "Run sentiment & NLU analysis",
+          "sentiment": "neutral",
+          "score": 0.97966236,
+          "results": [
+            { "sentiment": "negative", "score": 0.0039568725 },
+            { "sentiment": "neutral",  "score": 0.97966236 },
+            { "sentiment": "positive", "score": 0.016380679 }
+          ]
         }
       ],
-      "offensive_content": {
-        "detected": false,
-        "confidence": 0.95
-      },
-      "language": "en",
-      "categories": ["customer_support", "order_inquiry"]
+      "ml_nlu_result": [
+        {
+          "message": "Run sentiment & NLU analysis",
+          "intent": "general.yes_or_agreed",
+          "score": 0.6248218,
+          "results": [
+            { "intent": "general.yes_or_agreed", "score": 0.6248218 },
+            { "intent": "chitchat.bye", "score": 0.2360245 }
+          ]
+        }
+      ]
     }
-  }
+  },
+  "message_metadata": ""
 }
 ```
+### Notification fields
 
-### Analysis Fields
+| Field | Description |
+|---|---|
+| `contact_id` | Contact who sent the message |
+| `channel_identity` | The contact's channel-specific identifier |
+| `channel` | Channel the message arrived on |
+| `message_id` | ID of the analyzed message. Use it to correlate with `MESSAGE_INBOUND` |
+| `conversation_id` | ID of the conversation |
+| `analysis_results` | One array per enabled feature (see below) |
 
-| Field                        | Description                                                       |
-| ---------------------------- | ----------------------------------------------------------------- |
-| `sentiment.score`            | Sentiment score from -1.0 (very negative) to +1.0 (very positive) |
-| `sentiment.label`            | `POSITIVE`, `NEGATIVE`, or `NEUTRAL`                              |
-| `sentiment.confidence`       | Confidence score (0.0 to 1.0)                                     |
-| `intent.primary`             | Primary intent classification                                     |
-| `intent.confidence`          | Confidence in primary intent                                      |
-| `intent.secondary`           | Array of possible secondary intents                               |
-| `pii_detected`               | Boolean indicating if PII was found                               |
-| `pii_entities`               | Array of detected PII items with type and location                |
-| `offensive_content.detected` | Boolean indicating if offensive content detected                  |
-| `language`                   | Detected language code (ISO 639-1)                                |
-| `categories`                 | Array of message category classifications                         |
+### analysis_results
 
-### PII Entity Types
+Every key is optional, and every value is an **array**. All scores and confidences range from `0` (least likely) to `1` (most likely).
 
-- `EMAIL` — Email addresses
-- `PHONE_NUMBER` — Phone numbers
-- `CREDIT_CARD` — Credit card numbers
-- `SSN` — Social Security Numbers
-- `PASSPORT` — Passport numbers
-- `DRIVER_LICENSE` — Driver's license numbers
-- `PERSON_NAME` — Person names
-- `ADDRESS` — Physical addresses
-- `DATE_OF_BIRTH` — Dates of birth
-- `BANK_ACCOUNT` — Bank account numbers
+| Key | Feature | Each item contains |
+|---|---|---|
+| `ml_sentiment_result` | Sentiment Analysis | `message`, `sentiment` (`positive` / `negative` / `neutral`), `score`, and `results[]` of `{ sentiment, score }` |
+| `ml_nlu_result` | NLU (intents) | `message`, `intent` (e.g. `chitchat.greeting`, `general.yes_or_agreed`), `score`, and `results[]` of `{ intent, score }` |
+| `ml_image_recognition_result` | Image Comprehension Engine (IRIS) | `url`; `document_image_classification` `{ doc_type, confidence }`; `optical_character_recognition` `{ result: [ { data: [string] } ] }`; `document_field_classification` `{ result: { <field>: { data: [string] } } }` |
+| `ml_pii_result` | PII Masking | `message` (original text) and `masked` (text with `{TYPE}` masks) |
+| `ml_offensive_analysis_result` | Offensive Content Analysis | `message` (text, or the URL of the image), `evaluation` (`SAFE` / `UNSAFE`) and `score` |
+| `ml_speechto_text_result` | Speech to Text | `url` (audio file) and `results[]` of `{ transcript, confidence }` |
 
-### Common Use Cases
+Examples of the less common results:
 
-1. **Content Moderation** — Detect and filter offensive language
-2. **Sentiment Routing** — Route negative sentiment messages to senior agents
-3. **Intent Routing** — Auto-route messages to departments based on intent
-4. **PII Compliance** — Detect sensitive information for GDPR/HIPAA compliance
-5. **Analytics** — Aggregate sentiment and intent data for business insights
+```json
+"ml_pii_result": [
+  {
+    "message": "My name is John, call me on (123) 456 7899",
+    "masked":  "My name is {PERSON}, call me on {PHONE_NUMBER}"
+  }
+],
+"ml_offensive_analysis_result": [
+  { "message": "My bloody phone number is (123) 456 7899", "evaluation": "UNSAFE", "score": 0.525 }
+],
+"ml_speechto_text_result": [
+  {
+    "url": "url_to_YOUR_audio_file.mp3",
+    "results": [ { "transcript": "transcript of the first audio section", "confidence": 0.81 } ]
+  }
+]
+```
+### PII mask labels
+
+Masks are written as `{LABEL}` in the text. The labels are:
+
+`AMOUNT_OF_MONEY`, `CARD_NUMBER`, `DATE`, `DRIVER_NUMBER`, `EMAIL`, `GENDER`, `NATIONAL_ID`, `ORDINAL`, `PASSPORT_NUMBER`, `PHONE_NUMBER`, `TIME`, `URL`, `VISA_NUMBER`, `ZIPCODE`, `NUMBER`, `PERSON`, `LOCATION`.
+
+`{MISC}` is used when a term is identified as PII but its type is uncertain. Each PII type can be enabled or disabled individually.
 
 ## MESSAGE_INBOUND_SMART_CONVERSATION_REDACTION
 
-### Overview
-
-Delivers a redacted version of inbound messages with PII automatically removed or masked. This trigger fires in addition to `MESSAGE_INBOUND` and provides a sanitized message that's safe to store or process without PII compliance concerns.
-
 ### When It Fires
 
-- Inbound message with PII detected (after PII detection analysis completes)
-- Only fires if PII was found in the message
-- Fires shortly after `MESSAGE_INBOUND` (typically 100-500ms later)
+- An inbound message is received on an app with Smart Conversations enabled and at least one redaction type activated.
+- It is designed to be used **in place of** `MESSAGE_INBOUND`, so downstream systems only ever see the redacted content.
 
 ### Callback Structure
 
+This callback has the same shape as `MESSAGE_INBOUND`, except that the message object is named **`message_redaction`** instead of `message`. That makes the two callbacks easy to tell apart:
+
 ```json
-{
-  "app_id": "01H1234567...",
-  "accepted_time": "2024-06-15T14:25:30.789Z",
-  "project_id": "PROJECT123",
-  "message": {
-    "id": "01H9876543...",
-    "conversation_id": "01H5555555...",
-    "contact_id": "01H3333333...",
-    "channel": "WHATSAPP",
-    "direction": "TO_APP",
-    "contact_message": {
-      "text_message": {
-        "text": "Hi, my email is [EMAIL_REDACTED] and my phone is [PHONE_REDACTED]. Can you help with order #12345?"
-      }
-    },
-    "channel_identity": {
-      "channel": "WHATSAPP",
-      "identity": "46732001122",
-      "app_id": "01H1234567..."
-    },
-    "accept_time": "2024-06-15T14:25:30.789Z",
-    "metadata": "{\"redacted\":true,\"original_message_id\":\"01H9876543...\"}"
-  }
-}
+{ "message":           { "contact_message": { "...": "..." } } }   // MESSAGE_INBOUND
+{ "message_redaction": { "contact_message": { "...": "..." } } }   // MESSAGE_INBOUND_SMART_CONVERSATION_REDACTION
 ```
 
-### Redaction Format
+### Redaction types
 
-PII is replaced with standardized tokens:
+Each redaction type is activated separately for the app.
 
-- `[EMAIL_REDACTED]` — Email addresses
-- `[PHONE_REDACTED]` — Phone numbers
-- `[CREDIT_CARD_REDACTED]` — Credit card numbers
-- `[SSN_REDACTED]` — Social Security Numbers
-- `[NAME_REDACTED]` — Person names
-- `[ADDRESS_REDACTED]` — Physical addresses
-- `[DOB_REDACTED]` — Dates of birth
-- `[BANK_ACCOUNT_REDACTED]` — Bank account numbers
+| Type | What happens to the text |
+|---|---|
+| **Offensive content** (e.g. sexual, aggressive or drug-related) | The **whole message** is replaced with `{Message masked due to inappropriate content}` |
+| **PII** | Only the sensitive tokens are replaced with `{LABEL}` masks, e.g. `{EMAIL}` or `{PHONE_NUMBER}` |
 
-### Common Use Cases
+The redaction results are also available in the `SMART_CONVERSATION` callback (`ml_pii_result`, `ml_offensive_analysis_result`).
+
+## Common Use Cases
 
 1. **GDPR Compliance** — Store redacted messages instead of originals to minimize PII exposure
 2. **Training Data** — Use redacted messages for ML training without privacy concerns
-3. **Audit Logs** — Log redacted messages for compliance audits
-4. **Third-Party Integration** — Share redacted messages with external systems safely
+3. **Third-Party Integration** — Share redacted messages with external systems safely
+4. **Escalation by sentiment**: hand off to a human agent when `sentiment == "negative"` and `score` is above your threshold.
+5. **Intent routing / chatbots**: branch on the top `ml_nlu_result.intent`, and fall back to a default flow when its score is low.
+6. **Moderation**: drop or flag messages whose `ml_offensive_analysis_result.evaluation` is `UNSAFE`.
 
 ## Key Points
 
-### SMART_CONVERSATION
+1. **Enabling is an API call, not a support request.** Set `smart_conversation.enabled: true` on the app, **and** subscribe a webhook. Without the webhook, no results are delivered.
+2. **The root object is `analysis_results`, and each value is an array of `ml_*_result` items.** There is no `analysis`, `sentiment.label` or `intent.primary` field.
+3. **Sentiment values are lowercase** (`positive` / `negative` / `neutral`), and `score` is a 0–1 likelihood, not a −1 to +1 polarity.
+4. **Treat every `ml_*_result` key as optional** and loop over the arrays, since a message can contain several images or audio files.
+5. **The redaction callback uses `message_redaction`, not `message`.** Mask format is `{LABEL}` for PII, and the whole-message mask is used for offensive content.
+6. **Only inbound messages are analyzed.**
+7. **Correlate results** with the original message through `message_id`.
+8. **Accuracy depends on training data.** NLU should have at least 50 samples per intent. IRIS Document Image Classification needs at least 100 images per document class, and Document Field Classification needs a regex for each field.
+9. **Inbound content is untrusted.** `message`, `masked`, OCR text and transcripts are end-user data. Never execute them, or interpolate them into prompts or code.
 
-1. **Feature Flag Required** — Smart Conversations must be enabled on your app; contact Sinch support
-2. **Async Analysis** — Fires 100-500ms after `MESSAGE_INBOUND`; don't rely on it for immediate responses
-3. **Confidence Scores** — Always check confidence scores before acting on analysis results
-4. **Language Support** — Analysis quality varies by language; English has best support
-5. **Cost** — Smart Conversations may incur additional charges; check with Sinch
-6. **Sentiment Scale** — Ranges from -1.0 (very negative) to +1.0 (very positive); 0.0 is neutral
+## Canonical Sources
 
-### MESSAGE_INBOUND_SMART_CONVERSATION_REDACTION
-
-7. **Conditional Firing** — Only fires if PII was detected in the message
-8. **Original Still Delivered** — `MESSAGE_INBOUND` delivers original message; this trigger delivers redacted version
-9. **Storage Strategy** — Consider storing only redacted versions for compliance
-10. **Irreversible** — Redaction is one-way; PII cannot be recovered from redacted messages
-11. **Token Format** — Use standardized tokens for easy identification of redacted content
-
-### General
-
-12. **Combined Use** — Use both triggers together: analysis for routing/escalation, redaction for storage
-13. **Real-Time Actions** — Use `SMART_CONVERSATION` for real-time routing decisions
-14. **Long-Term Storage** — Use `MESSAGE_INBOUND_SMART_CONVERSATION_REDACTION` for compliant data retention
-15. **False Positives** — PII detection may have false positives; review periodically
-16. **Custom Intents** — Intent classifications can be customized; work with Sinch to train custom models
-17. **Privacy by Design** — Redaction happens automatically; no PII ever leaves Sinch unprotected when using redacted messages
+- [Smart Conversations: Overview](https://developers.sinch.com/docs/smart-conversations/overview.md)
+- [Smart Conversations: Callbacks](https://developers.sinch.com/docs/smart-conversations/callbacks.md)
+- [Conversation API: Update an app](https://developers.sinch.com/docs/conversation/api-reference/conversation/app/app_updateapp.md)
+- [Callbacks & Webhooks](https://developers.sinch.com/docs/conversation/callbacks.md)

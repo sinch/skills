@@ -3,7 +3,7 @@ name: sinch-elastic-sip-trunking
 description: Provisions SIP trunks, endpoints, ACLs, credential lists, and phone numbers via the Sinch Elastic SIP Trunking REST API. Use when the user needs SIP connectivity, trunk provisioning, inbound/outbound PSTN voice routing, PBX integration, or SIP-to-PSTN bridging.
 metadata:
   author: Sinch
-  version: 1.2.1
+  version: 1.3.0
   category: Voice
   tags: sip, trunking, est, pstn, voice, pbx, inbound, outbound
   uses:
@@ -19,7 +19,7 @@ The Sinch Elastic SIP Trunking (EST) API lets you programmatically provision SIP
 
 ## Agent Instructions
 
-> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+> **Policy gate `sinch-shared-policy@7` (`sha256:587240ed6627`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
 
 <!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
 **Sinch policy digest (binding):**
@@ -29,11 +29,12 @@ The Sinch Elastic SIP Trunking (EST) API lets you programmatically provision SIP
 3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
 4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
 5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
-6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL. Base every fact on a fetched canonical document, not on recall, search snippets, or bundled files.
 7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
 8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
 9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
 10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+11. Do the work yourself when a Sinch API, SDK, or CLI command can do it. Before telling the user to do a step in the dashboard, check the canonical docs and the CLI for a way to automate it; for one-off setup that the code under construction does not depend on, the CLI is enough when it is installed and logged in; hand a step to the user only when no API or CLI covers it, it needs their identity, a secret only they can see, or their legal acceptance, or they asked to do it themselves.
 <!-- sinch-policy-digest: end -->
 
 Before generating code, gather from the user (skip any item already specified in the prompt or context):
@@ -42,7 +43,7 @@ Before generating code, gather from the user (skip any item already specified in
 2. **Auth method for the trunk** (if outbound or both) — ACL-based (static IPs) or Credential-based (digest auth / dynamic IPs)?
 3. **Endpoint type** (if inbound or both) — Static endpoint (fixed IP/port) or Registered endpoint (SIP UA registers dynamically)?
 4. **Approach** — SDK or direct API calls (curl/fetch/requests)?
-5. **Language** — for SDK: Node.js. For direct API: any language, or curl. Python, Java, and .NET must use direct HTTP — only Node.js has SDK support.
+5. **Language** — for SDK: Node.js only, and EST support is **deprecated** there since `@sinch/sdk-core` 1.6.0 (removal planned for SDK v2) — prefer direct HTTP for new code. For direct API: any language, or curl. Python, Java, and .NET must use direct HTTP.
 
 When the user chooses **SDK**, refer to the `sinch-sdks` skill for installation and client initialization, then to the API references linked in References.
 
@@ -117,7 +118,7 @@ See `sinch-authentication` for full setup, most importantly how to obtain `{SINC
 
 ### SDK Installation
 
-See `sinch-sdks` for installation and client initialization. Note: EST is only supported in the **Node.js SDK** — for Java, Python, and .NET, use direct HTTP calls.
+See `sinch-sdks` for installation and client initialization. Note: EST is only supported in the **Node.js SDK**, where it is deprecated since 1.6.0 and will be removed in SDK v2. Prefer direct HTTP for new integrations in every language.
 
 ### First API Call — Create a Trunk
 

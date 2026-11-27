@@ -20,6 +20,8 @@ Load the smallest set of skills that owns the behavior. Start with the product s
 
 | Task | Start with |
 |------|-----------|
+| Start here: connect an AI agent to Sinch (CLI, skills, Docs MCP, or plugins), then store and verify an access key | `sinch-get-started` |
+| No account yet, sign up, try or test Sinch on a free trial up to going live, launcher prompts (Claude Code or Lovable) | `sinch-onboarding` |
 | Credentials, OAuth2, Basic auth, application signing, API keys | `sinch-authentication` |
 | Install or initialize an official Sinch SDK (Node.js, Python, Java, .NET) | `sinch-sdks` |
 | Send or receive SMS | `sinch-sms` |
@@ -29,8 +31,8 @@ Load the smallest set of skills that owns the behavior. Start with the product s
 | Omnichannel apps, contacts, webhooks, templates, batch sending | `sinch-conversation-api` |
 | Provision WhatsApp senders, RCS agents, KakaoTalk senders | `sinch-provisioning-api` |
 | US 10DLC brand and campaign registration | `sinch-10dlc` |
-| Voice calls, IVR, TTS, conferencing with the Voice API v1 | `sinch-voice-api` |
-| Voice API v2 (public preview): calls, SVAML v2, webhooks, Voice Relay, audio streams | `sinch-voice-api-v2` |
+| Any new voice project: calls, IVR, TTS, SVAML v2, webhooks, batch calling, Voice Relay, audio streams, AI voice agents (Voice API v2, public preview) | `sinch-voice-api-v2` |
+| Existing Voice API v1 code, or a new project that strictly requires a GA API, conferencing, or In-App voice | `sinch-voice-api` |
 | In-app voice and video SDKs (Android, iOS, JavaScript) | `sinch-in-app-calling` |
 | SIP trunks, endpoints, ACLs | `sinch-elastic-sip-trunking` |
 | Phone number verification (SMS, flashcall, call, data, WhatsApp) | `sinch-verification-api` |
@@ -56,7 +58,7 @@ Each skill declares its dependencies under `metadata.uses` in the frontmatter. I
 Every SKILL.md follows the same order. Read it top to bottom the first time, then jump by section.
 
 1. **Frontmatter** — `name`, `description` (trigger conditions), `metadata.uses` (dependencies).
-2. **Overview** — what the product does, and any version scope. For example, `sinch-voice-api` covers v1 only.
+2. **Overview** — what the product does, and any version scope. For example, `sinch-voice-api` covers v1 only, and new voice projects default to `sinch-voice-api-v2`.
 3. **Agent Instructions** — the shared policy gate, the binding policy digest, what to infer versus ask, and which other skills to load. Follow this section before writing code.
 4. **Getting Started** — credentials, base URLs, regions, first call.
 5. **Key Concepts** and **Common Patterns** — domain model and worked examples in curl and the Node.js SDK (Mailgun skills use `mailgun.js`).

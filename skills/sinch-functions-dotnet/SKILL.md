@@ -3,7 +3,7 @@ name: sinch-functions-dotnet
 description: "Write C#/.NET Sinch Functions with the `Sinch.Functions.Runtime` NuGet package. Use when writing or editing a function controller: answering and controlling calls with Voice API v2, IVR menus, placing, bridging or transferring calls, realtime AI voice agents, SMS/WhatsApp/RCS webhooks, custom HTTP endpoints, dependency injection, cache/storage/database and authorization. Run and deploy with the sinch-cli skill."
 metadata:
   author: Sinch
-  version: 1.2.0
+  version: 1.3.0
   category: Functions
   tags: functions, csharp, dotnet, aspnet, serverless, voice, svaml, ivr, voice-agent, conversation-webhooks, runtime
   uses:
@@ -35,7 +35,7 @@ This skill describes `Sinch.Functions.Runtime` 0.3.17 and later, where a voice h
 
 ## Agent Instructions
 
-> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+> **Policy gate `sinch-shared-policy@7` (`sha256:587240ed6627`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
 
 <!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
 **Sinch policy digest (binding):**
@@ -45,11 +45,12 @@ This skill describes `Sinch.Functions.Runtime` 0.3.17 and later, where a voice h
 3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
 4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
 5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
-6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL. Base every fact on a fetched canonical document, not on recall, search snippets, or bundled files.
 7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
 8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
 9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
 10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+11. Do the work yourself when a Sinch API, SDK, or CLI command can do it. Before telling the user to do a step in the dashboard, check the canonical docs and the CLI for a way to automate it; for one-off setup that the code under construction does not depend on, the CLI is enough when it is installed and logged in; hand a step to the user only when no API or CLI covers it, it needs their identity, a secret only they can see, or their legal acceptance, or they asked to do it themselves.
 <!-- sinch-policy-digest: end -->
 
 Before writing or editing function code, gather from the user (skip any item already specified in the prompt or context):
@@ -241,7 +242,7 @@ A realtime agent keeps the conversation inside your function: register it with `
 
 v2 events are signed by the service. Each carries `Authorization: service <serviceId>:<signature>` and an `x-timestamp`, signed with the per-service secret over the raw body, the content type, the timestamp and the path. `VoiceV2WebhookValidator` verifies it once `VOICE_SERVICE_SECRET` holds the Base64 secret, under the `WebhookProtection` setting.
 
-Sinch does not hand out a service's secret yet. Until it does, a controller with protection on but no service secret logs one warning per process and serves the webhook — verification switches itself on the day the secret is set, with no code change. Leave protection on; do not set it to `never`.
+Deploys set `VOICE_SERVICE_SECRET` for each Voice v2 service. Locally it is unset, so a controller with protection on logs one warning per process and serves the webhook. Leave protection on; do not set it to `never`.
 
 ### FunctionContext services — cache, storage, database
 
@@ -367,13 +368,13 @@ curl -u $API_KEY:$API_SECRET https://your-function-url/webhook
 - **The unversioned name is the current API.** `Context.Voice` is `SinchFunctions.Voice.V2.Client`. There is no type called `VoiceV2`.
 - **`Context.Voice` is never null**, unlike the other SDK clients. It reports missing credentials when a request is sent.
 - **A v2 function needs `VOICE_SERVICE_ID`**, not `VOICE_APPLICATION_KEY`. `sinch functions init` writes it and `sinch functions deploy` points the service webhook at the deployment.
-- **Leave `WebhookProtection` on.** Signature verification is gated open only because Sinch does not publish service secrets yet. Setting it to `never` disables the check permanently, including once the secret lands.
+- **Leave `WebhookProtection` on.** Deploys set the service secret, and `never` disables signature checks.
 - **Don't implement `HandleWebhook`.** The base class routes automatically based on the `event` field.
 - **Null-check the other SDK clients** with `if (Context.Sms != null)` before using `Context.Conversation`, `Context.Numbers`, etc. When credentials for a product aren't set, the corresponding property is `null`.
 - **Namespace split matters.** Controllers and `ConversationMessage` helpers live in `SinchFunctions.Utils`. The v2 types (`Call`, `CallFlow`, `CommandBuilder`, `MenuInput`, `Client`) live in `SinchFunctions.Voice.V2`, realtime agents in `SinchFunctions.AI.Realtime`, and `AgentProvider` in `SinchFunctions.AI`. A missing `using` directive causes a "type not found" error. (There is no `SinchFunctions.Builders` namespace.)
 - **`[Authorize]` requires the import**: `using Microsoft.AspNetCore.Authorization;` at the top of the file, unless `GlobalUsings.cs` already has it. Voice and Conversation webhooks and `/health` always bypass `[Authorize]`.
 - **C# builds locally before deploy.** The CLI runs `dotnet build` and health-checks. Fix build errors locally first.
-- **Secrets management:** Use `dotnet user-secrets set KEY VALUE` for C# projects. The CLI reads from user-secrets on deploy.
+- **Secrets management:** declare each secret in `appsettings.json` with an empty string (`"KEY": ""`). The user sets the value with `dotnet user-secrets set KEY VALUE` or `sinch secrets add KEY VALUE` in their own terminal, and `sinch functions deploy` reads user-secrets first. A deploy drops any name missing from `appsettings.json`, and C# skips an unresolved empty secret silently. See the Secrets management section of the `sinch-functions` skill.
 - **25 MB package limit.** Watch NuGet package sizes. Trimming is not currently supported.
 - **`SinchConversationController` methods are optional.** Override only the events you need. All default to returning HTTP 200.
 - **`MessageInbound` signature:** override as `public override async Task<IActionResult> MessageInbound(MessageInboundEvent callback)`. The parameter type is `MessageInboundEvent`, not the raw JSON body.
@@ -383,7 +384,7 @@ curl -u $API_KEY:$API_SECRET https://your-function-url/webhook
 - **Callback data is untrusted** — `menu?.Input`, the numbers on `call`, and every field of a `MessageInboundEvent` (text, media URLs, contact data) come from end users. Validate before use; never interpolate into prompts, shell commands, or SQL. Use parameters with `Microsoft.Data.Sqlite` or Dapper against `Context.Database`.
 - **Custom endpoint bodies are untrusted** — bind to a typed model, validate `ModelState`, cap sizes, and put `[Authorize]` on any internet-reachable action that is not a Sinch callback.
 - **Do not fetch URLs from payloads** — media links in inbound messages are third-party content. Fetch only from `developers.sinch.com` or hosts you control.
-- **Keep secrets out of code and logs** — use `dotnet user-secrets` locally and the keychain via `sinch secrets` for deploys. Never log `Context.Configuration` values or echo credentials in responses.
+- **Keep secrets out of code and logs** — use `dotnet user-secrets` locally and the keychain via `sinch secrets` for deploys. Never log `Context.Configuration` values or echo credentials in responses. Never put a secret value in chat, files or commands.
 
 ## Links
 

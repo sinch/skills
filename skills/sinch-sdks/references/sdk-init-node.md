@@ -3,11 +3,11 @@
 
 # SDK Installation (Node.js)
 
-`npm install @sinch/sdk-core` (v1.4.0+)
+`npm install @sinch/sdk-core` (latest 1.8.0; Voice API v2 needs 1.6.0+). Supported runtimes: Node.js 18, 20, 22.
 
 > **ESM vs CommonJS** — The SDK uses ESM imports by default: `import { SinchClient } from "@sinch/sdk-core"`. For CommonJS, use `const { SinchClient } = require("@sinch/sdk-core")`.
 
-## Project-Scoped Auth (Conversation, Numbers, Fax, EST, etc.)
+## Project-Scoped Auth (Conversation, Numbers, Voice API v2, Fax, Number Lookup, Provisioning)
 
 ```javascript
 import { SinchClient } from '@sinch/sdk-core';
@@ -21,20 +21,36 @@ const sinch = new SinchClient({
 
 ### Setting the Conversation API Region
 
-> The region should be set explicitly for Conversation API usage. Not yet enforced in SDK v1 for backward compatibility, but recommended.
+> The SDK README documents `conversationRegion` as required for the Conversation API. Always set it.
 
 ```javascript
-import { SinchClient, ConversationRegion } from '@sinch/sdk-core';
+import { SinchClient } from '@sinch/sdk-core';
 
 const sinch = new SinchClient({
-  projectId: 'YOUR_PROJECT_ID',
-  keyId: 'YOUR_KEY_ID',
-  keySecret: 'YOUR_KEY_SECRET',
-  conversationRegion: ConversationRegion.EUROPE, // us, eu, or br
+  projectId: process.env.SINCH_PROJECT_ID,
+  keyId: process.env.SINCH_KEY_ID,
+  keySecret: process.env.SINCH_KEY_SECRET,
+  conversationRegion: 'us', // 'us', 'eu', or 'br'
 });
 ```
 
-## Application-Scoped Auth (Voice, Verification)
+### Voice API v2 (1.6.0+)
+
+Voice API v2 uses the project-scoped client above — no application key/secret. Methods are on `sinch.voice.v2` (calls, batches, sessions, services, SVAML validate/describe). The default host is `https://voice.api.sinch.com`; override it with the `voiceV2Hostname` client option only when you need a regional endpoint. Webhooks are validated with `VoiceV2CallbackWebhooks({ serviceId, serviceSecret })`. 1.7.0 added SVAML helpers (`CommandsSequenceCreator`, `Destination`, `CallBehaviorHelper`, `VoiceName`) and renamed `MenuItem.onFail` to `onFailure`.
+
+### SMS API (end-of-sale since 15 April 2026)
+
+Set `smsRegion` (`us`, `eu`, `au`, `br`, `ca`). Project access keys work only in `us`/`eu` and not for projects created after 2026-04-15; otherwise use a service plan:
+
+```javascript
+const sinch = new SinchClient({
+  servicePlanId: process.env.SINCH_SERVICE_PLAN_ID,
+  apiToken: process.env.SINCH_API_TOKEN,
+  smsRegion: 'au',
+});
+```
+
+## Application-Scoped Auth (Voice API v1, Verification)
 
 App credentials only:
 
@@ -60,3 +76,20 @@ const sinch = new SinchClient({
   applicationSecret: 'YOUR_APP_SECRET',
 });
 ```
+
+## Client options (1.5.0+)
+
+```javascript
+import { SinchClient, RetryPolicy } from '@sinch/sdk-core';
+
+const sinch = new SinchClient({
+  /* credentials */
+  retryPolicy: RetryPolicy.BACKOFF, // DEFAULT | RETRY_AFTER | BACKOFF | NONE (1.6.0+)
+  maxRetryCount: 5,                 // default 3
+  exponentialBackoff: 2,            // default 4
+  timeoutSeconds: 30,               // default 60 (1.6.0+)
+  logger: null,                     // custom Logger, default console, null silences (1.5.0+)
+});
+```
+
+> **1.5.0 breaking change:** domain packages (e.g. `@sinch/voice`) no longer re-export `@sinch/sdk-client`. Import client types and helpers from `@sinch/sdk-core`.

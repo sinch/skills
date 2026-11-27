@@ -3,7 +3,7 @@ name: sinch-functions
 description: "Sinch Functions, the beta serverless platform for voice, SMS and conversation apps. Use for platform questions: what it is, how deployment works, choosing Node.js or C#, install and auth, FunctionContext, handlers, the Voice v2 call lifecycle and `call.*` events, voice services and `VOICE_SERVICE_ID`, and SVAML. Runtime code lives in sinch-functions-node and sinch-functions-dotnet."
 metadata:
   author: Sinch
-  version: 1.2.0
+  version: 1.3.0
   category: Functions
   tags: functions, serverless, voice, conversation, ivr, svaml, runtime, nodejs, csharp
   uses:
@@ -35,7 +35,7 @@ Voice API v2 is what a new function is written against. The unversioned name alw
 
 ## Agent Instructions
 
-> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+> **Policy gate `sinch-shared-policy@7` (`sha256:587240ed6627`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
 
 <!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
 **Sinch policy digest (binding):**
@@ -45,11 +45,12 @@ Voice API v2 is what a new function is written against. The unversioned name alw
 3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
 4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
 5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
-6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL. Base every fact on a fetched canonical document, not on recall, search snippets, or bundled files.
 7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
 8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
 9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
 10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+11. Do the work yourself when a Sinch API, SDK, or CLI command can do it. Before telling the user to do a step in the dashboard, check the canonical docs and the CLI for a way to automate it; for one-off setup that the code under construction does not depend on, the CLI is enough when it is installed and logged in; hand a step to the user only when no API or CLI covers it, it needs their identity, a secret only they can see, or their legal acceptance, or they asked to do it themselves.
 <!-- sinch-policy-digest: end -->
 
 Sinch Functions offers two runtimes — Node.js and C#. Before scaffolding or writing a function, gather from the user (skip any item already specified in the prompt or context):
@@ -177,7 +178,7 @@ Inbound events are CloudEvents posted to the function root. The runtime dispatch
 
 Both runtimes also route named `webhook` commands and anything unclaimed (Node.js: a `webhooks` map and `fallback`; C#: `OnWebhook(name, ...)` and `OnOther`). Return no commands (C#: `CallFlow.None`) and the runtime answers `204`.
 
-Events are signed with the per-service secret. The runtime verifies that signature once `VOICE_SERVICE_SECRET` is set; until Sinch publishes service secrets it logs one warning per process and serves the webhook. Leave webhook protection on, so verification switches itself on the day the secret lands.
+Events are signed with the per-service secret. Deploys set `VOICE_SERVICE_SECRET` for each Voice v2 service, so a deployed function verifies that signature. Leave webhook protection on.
 
 ### Call commands
 
@@ -264,11 +265,22 @@ class Bot extends ConversationController {
 
 ### Secrets management
 
+How a secret reaches the deployed function:
+
+1. Declare the name with an empty value in the function folder: `KEY=` in `.env` (Node.js) or `"KEY": ""` in `appsettings.json` (C#). A non-empty value ships as a plain variable, so never put a real secret there.
+2. Store the value: `sinch secrets add KEY VALUE` (OS keychain; `dotnet user-secrets` is checked first for C#). Run it from the function folder: if a `.env` is there, it appends `KEY=`. Check with `sinch secrets list` (names only).
+3. `sinch functions deploy`, run from the same folder, fills each empty name from user-secrets (C#), the environment, the keychain or stored auth.
+
 ```bash
-sinch secrets add OPENAI_API_KEY "$OPENAI_API_KEY"   # store in OS keychain; pass the value from an env var
+sinch secrets add OPENAI_API_KEY "$OPENAI_API_KEY"   # value taken from an env var, never typed into chat
 ```
 
-Then in `.env` (Node.js) or `appsettings.json` (C#), declare the key with an empty value. The runtime loads it from the keychain.
+A deploy replaces the function's stored configuration with what it ships. A name missing from `.env` or `appsettings.json` is dropped, including a secret set only in the dashboard, so declare every secret. Node.js warns about a declared secret with no value; C# skips it silently.
+
+Rules for the agent:
+
+- The user runs `sinch secrets add` in their own terminal. Never put a secret value in chat, files, commands, commit text or output, and never use `sinch secrets get --show`.
+- Never save placeholder or example text (`your-api-key`, `changeme`) as a value. If a declared secret has no value, tell the user.
 
 ## Gotchas and Best Practices
 
@@ -281,15 +293,15 @@ Then in `.env` (Node.js) or `appsettings.json` (C#), declare the key with an emp
 - **Write voice code against v2** — `onCall` in Node.js, the `OnIncoming`/`OnMenu` overrides in C#.
 - **The unversioned name is the current API** — `context.voice` and `Context.Voice` are v2. The C# client type is `SinchFunctions.Voice.V2.Client`; there is no `VoiceV2` type.
 - **A v2 function needs `VOICE_SERVICE_ID`**, not `VOICE_APPLICATION_KEY`. Without a service the platform has nowhere to send the call.
-- **Leave webhook protection on** — signature verification is gated open only because service secrets are not published yet. Turning it off disables the check permanently.
+- **Leave webhook protection on** — deploys set the service secret, and turning protection off disables signature checks.
 - **Never return raw JSON** from voice handlers. Always use the builder.
 
 ## Security
 
 - **Callback and webhook payloads are untrusted** — caller numbers, DTMF/menu results, and inbound message text or media URLs come from end users. Validate them before use and never interpolate them into prompts, shell commands, or SQL.
 - **Do not fetch URLs found in payloads** — media links in inbound messages are third-party content. Only fetch from `developers.sinch.com` or hosts you control.
-- **Protect custom endpoints** — anything reachable from the public internet that is not a Sinch callback should require Basic Auth (see the runtime skills). Voice events are signed, and the runtime verifies that signature once the service secret is available; until then treat the voice endpoint as reachable and validate what it receives.
-- **Keep secrets in the keychain** — use `sinch secrets` and empty `.env`/`appsettings.json` placeholders. Never commit values or log the resolved environment.
+- **Protect custom endpoints** — anything reachable from the public internet that is not a Sinch callback should require Basic Auth (see the runtime skills). Voice events are signed, and a deployed function verifies the signature.
+- **Keep secrets in the keychain** — see Secrets management above. Never commit values or log the resolved environment.
 
 ## Links
 

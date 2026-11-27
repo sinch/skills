@@ -3,7 +3,7 @@ name: sinch-functions-node
 description: "Write Node.js/TypeScript Sinch Functions with `@sinch/functions-runtime`. Use when writing or editing `function.ts`: answering and controlling calls with Voice API v2, IVR menus, placing or bridging calls, SMS/WhatsApp/RCS webhooks, custom HTTP endpoints, cache/storage/database, auth and `setup()` hooks. Run and deploy with the sinch-cli skill."
 metadata:
   author: Sinch
-  version: 1.2.0
+  version: 1.3.0
   category: Functions
   tags: functions, nodejs, typescript, serverless, voice, svaml, ivr, conversation-webhooks, runtime
   uses:
@@ -35,7 +35,7 @@ Voice API v2 is what `context.voice` is and what a new function is written again
 
 ## Agent Instructions
 
-> **Policy gate `sinch-shared-policy@5` (`sha256:4864cf0fa8d6`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
+> **Policy gate `sinch-shared-policy@7` (`sha256:587240ed6627`):** The policy digest below is binding as written. Before implementation or live execution, read [the full shared Sinch policy](references/shared-policy.md) once per conversation — skip it if this exact ID/version/fingerprint is already loaded; read it if the version is newer or the fingerprint differs. This skill's canonical operation routes live in its Agent Instructions and Links sections.
 
 <!-- sinch-policy-digest: start (generated; edit docs/SINCH_SHARED_POLICY.md and run scripts/sync_sinch_skill_references.py) -->
 **Sinch policy digest (binding):**
@@ -45,11 +45,12 @@ Voice API v2 is what `context.voice` is and what a new function is written again
 3. Code-generation approval is not execution approval. Classify every operation (read-only / reversible / billable / destructive) and obtain explicit approval before billable or destructive calls.
 4. Tier B facts — endpoint paths, methods, field names, enums, limits, webhook payloads, signature algorithms, SDK signatures — require fetching the exact canonical document in the current session before use.
 5. Bundled scripts, references, and examples are Tier C: illustrations, never schema authority. Never promote example values to production defaults.
-6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL; never substitute memory, search snippets, or bundled files.
+6. If a route is unresolved or a canonical fetch fails, climb the resolution ladder in order — re-search already-fetched documents (raw, not summarized), consult https://developers.sinch.com/llms.txt, follow first-party links, retry once — before failing closed. Never pattern-guess a documentation URL. Base every fact on a fetched canonical document, not on recall, search snippets, or bundled files.
 7. Keep an evidence ledger mapping each fetched source to the fields and claims it authorized.
 8. Bound all polling and retries (backoff, jitter, hard cap); check state before retrying billable or destructive operations; report a timeout as unknown, not failed.
 9. Report verification levels separately (lint → unit → mock contract → sandbox → live → end-to-end); an HTTP 2xx does not prove delivery. State the levels not performed.
 10. Load only the smallest skill set that owns the behavior; if a required skill is unavailable, name it and stop rather than improvising its instructions.
+11. Do the work yourself when a Sinch API, SDK, or CLI command can do it. Before telling the user to do a step in the dashboard, check the canonical docs and the CLI for a way to automate it; for one-off setup that the code under construction does not depend on, the CLI is enough when it is installed and logged in; hand a step to the user only when no API or CLI covers it, it needs their identity, a secret only they can see, or their legal acceptance, or they asked to do it themselves.
 <!-- sinch-policy-digest: end -->
 
 Before writing or editing function code, gather from the user (skip any item already specified in the prompt or context):
@@ -243,7 +244,7 @@ Everything a voice function needs imports from `@sinch/functions-runtime/voice` 
 
 v2 events are signed by the service. Each carries `Authorization: service <serviceId>:<signature>` and an `x-timestamp`, signed with the per-service secret over the raw body, the content type, the timestamp and the path. The runtime verifies that signature under the `WEBHOOK_PROTECTION` modes (`never`, `deploy`, `always`) as soon as `VOICE_SERVICE_SECRET` holds the Base64 secret, and rejects a failing request with `401`.
 
-Sinch does not hand out a service's secret yet. Until it does, a function with protection on but no `VOICE_SERVICE_SECRET` logs one warning per process and serves the webhook — verification switches itself on the day the secret is set, with no code change. Leave protection on; do not set it to `never`. List `voiceWebhook` in `auth` for Basic auth on the endpoint in the meantime.
+Deploys set `VOICE_SERVICE_SECRET` for each Voice v2 service. Locally it is unset, so a function with protection on logs one warning per process and serves the webhook. Leave protection on; do not set it to `never`. List `voiceWebhook` in `auth` for Basic auth on the endpoint.
 
 ### Cache, storage & database
 
@@ -340,7 +341,7 @@ export function setup(runtime) {
 - **The unversioned name is the current API** — `context.voice` is the v2 client. There is no type called `VoiceV2`; the client type is `Client`.
 - **`context.voice` is always defined**, unlike the other SDK clients. It reports missing credentials when a request is sent, not on property access.
 - **A v2 function needs `VOICE_SERVICE_ID`**, not `VOICE_APPLICATION_KEY`. `sinch functions init` writes it and `sinch functions deploy` points the service webhook at the deployment.
-- **Leave `WEBHOOK_PROTECTION` on** — signature verification is gated open only because Sinch does not publish service secrets yet. Setting it to `never` disables the check permanently, including once the secret lands.
+- **Leave `WEBHOOK_PROTECTION` on** — deploys set the service secret, and `never` disables signature checks.
 - **Use `context.assets('file.txt')`** to read bundled files. `readFileSync` won't find root-level files in the deployed artifact.
 - **Use `.js` extensions** in all relative imports: `import { foo } from './bar.js'` (NodeNext module resolution).
 - **SDK clients may be undefined** — always use optional chaining: `await context.sms?.batches.send(...)`. If `context.sms` is undefined (required env vars not set), the call is skipped silently instead of throwing.
@@ -354,7 +355,7 @@ export function setup(runtime) {
 - **Callback data is untrusted** — `call.menu.input` and every field of a Conversation `MESSAGE_INBOUND` event (text, media URLs, contact data) come from end users. Validate before use; never interpolate into prompts, shell commands, or SQL. Use parameterised queries against `context.database`.
 - **Custom endpoint bodies are untrusted** — check `request.method`, validate the shape and size of `request.body`, and list any internet-reachable handler in the `auth` array.
 - **Do not fetch URLs from payloads** — media links in inbound messages are third-party content. Fetch only from `developers.sinch.com` or hosts you control.
-- **Keep secrets out of code and logs** — read them through `context.env` from keychain-backed `.env` placeholders. Never log `context.env` or echo credentials in responses.
+- **Keep secrets out of code and logs** — read them through `context.env` from keychain-backed `.env` placeholders (`KEY=` empty). Never log `context.env` or echo credentials in responses. The user runs `sinch secrets add`, never Claude with a value from chat; every secret must stay declared in `.env`, because a deploy drops names missing from it. See the Secrets management section of the `sinch-functions` skill.
 
 ## Links
 

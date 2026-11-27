@@ -159,7 +159,7 @@ Note: The callback only includes the conversation ID, not full conversation deta
 ### Common Use Cases
 
 1. **Cleanup Synchronization** — Remove conversation records from external databases
-2. **Audit Logging** — Log conversation deletion events for compliance
+2. **Audit Logging** — Keep an audit entry for each deletion event (conversation ID and timestamp only) for compliance
 3. **Cache Invalidation** — Clear cached conversation data from application caches
 4. **GDPR Compliance** — Track deletion requests for data privacy compliance
 5. **Reference Cleanup** — Remove conversation references from related records (tickets, notes, etc.)
